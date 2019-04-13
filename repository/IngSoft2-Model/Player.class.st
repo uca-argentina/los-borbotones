@@ -48,11 +48,6 @@ Player >> initializeWithName: aName [
 	position := 0
 ]
 
-{ #category : #actions }
-Player >> move: aNumberOfSteps [ 
-	 position := aNumberOfSteps 
-]
-
 { #category : #presentation }
 Player >> name [
 	^ playerName
@@ -69,11 +64,5 @@ Player >> rollsDices: aBagOfDices andPlaysIn: aGame [
 	sumOfDiceResults := 0.
 	aBagOfDices do: [:each |  sumOfDiceResults := sumOfDiceResults + each roll].
 	position := aGame goFrom: position to: (position + sumOfDiceResults).
-	
-]
-
-{ #category : #actions }
-Player >> takeADiceWithFacesAndPlays: aNumberOfFaces [
-^ 2
 	
 ]

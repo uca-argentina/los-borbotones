@@ -35,13 +35,6 @@ EnunciadoTest >> testAPlayerCalledRobert [
 ]
 
 { #category : #tests }
-EnunciadoTest >> testAPlayerCalledRobertRollsADiceWith4Faces [
-	| player |
-	player := Player called: 'Robert'.
-	self assert: (player takeADiceWithFacesAndPlays: 4)equals: 2
-]
-
-{ #category : #tests }
 EnunciadoTest >> testBoardWithFourStepsToWin [
 	^ self assert: (Board withStepsToWin: 6) stepsToWin equals:6.
 ]
