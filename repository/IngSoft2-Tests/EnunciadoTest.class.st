@@ -88,7 +88,7 @@ EnunciadoTest >> testInitialPositionOfRobertIsZero [
 EnunciadoTest >> testPlayerMovesFourStepsWhenSheGetsAFour [
 	|newGame aBagOfDices fourFaceDummyDice player |
 	
-	fourFaceDummyDice := SameFaceDice withFaces: 4.
+	fourFaceDummyDice := SameFaceDice withFaces: 4 andValue: 4.
 	newGame := Game withStepsToWin: 6.
 	aBagOfDices := Array with: fourFaceDummyDice.
 	
@@ -103,7 +103,7 @@ EnunciadoTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	|newGame aBagOfDices fourFaceDummyDice fiveFaceDummyDice player|
 	
 	fourFaceDummyDice := SameFaceDice withFaces: 4 andValue: 4.
-	fiveFaceDummyDice := SameFaceDice withFaces: 4 andValue: 5.
+	fiveFaceDummyDice := SameFaceDice withFaces: 5 andValue: 5.
 	
 	newGame := Game withStepsToWin: 10.
 	aBagOfDices := Array with: fourFaceDummyDice with: fiveFaceDummyDice.
