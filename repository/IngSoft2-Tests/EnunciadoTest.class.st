@@ -99,7 +99,7 @@ EnunciadoTest >> testPlayerMovesFourStepsWhenSheGetsAFour [
 ]
 
 { #category : #tests }
-EnunciadoTest >> testPlayerMovesSixStepsWhenUsingTwoDices [
+EnunciadoTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	|newGame aBagOfDices fourFaceDummyDice fiveFaceDummyDice player|
 	
 	fourFaceDummyDice := SameFaceDice withFaces: 4 andValue: 4.
