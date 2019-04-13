@@ -26,23 +26,30 @@ Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'board',
-		'dices'
+		'board'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Game class >> withStepsToWin: aStepsAmount andDices: aBagOfDices [ 
+Game class >> withStepsToWin: aStepsAmount [ 
 	^ self new
-		 initializeWithSteps: aStepsAmount andDices: aBagOfDices;
+		 initializeWithSteps: aStepsAmount;
 		 yourself.
 ]
 
+{ #category : #playing }
+Game >> goFrom: currentStep to: someOtherStep [
+	|sum|
+	sum := currentStep + someOtherStep.
+	
+	^ (sum < board stepsToWin)	ifTrue: [ ^sum ]; ifFalse: [ ^board stepsToWin ].
+
+]
+
 { #category : #status }
-Game >> initializeWithSteps: aStepsAmount andDices: aBagOfDices [
+Game >> initializeWithSteps: aStepsAmount [
 	board := Board withStepsToWin: aStepsAmount.
-	dices := aBagOfDices.
 ]
 
 { #category : #status }

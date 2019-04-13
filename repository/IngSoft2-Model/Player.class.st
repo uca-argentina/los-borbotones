@@ -63,6 +63,15 @@ Player >> position [
 	^ position
 ]
 
+{ #category : #playing }
+Player >> rollsDices: aBagOfDices andPlaysIn: aGame [ 
+	| sumOfDiceResults |
+	sumOfDiceResults := 0.
+	aBagOfDices do: [:each |  sumOfDiceResults := sumOfDiceResults + each roll].
+	position := aGame goFrom: position to: (position + sumOfDiceResults).
+	
+]
+
 { #category : #actions }
 Player >> takeADiceWithFacesAndPlays: aNumberOfFaces [
 ^ 2
