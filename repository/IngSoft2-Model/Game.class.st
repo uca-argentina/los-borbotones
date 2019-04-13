@@ -1,5 +1,6 @@
 "
-""soy un jugador""
+""soy un juego""
+
 Please comment me using the following template inspired by Class Responsibility Collaborator (CRC) design:
 
 For the Class part:  State a one line summary. For example, ""I represent a paragraph of text"".
@@ -18,53 +19,33 @@ Public API and Key Messages
  
 Internal Representation and Key Implementation Points.
 
-    Instance Variables
-	dice:		<Object>
-	playerName:		<Object>
-
 
     Implementation Points
 "
 Class {
-	#name : #Player,
+	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'playerName',
-		'position'
+		'board',
+		'dices'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Player class >> called: aName [
+Game class >> withStepsToWin: aStepsAmount andDices: aBagOfDices [ 
 	^ self new
-		initializeWithName: aName;
-		yourself
+		 initializeWithSteps: aStepsAmount andDices: aBagOfDices;
+		 yourself.
 ]
 
-{ #category : #initialize }
-Player >> initializeWithName: aName [
-	playerName := aName.
-	position := 0
+{ #category : #status }
+Game >> initializeWithSteps: aStepsAmount andDices: aBagOfDices [
+	board := Board withStepsToWin: aStepsAmount.
+	dices := aBagOfDices.
 ]
 
-{ #category : #actions }
-Player >> move: aNumberOfSteps [ 
-	 position := aNumberOfSteps 
-]
-
-{ #category : #presentation }
-Player >> name [
-	^ playerName
-]
-
-{ #category : #actions }
-Player >> position [ 
-	^ position
-]
-
-{ #category : #actions }
-Player >> takeADiceWithFacesAndPlays: aNumberOfFaces [
-^ 2
-	
+{ #category : #status }
+Game >> status [
+	^'running'.
 ]

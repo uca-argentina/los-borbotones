@@ -30,23 +30,20 @@ Class {
 { #category : #tests }
 EnunciadoTest >> testAPlayerCalledRobert [
 	| player |
-	player := Player call: 'Robert'.
+	player := Player called: 'Robert'.
 	self assert: player name equals: 'Robert'
 ]
 
 { #category : #tests }
 EnunciadoTest >> testAPlayerCalledRobertRollsADiceWith4Faces [
 	| player |
-	player := Player call: 'Robert'.
+	player := Player called: 'Robert'.
 	self assert: (player takeADiceWithFacesAndPlays: 4)equals: 2
 ]
 
 { #category : #tests }
-EnunciadoTest >> testBoardHas5StepsAndIsPlayableBy5Players [
-	| board |
-	board := Board WithStepsToWin: 5 andPlayers: 5.
-	self assert: board stepsToWin equals: 5.
-	self assert: board players equals: 5
+EnunciadoTest >> testBoardWithFourStepsToWin [
+	^ self assert: (Board withStepsToWin: 6) stepsToWin equals:6.
 ]
 
 { #category : #tests }
@@ -72,18 +69,27 @@ EnunciadoTest >> testFourFaceDiceHasFourFaces [
 ]
 
 { #category : #tests }
-EnunciadoTest >> testIfIGetAFourIMoveFourBlocks [
-	| fourFaceDice player |
-	fourFaceDice := SameFaceDice withFaces: 4.
-	player := Player call: 'Robert'.
-	player move: fourFaceDice roll.
-	self assert: player position equals: 4
+EnunciadoTest >> testGameIsRunningWithASixStepBoardAndAFourFaceDice [
+	|aStepsAmount aBagOfDices newGame|
+	aStepsAmount := 6.
+	aBagOfDices := Array with: (Dice withFaces:4).
+	newGame := Game withStepsToWin:aStepsAmount andDices: aBagOfDices.
+	self assert: newGame status equals: 'running'.
 ]
 
 { #category : #tests }
 EnunciadoTest >> testInitialPositionOfRobertIsZero [
 	| player |
-	player := Player call: 'Robert'.
+	player := Player called: 'Robert'.
 	self assert: player position equals: 0
 
+]
+
+{ #category : #tests }
+EnunciadoTest >> testPlayerMovesFourStepsWhenSheGetsAFour [
+	|fourFaceDummyDice player |
+	fourFaceDummyDice := SameFaceDice withFaces: 4.
+	player := Player called: 'Robert'.
+	player move: fourFaceDummyDice roll.
+	self assert: player position equals: 4
 ]

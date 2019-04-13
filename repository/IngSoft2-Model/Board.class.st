@@ -30,37 +30,25 @@ Class {
 	#name : #Board,
 	#superclass : #Object,
 	#instVars : [
-		'stepsToWin',
-		'numberOfStepsToWin',
-		'numberOfPlayers',
-		'position'
+		'numberOfSteps'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Board class >> WithStepsToWin: aNumberOfStepsToWin andPlayers: aNumberOfplayers [
+Board class >> withStepsToWin: aNumberOfStepsToWin [
 	^ self new
-		initializeWithStepsToWin: aNumberOfStepsToWin
-			andPlayers: aNumberOfplayers;
-		
+		initializeWithSteps: aNumberOfStepsToWin;
 		yourself
 ]
 
 { #category : #initialize }
-Board >> initializeWithStepsToWin: aNumberOfStepsToWin andPlayers: aNumberOfPlayers [
-	numberOfStepsToWin := aNumberOfStepsToWin .
-	numberOfPlayers := aNumberOfPlayers .
-	position := 0.
+Board >> initializeWithSteps: aNumberOfSteps [
+	numberOfSteps:= aNumberOfSteps.
 	
 ]
 
 { #category : #description }
-Board >> players [
-	^ numberOfPlayers 
-]
-
-{ #category : #description }
 Board >> stepsToWin [
-	^ numberOfStepsToWin 
+	^ numberOfSteps 
 ]
