@@ -26,7 +26,9 @@ Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'board'
+		'board',
+		'status',
+		'winner'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -40,19 +42,37 @@ Game class >> withStepsToWin: aStepsAmount [
 
 { #category : #playing }
 Game >> goFrom: currentStep to: someOtherStep [
-	|sum|
-	sum := currentStep + someOtherStep.
+	|amountOfSteps|
+	amountOfSteps := someOtherStep - currentStep.
 	
-	^ (sum < board stepsToWin)	ifTrue: [ ^sum ]; ifFalse: [ ^board stepsToWin ].
+	^ (amountOfSteps < board stepsToWin)	ifTrue: [ ^amountOfSteps ]; ifFalse: [ status := 'ended'. ^board stepsToWin ].
 
 ]
 
 { #category : #status }
 Game >> initializeWithSteps: aStepsAmount [
 	board := Board withStepsToWin: aStepsAmount.
+	status := 'running'.
+	winner := ''.
+]
+
+{ #category : #playing }
+Game >> player: aPlayer goesFrom: currentStep to: someOtherStep [
+	|amountOfSteps|
+	amountOfSteps := someOtherStep - currentStep.
+	
+	^ (amountOfSteps < board stepsToWin)	
+		ifTrue: [ ^amountOfSteps ]; 
+		ifFalse: [ winner:= aPlayer. status := 'ended'. ^board stepsToWin ].
+
 ]
 
 { #category : #status }
 Game >> status [
-	^'running'.
+	^status.
+]
+
+{ #category : #status }
+Game >> winner [
+	^winner.
 ]
