@@ -50,7 +50,7 @@ EnunciadoTest >> testDiceCantHaveLessThanFourFaces [
 { #category : #tests }
 EnunciadoTest >> testDiceRollsAndReturnsAValidNumber [
 	| fourFacesDice rollingResult |
-	fourFacesDice := Dice withFaces: 4.
+	fourFacesDice := RandomDice withFaces: 4.
 	rollingResult := fourFacesDice roll.
 	self assert: (rollingResult >= 1 and: rollingResult <= 4).
 ]
@@ -58,7 +58,7 @@ EnunciadoTest >> testDiceRollsAndReturnsAValidNumber [
 { #category : #tests }
 EnunciadoTest >> testFourFaceDiceHasFourFaces [
 	| fourFaceDice |
-	fourFaceDice := Dice withFaces: 4.
+	fourFaceDice := RandomDice  withFaces: 4.
 	self assert: fourFaceDice numberOfFaces equals: 4
 ]
 
