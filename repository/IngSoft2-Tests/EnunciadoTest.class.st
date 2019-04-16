@@ -49,10 +49,10 @@ EnunciadoTest >> testDiceCantHaveLessThanFourFaces [
 
 { #category : #tests }
 EnunciadoTest >> testDiceRollsAndReturnsAValidNumber [
-	| fourFacesDice |
+	| fourFacesDice rollingResult |
 	fourFacesDice := Dice withFaces: 4.
-	self assert: fourFacesDice roll > 1.
-	self assert: fourFacesDice roll <= 4
+	rollingResult := fourFacesDice roll.
+	self assert: (rollingResult >= 1 and: rollingResult <= 4).
 ]
 
 { #category : #tests }
