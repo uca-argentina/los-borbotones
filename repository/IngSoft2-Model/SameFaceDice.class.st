@@ -28,10 +28,28 @@ Internal Representation and Key Implementation Points.
 Class {
 	#name : #SameFaceDice,
 	#superclass : #Dice,
+	#instVars : [
+		'value'
+	],
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #creation }
+SameFaceDice class >> withFaces: aNumberOfFaces andValue: aNumber [
+	self assertValidFaces: aNumberOfFaces.
+	^ self new
+		initializeWithFaces: aNumberOfFaces andValue: aNumber;
+		yourself
+]
+
+{ #category : #initialization }
+SameFaceDice >> initializeWithFaces: aNumberOfFaces andValue: aNumber [
+	numberOfFaces := aNumberOfFaces.
+	value := aNumber.
+	random := Random new
+]
+
 { #category : #actions }
 SameFaceDice >> roll [
-	^ 4
+	^value
 ]

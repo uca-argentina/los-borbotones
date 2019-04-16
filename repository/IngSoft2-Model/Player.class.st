@@ -36,7 +36,7 @@ Class {
 }
 
 { #category : #creation }
-Player class >> call: aName [
+Player class >> called: aName [
 	^ self new
 		initializeWithName: aName;
 		yourself
@@ -48,12 +48,7 @@ Player >> initializeWithName: aName [
 	position := 0
 ]
 
-{ #category : #actions }
-Player >> move: aNumberOfSteps [ 
-	 position := aNumberOfSteps 
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #presentation }
 Player >> name [
 	^ playerName
 ]
@@ -63,8 +58,11 @@ Player >> position [
 	^ position
 ]
 
-{ #category : #actions }
-Player >> takeADiceWithFacesAndPlays: aNumberOfFaces [
-^ 2
+{ #category : #playing }
+Player >> rollsDices: aBagOfDices andPlaysIn: aGame [ 
+	| sumOfDiceResults |
+	sumOfDiceResults := 0.
+	aBagOfDices do: [:each |  sumOfDiceResults := sumOfDiceResults + each roll].
+	position := aGame player:self goesFrom: position to: (position + sumOfDiceResults).
 	
 ]
