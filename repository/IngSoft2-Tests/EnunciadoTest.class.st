@@ -110,7 +110,7 @@ EnunciadoTest >> testInitialPositionOfRobertIsZero [
 ]
 
 { #category : #tests }
-EnunciadoTest >> testPlayerMovesFourStepsWhenSheGetsAFour [
+EnunciadoTest >> testPlayerMovesFourStepsWhenHeGetsAFour [
 	|newGame aBagOfDices fourFaceDummyDice player |
 	
 	fourFaceDummyDice := SameFaceDice withFaces: 4 andValue: 4.
