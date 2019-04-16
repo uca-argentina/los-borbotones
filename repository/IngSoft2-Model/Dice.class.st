@@ -29,31 +29,10 @@ Class {
 	#name : #Dice,
 	#superclass : #Object,
 	#instVars : [
-		'numberOfFaces',
-		'random'
+		'numberOfFaces'
 	],
 	#category : #'IngSoft2-Model'
 }
-
-{ #category : #creation }
-Dice class >> assertValidFaces: aNumberOfFaces [
-	aNumberOfFaces > 3
-		ifFalse: [ self error: 'Number of faces must be 4 or greater' ]
-]
-
-{ #category : #creation }
-Dice class >> withFaces: aNumberOfFaces [
-	self assertValidFaces: aNumberOfFaces.
-	^ self new
-		initializeWithFaces: aNumberOfFaces;
-		yourself
-]
-
-{ #category : #initialize }
-Dice >> initializeWithFaces: aNumberOfFaces [
-	numberOfFaces := aNumberOfFaces.
-	random := Random new
-]
 
 { #category : #actions }
 Dice >> numberOfFaces [
@@ -62,5 +41,5 @@ Dice >> numberOfFaces [
 
 { #category : #actions }
 Dice >> roll [
-	^ (random next * numberOfFaces) floor + 1
+	self subclassResponsibility 
 ]

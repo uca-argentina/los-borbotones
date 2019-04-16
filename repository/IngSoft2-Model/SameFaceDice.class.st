@@ -34,15 +34,21 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #asserting }
+SameFaceDice class >> assertValidThatADiceHas3OrMoreFaces: aNumberOfFaces [
+	aNumberOfFaces > 3
+		ifFalse: [ self error: 'Number of faces must be 4 or greater' ]
+]
+
 { #category : #creation }
 SameFaceDice class >> withFaces: aNumberOfFaces andValue: aNumber [
-	self assertValidFaces: aNumberOfFaces.
+	self assertValidThatADiceHas3OrMoreFaces: aNumberOfFaces.
 	^ self new
 		initializeWithFaces: aNumberOfFaces andValue: aNumber;
 		yourself
 ]
 
-{ #category : #initialization }
+{ #category : #initialize }
 SameFaceDice >> initializeWithFaces: aNumberOfFaces andValue: aNumber [
 	numberOfFaces := aNumberOfFaces.
 	value := aNumber.
