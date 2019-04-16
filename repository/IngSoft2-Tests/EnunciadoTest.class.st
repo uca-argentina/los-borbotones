@@ -52,7 +52,7 @@ EnunciadoTest >> testDiceRollsAndReturnsAValidNumber [
 	| fourFacesDice rollingResult |
 	fourFacesDice := Dice withFaces: 4.
 	rollingResult := fourFacesDice roll.
-	self assert: (rollingResult >= 1 and: rollingResult < 4).
+	self assert: (rollingResult >= 1 and: rollingResult <= 4).
 ]
 
 { #category : #tests }
