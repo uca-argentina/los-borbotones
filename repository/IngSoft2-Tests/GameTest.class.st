@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'fourFaceDummyDice',
 		'dices',
-		'player',
 		'players',
-		'game'
+		'game',
+		'robert'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -18,33 +18,32 @@ GameTest >> setUp [
 	fourFaceDummyDice := SameFaceDice withFaces: 4  andValue: 4.
 	
 	dices := LinkedList  with: fourFaceDummyDice.
+	robert := Player called: 'Robert'.
 	
-	player := Player called: 'Robert'.
-	players := Array with: player.
+	players := LinkedList with: robert.
 	
 	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
 ]
 
 { #category : #tests }
 GameTest >> testGameHasEnded [
-	
-	game playedNextBy: player.
+	game playedNextBy: robert.
 	
 	self assert: game hasEnded.
 ]
 
 { #category : #tests }
 GameTest >> testGetWinnerOnceGameIsFinished [
-	game playedNextBy: player.
+	game playedNextBy: robert.
 	self assert: game winner name equals: 'Robert'
 ]
 
 { #category : #tests }
 GameTest >> testPlayerMovesFourStepsWhenHeGetsAFour [
 	
-	game playedNextBy: player.
+	game playedNextBy: robert.
 	
-	self assert: player position equals: 4
+	self assert: robert position equals: 4
 ]
 
 { #category : #tests }
@@ -53,7 +52,7 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	fiveFaceDummyDice := SameFaceDice withFaces: 5 andValue: 5.
 	dices add: fiveFaceDummyDice.
 
-	game playedNextBy: player.
+	game playedNextBy: robert.
 	
-	self assert: player position equals: 9
+	self assert: robert position equals: 9
 ]
