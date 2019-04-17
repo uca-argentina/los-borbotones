@@ -59,10 +59,16 @@ Player >> position [
 ]
 
 { #category : #playing }
-Player >> rollsDices: aBagOfDices andPlaysIn: aGame [ 
-	| sumOfDiceResults |
-	sumOfDiceResults := 0.
-	aBagOfDices do: [:each |  sumOfDiceResults := sumOfDiceResults + each roll].
-	position := aGame player:self goesFrom: position to: (position + sumOfDiceResults).
+Player >> rolls: dices in: aGame [ 
+	| sumOfRollResults newPosition|
+	sumOfRollResults := dices sum: #roll.
+	newPosition := position + sumOfRollResults.
+	
+	aGame hasEnded ifTrue: [ self error: 'The game has already ended.' ].
+	
+	aGame updateGameStatusWhenPlayerMovesTo: newPosition. 
+	
+	position := newPosition.
+	
 	
 ]

@@ -26,45 +26,30 @@ Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'board',
+		'numberOfSteps',
 		'status',
-		'winner'
+		'players'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Game class >> withStepsToWin: aStepsAmount [ 
+Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount [ 
 	^ self new
-		 initializeWithSteps: aStepsAmount;
+		 initializeWithSteps: aStepsAmount andPlayers: aSetOfPlayers;
 		 yourself.
 ]
 
-{ #category : #playing }
-Game >> goFrom: currentStep to: someOtherStep [
-	|amountOfSteps|
-	amountOfSteps := someOtherStep - currentStep.
-	
-	^ (amountOfSteps < board stepsToWin)	ifTrue: [ ^amountOfSteps ]; ifFalse: [ status := 'ended'. ^board stepsToWin ].
-
+{ #category : #status }
+Game >> hasEnded [
+	^ (status = 'ended').
 ]
 
 { #category : #status }
-Game >> initializeWithSteps: aStepsAmount [
-	board := Board withStepsToWin: aStepsAmount.
+Game >> initializeWithSteps: aStepsAmount andPlayers: setOfPlayers [
+	players := setOfPlayers.
+	numberOfSteps := aStepsAmount.
 	status := 'running'.
-	winner := ''.
-]
-
-{ #category : #playing }
-Game >> player: aPlayer goesFrom: currentStep to: someOtherStep [
-	|amountOfSteps|
-	amountOfSteps := someOtherStep - currentStep.
-	
-	^ (amountOfSteps < board stepsToWin)	
-		ifTrue: [ ^amountOfSteps ]; 
-		ifFalse: [ winner:= aPlayer. status := 'ended'. ^board stepsToWin ].
-
 ]
 
 { #category : #status }
@@ -73,6 +58,11 @@ Game >> status [
 ]
 
 { #category : #status }
+Game >> updateGameStatusWhenPlayerMovesTo: aPosition [
+	(aPosition > numberOfSteps) ifTrue: [ status := 'ended'. ]
+]
+
+{ #category : #presentation }
 Game >> winner [
-	^winner.
+	^ players detect: [ :player | player position > numberOfSteps ]
 ]
