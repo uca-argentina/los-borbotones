@@ -27,39 +27,35 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'numberOfSteps',
-		'status',
-		'players'
+		'players',
+		'dices'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount [ 
+Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount  andUsing: dices [
 	^ self new
-		 initializeWithSteps: aStepsAmount andPlayers: aSetOfPlayers;
+		 initializeWithSteps: aStepsAmount players: aSetOfPlayers andUsing: dices;
 		 yourself.
 ]
 
 { #category : #status }
 Game >> hasEnded [
-	^ (status = 'ended').
+	^ players contains: [ :player | player position > numberOfSteps ].
 ]
 
 { #category : #status }
-Game >> initializeWithSteps: aStepsAmount andPlayers: setOfPlayers [
+Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfDices [
 	players := setOfPlayers.
 	numberOfSteps := aStepsAmount.
-	status := 'running'.
+	dices := setOfDices  .
 ]
 
-{ #category : #status }
-Game >> status [
-	^status.
-]
+{ #category : #presentation }
+Game >> playedNextBy: aPlayer [
 
-{ #category : #status }
-Game >> updateGameStatusWhenPlayerMovesTo: aPosition [
-	(aPosition > numberOfSteps) ifTrue: [ status := 'ended'. ]
+	aPlayer playsRolling: dices.
 ]
 
 { #category : #presentation }

@@ -48,27 +48,31 @@ Player >> initializeWithName: aName [
 	position := 0
 ]
 
+{ #category : #initialize }
+Player >> moveTo: newPosition [
+
+	position := newPosition.
+
+
+]
+
 { #category : #presentation }
 Player >> name [
 	^ playerName
 ]
 
+{ #category : #initialize }
+Player >> playsRolling: dices [
+	| sumOfRollResults |
+	
+	sumOfRollResults := dices sum: #roll.
+	
+	self moveTo: position + sumOfRollResults.
+
+
+]
+
 { #category : #actions }
 Player >> position [ 
 	^ position
-]
-
-{ #category : #playing }
-Player >> rolls: dices in: aGame [ 
-	| sumOfRollResults newPosition|
-	sumOfRollResults := dices sum: #roll.
-	newPosition := position + sumOfRollResults.
-	
-	aGame hasEnded ifTrue: [ self error: 'The game has already ended.' ].
-	
-	aGame updateGameStatusWhenPlayerMovesTo: newPosition. 
-	
-	position := newPosition.
-	
-	
 ]
