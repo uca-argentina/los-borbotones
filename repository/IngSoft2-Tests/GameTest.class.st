@@ -26,10 +26,40 @@ GameTest >> setUp [
 ]
 
 { #category : #tests }
+GameTest >> testGameCantBePlayedOnceItIsOver [
+	| lucia |
+	lucia := Player called: 'Lucia'.
+	players add: lucia.
+
+	game playedNextBy: lucia.
+	
+	self should: [ game playedNextBy: robert. ] raise: Error.
+]
+
+{ #category : #tests }
 GameTest >> testGameHasEnded [
 	game playedNextBy: robert.
 	
 	self assert: game hasEnded.
+]
+
+{ #category : #tests }
+GameTest >> testGetPositionOfPlayersOnceGameIsOver [
+	| lucia lucas|
+	
+	lucia := Player called: 'Lucia'.
+	lucas := Player called: 'Lucas'.
+	players add: lucia.
+	players add: lucas.
+
+	game := Game playedBy: players withStepsToWin: 8 andUsing: dices.
+	game playedNextBy: lucia.
+	game playedNextBy: robert.
+	game playedNextBy: lucia.
+	
+	self assert: lucia position equals: 8.
+	self assert: lucas position equals: 0.
+	self assert: robert position equals: 4.
 ]
 
 { #category : #tests }

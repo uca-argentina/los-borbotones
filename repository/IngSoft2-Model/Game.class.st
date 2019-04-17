@@ -40,9 +40,15 @@ Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount  andUsing: di
 		 yourself.
 ]
 
+{ #category : #presentation }
+Game >> assertGameHasEnded [
+	self hasEnded
+		ifTrue: [ self error: 'Game is over. ' ]
+]
+
 { #category : #status }
 Game >> hasEnded [
-	^ players contains: [ :player | player position > numberOfSteps ].
+	^ players anySatisfy: [ :player | player position > numberOfSteps ].
 ]
 
 { #category : #status }
@@ -54,8 +60,8 @@ Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfD
 
 { #category : #presentation }
 Game >> playedNextBy: aPlayer [
-
-	aPlayer playsRolling: dices.
+	self assertGameHasEnded.
+	aPlayer playsRolling: dices
 ]
 
 { #category : #presentation }
