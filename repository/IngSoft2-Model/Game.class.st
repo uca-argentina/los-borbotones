@@ -26,53 +26,45 @@ Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'board',
-		'status',
-		'winner'
+		'numberOfSteps',
+		'players',
+		'dices'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Game class >> withStepsToWin: aStepsAmount [ 
+Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount  andUsing: dices [
 	^ self new
-		 initializeWithSteps: aStepsAmount;
+		 initializeWithSteps: aStepsAmount players: aSetOfPlayers andUsing: dices;
 		 yourself.
 ]
 
-{ #category : #playing }
-Game >> goFrom: currentStep to: someOtherStep [
-	|amountOfSteps|
-	amountOfSteps := someOtherStep - currentStep.
-	
-	^ (amountOfSteps < board stepsToWin)	ifTrue: [ ^amountOfSteps ]; ifFalse: [ status := 'ended'. ^board stepsToWin ].
-
+{ #category : #presentation }
+Game >> assertGameHasEnded [
+	self hasEnded
+		ifTrue: [ self error: 'Game is over. ' ]
 ]
 
 { #category : #status }
-Game >> initializeWithSteps: aStepsAmount [
-	board := Board withStepsToWin: aStepsAmount.
-	status := 'running'.
-	winner := ''.
-]
-
-{ #category : #playing }
-Game >> player: aPlayer goesFrom: currentStep to: someOtherStep [
-	|amountOfSteps|
-	amountOfSteps := someOtherStep - currentStep.
-	
-	^ (amountOfSteps < board stepsToWin)	
-		ifTrue: [ ^amountOfSteps ]; 
-		ifFalse: [ winner:= aPlayer. status := 'ended'. ^board stepsToWin ].
-
+Game >> hasEnded [
+	^ players anySatisfy: [ :player | player position > numberOfSteps ].
 ]
 
 { #category : #status }
-Game >> status [
-	^status.
+Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfDices [
+	players := setOfPlayers.
+	numberOfSteps := aStepsAmount.
+	dices := setOfDices  .
 ]
 
-{ #category : #status }
+{ #category : #presentation }
+Game >> playedNextBy: aPlayer [
+	self assertGameHasEnded.
+	aPlayer playsRolling: dices
+]
+
+{ #category : #presentation }
 Game >> winner [
-	^winner.
+	^ players detect: [ :player | player position > numberOfSteps ]
 ]

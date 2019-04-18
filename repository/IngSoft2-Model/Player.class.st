@@ -48,21 +48,31 @@ Player >> initializeWithName: aName [
 	position := 0
 ]
 
+{ #category : #initialize }
+Player >> moveTo: newPosition [
+
+	position := newPosition.
+
+
+]
+
 { #category : #presentation }
 Player >> name [
 	^ playerName
 ]
 
+{ #category : #initialize }
+Player >> playsRolling: dices [
+	| sumOfRollResults |
+	
+	sumOfRollResults := dices sum: #roll.
+	
+	self moveTo: position + sumOfRollResults.
+
+
+]
+
 { #category : #actions }
 Player >> position [ 
 	^ position
-]
-
-{ #category : #playing }
-Player >> rollsDices: aBagOfDices andPlaysIn: aGame [ 
-	| sumOfDiceResults |
-	sumOfDiceResults := 0.
-	aBagOfDices do: [:each |  sumOfDiceResults := sumOfDiceResults + each roll].
-	position := aGame player:self goesFrom: position to: (position + sumOfDiceResults).
-	
 ]
