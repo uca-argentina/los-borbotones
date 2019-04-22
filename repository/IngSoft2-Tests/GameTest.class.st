@@ -13,16 +13,12 @@ Class {
 
 { #category : #running }
 GameTest >> setUp [
-	
 	super setUp.
-	fourFaceDummyDice := SameFaceDice withFaces: 4  andValue: 4.
-	
-	dices := LinkedList  with: fourFaceDummyDice.
+	fourFaceDummyDice := SameFaceDice withFaces: 4 andValue: 4.
+	dices := LinkedList with: fourFaceDummyDice.
 	robert := Player called: 'Robert'.
-	
 	players := LinkedList with: robert.
-	
-	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices
 ]
 
 { #category : #tests }
@@ -66,6 +62,15 @@ GameTest >> testGetPositionOfPlayersOnceGameIsOver [
 GameTest >> testGetWinnerOnceGameIsFinished [
 	game playedNextBy: robert.
 	self assert: game winner name equals: 'Robert'
+]
+
+{ #category : #tests }
+GameTest >> testIsMattTurn [
+	| matt |
+	matt := Player called: 'Matt'.
+	players add: matt.
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
+	self assert: game turn equals: 'Matt'
 ]
 
 { #category : #tests }

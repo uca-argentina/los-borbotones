@@ -28,7 +28,8 @@ Class {
 	#instVars : [
 		'numberOfSteps',
 		'players',
-		'dices'
+		'dices',
+		'turn'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -55,13 +56,20 @@ Game >> hasEnded [
 Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfDices [
 	players := setOfPlayers.
 	numberOfSteps := aStepsAmount.
-	dices := setOfDices  .
+	dices := setOfDices.
+
+	
 ]
 
 { #category : #presentation }
 Game >> playedNextBy: aPlayer [
 	self assertGameHasEnded.
 	aPlayer playsRolling: dices
+]
+
+{ #category : #'as yet unclassified' }
+Game >> turn [
+	^ turn
 ]
 
 { #category : #presentation }
