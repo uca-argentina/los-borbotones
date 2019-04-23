@@ -1,3 +1,6 @@
+"
+Game tests.
+"
 Class {
 	#name : #GameTest,
 	#superclass : #TestCase,
@@ -26,35 +29,19 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 	| lucia |
 	lucia := Player called: 'Lucia'.
 	players add: lucia.
-	game playedNextBy: lucia.
+	game nextTurnPlayed.
 	self should: [ game playedNextBy: robert ] raise: Error
 ]
 
 { #category : #tests }
 GameTest >> testGameHasEnded [
-	game playedNextBy: robert.
+	game nextTurnPlayed.
 	self assert: game hasEnded
 ]
 
 { #category : #tests }
-GameTest >> testGetPositionOfPlayersOnceGameIsOver [
-	| lucia lucas |
-	lucia := Player called: 'Lucia'.
-	lucas := Player called: 'Lucas'.
-	players add: lucia.
-	players add: lucas.
-	game := Game playedBy: players withStepsToWin: 8 andUsing: dices.
-	game playedNextBy: lucia.
-	game playedNextBy: robert.
-	game playedNextBy: lucia.
-	self assert: lucia position equals: 8.
-	self assert: lucas position equals: 0.
-	self assert: robert position equals: 4
-]
-
-{ #category : #tests }
 GameTest >> testGetWinnerOnceGameIsFinished [
-	game playedNextBy: robert.
+	game nextTurnPlayed.
 	self assert: game winner name equals: 'Robert'
 ]
 
@@ -66,15 +53,15 @@ GameTest >> testIsRobertTurn [
 	players add: matt.
 	players add: martin.
 	game := Game playedBy: players withStepsToWin: 20 andUsing: dices.
-	game playedNext.
-	game playedNext.
-	game playedNext.
+	game nextTurnPlayed.
+	game nextTurnPlayed.
+	game nextTurnPlayed.
 	self assert: game thePlayersTurn name equals: 'Robert'
 ]
 
 { #category : #tests }
 GameTest >> testPlayerMovesFourStepsWhenHeGetsAFour [
-	game playedNextBy: robert.
+	game nextTurnPlayed.
 	self assert: robert position equals: 4
 ]
 
@@ -83,6 +70,18 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	| fiveFaceDummyDice |
 	fiveFaceDummyDice := SameFaceDice withFaces: 5 andValue: 5.
 	dices add: fiveFaceDummyDice.
-	game playedNextBy: robert.
+	game nextTurnPlayed.
 	self assert: robert position equals: 9
+]
+
+{ #category : #tests }
+GameTest >> testThatLuciaCanNotPlayBecouseGameHasEnded [
+	| lucia lucas |
+	lucia := Player called: 'Lucia'.
+	lucas := Player called: 'Lucas'.
+	players add: lucia.
+	players add: lucas.
+	game := Game playedBy: players withStepsToWin: 4 andUsing: dices.
+	game nextTurnPlayed.
+	self should: [ game nextTurnPlayed ] raise: Error
 ]

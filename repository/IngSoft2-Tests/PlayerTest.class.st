@@ -1,3 +1,6 @@
+"
+Player tests.
+"
 Class {
 	#name : #PlayerTest,
 	#superclass : #TestCase,

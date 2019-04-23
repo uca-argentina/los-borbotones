@@ -51,8 +51,7 @@ SameFaceDice class >> withFaces: aNumberOfFaces andValue: aNumber [
 { #category : #initialize }
 SameFaceDice >> initializeWithFaces: aNumberOfFaces andValue: aNumber [
 	numberOfFaces := aNumberOfFaces.
-	value := aNumber.
-	random := Random new
+	value := aNumber
 ]
 
 { #category : #actions }
