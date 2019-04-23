@@ -57,5 +57,5 @@ SameFaceDice >> initializeWithFaces: aNumberOfFaces andValue: aNumber [
 
 { #category : #actions }
 SameFaceDice >> roll [
-	^value
+	^ value
 ]

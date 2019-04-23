@@ -28,7 +28,8 @@ Class {
 	#instVars : [
 		'numberOfSteps',
 		'players',
-		'dices'
+		'dices',
+		'turnPosition'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -48,20 +49,33 @@ Game >> assertGameHasEnded [
 
 { #category : #status }
 Game >> hasEnded [
-	^ players anySatisfy: [ :player | player position > numberOfSteps ].
+	^ players anySatisfy: [ :player | player position > numberOfSteps ]
 ]
 
 { #category : #status }
 Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfDices [
 	players := setOfPlayers.
 	numberOfSteps := aStepsAmount.
-	dices := setOfDices  .
+	dices := setOfDices.
+	turnPosition := 1
+]
+
+{ #category : #presentation }
+Game >> playedNext [
+	self assertGameHasEnded.
+	self thePlayersTurn playsRolling: dices.
+	turnPosition := turnPosition % players size + 1
 ]
 
 { #category : #presentation }
 Game >> playedNextBy: aPlayer [
 	self assertGameHasEnded.
 	aPlayer playsRolling: dices
+]
+
+{ #category : #status }
+Game >> thePlayersTurn [
+	^ players at: turnPosition
 ]
 
 { #category : #presentation }

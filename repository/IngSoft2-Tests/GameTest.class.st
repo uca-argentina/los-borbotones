@@ -13,16 +13,12 @@ Class {
 
 { #category : #running }
 GameTest >> setUp [
-	
 	super setUp.
-	fourFaceDummyDice := SameFaceDice withFaces: 4  andValue: 4.
-	
-	dices := LinkedList  with: fourFaceDummyDice.
+	fourFaceDummyDice := SameFaceDice withFaces: 4 andValue: 4.
+	dices := LinkedList with: fourFaceDummyDice.
 	robert := Player called: 'Robert'.
-	
 	players := LinkedList with: robert.
-	
-	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices
 ]
 
 { #category : #tests }
@@ -30,36 +26,30 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 	| lucia |
 	lucia := Player called: 'Lucia'.
 	players add: lucia.
-
 	game playedNextBy: lucia.
-	
-	self should: [ game playedNextBy: robert. ] raise: Error.
+	self should: [ game playedNextBy: robert ] raise: Error
 ]
 
 { #category : #tests }
 GameTest >> testGameHasEnded [
 	game playedNextBy: robert.
-	
-	self assert: game hasEnded.
+	self assert: game hasEnded
 ]
 
 { #category : #tests }
 GameTest >> testGetPositionOfPlayersOnceGameIsOver [
-	| lucia lucas|
-	
+	| lucia lucas |
 	lucia := Player called: 'Lucia'.
 	lucas := Player called: 'Lucas'.
 	players add: lucia.
 	players add: lucas.
-
 	game := Game playedBy: players withStepsToWin: 8 andUsing: dices.
 	game playedNextBy: lucia.
 	game playedNextBy: robert.
 	game playedNextBy: lucia.
-	
 	self assert: lucia position equals: 8.
 	self assert: lucas position equals: 0.
-	self assert: robert position equals: 4.
+	self assert: robert position equals: 4
 ]
 
 { #category : #tests }
@@ -69,10 +59,22 @@ GameTest >> testGetWinnerOnceGameIsFinished [
 ]
 
 { #category : #tests }
+GameTest >> testIsRobertTurn [
+	| matt martin |
+	matt := Player called: 'Matt'.
+	martin := Player called: 'Martin'.
+	players add: matt.
+	players add: martin.
+	game := Game playedBy: players withStepsToWin: 20 andUsing: dices.
+	game playedNext.
+	game playedNext.
+	game playedNext.
+	self assert: game thePlayersTurn name equals: 'Robert'
+]
+
+{ #category : #tests }
 GameTest >> testPlayerMovesFourStepsWhenHeGetsAFour [
-	
 	game playedNextBy: robert.
-	
 	self assert: robert position equals: 4
 ]
 
@@ -81,8 +83,6 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	| fiveFaceDummyDice |
 	fiveFaceDummyDice := SameFaceDice withFaces: 5 andValue: 5.
 	dices add: fiveFaceDummyDice.
-
 	game playedNextBy: robert.
-	
 	self assert: robert position equals: 9
 ]

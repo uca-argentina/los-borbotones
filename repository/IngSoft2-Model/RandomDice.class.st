@@ -23,10 +23,10 @@ RandomDice class >> withFaces: aNumberOfFaces [
 
 { #category : #initialize }
 RandomDice >> initializeWithFaces: aNumberOfFaces [
-	numberOfFaces := aNumberOfFaces.
+	numberOfFaces := aNumberOfFaces
 ]
 
 { #category : #actions }
 RandomDice >> roll [
-	^ numberOfFaces atRandom 
+	^ numberOfFaces atRandom
 ]

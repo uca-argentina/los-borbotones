@@ -41,5 +41,5 @@ Dice >> numberOfFaces [
 
 { #category : #actions }
 Dice >> roll [
-	self subclassResponsibility 
+	self subclassResponsibility
 ]
