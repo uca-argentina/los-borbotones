@@ -16,12 +16,12 @@ DiceTest >> testDiceRollsAndReturnsAValidNumber [
 	| fourFacesDice rollingResult |
 	fourFacesDice := RandomDice withFaces: 4.
 	rollingResult := fourFacesDice roll.
-	self assert: (rollingResult >= 1 and: rollingResult <= 4).
+	self assert: (rollingResult >= 1 and: rollingResult <= 4)
 ]
 
 { #category : #tests }
 DiceTest >> testFourFaceDiceHasFourFaces [
 	| fourFaceDice |
-	fourFaceDice := RandomDice  withFaces: 4.
+	fourFaceDice := RandomDice withFaces: 4.
 	self assert: fourFaceDice numberOfFaces equals: 4
 ]

@@ -29,7 +29,7 @@ Class {
 		'numberOfSteps',
 		'players',
 		'dices',
-		'turn'
+		'turnPosition'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -49,7 +49,7 @@ Game >> assertGameHasEnded [
 
 { #category : #status }
 Game >> hasEnded [
-	^ players anySatisfy: [ :player | player position > numberOfSteps ].
+	^ players anySatisfy: [ :player | player position > numberOfSteps ]
 ]
 
 { #category : #status }
@@ -57,8 +57,14 @@ Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfD
 	players := setOfPlayers.
 	numberOfSteps := aStepsAmount.
 	dices := setOfDices.
+	turnPosition := 1
+]
 
-	
+{ #category : #presentation }
+Game >> playedNext [
+	self assertGameHasEnded.
+	self thePlayersTurn playsRolling: dices.
+	turnPosition := turnPosition % players size + 1
 ]
 
 { #category : #presentation }
@@ -67,9 +73,9 @@ Game >> playedNextBy: aPlayer [
 	aPlayer playsRolling: dices
 ]
 
-{ #category : #'as yet unclassified' }
-Game >> turn [
-	^ turn
+{ #category : #status }
+Game >> thePlayersTurn [
+	^ players at: turnPosition
 ]
 
 { #category : #presentation }

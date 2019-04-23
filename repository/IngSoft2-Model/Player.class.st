@@ -73,6 +73,6 @@ Player >> playsRolling: dices [
 ]
 
 { #category : #actions }
-Player >> position [ 
+Player >> position [
 	^ position
 ]
