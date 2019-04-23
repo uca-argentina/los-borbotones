@@ -50,10 +50,7 @@ Player >> initializeWithName: aName [
 
 { #category : #initialize }
 Player >> moveTo: newPosition [
-
-	position := newPosition.
-
-
+	position := newPosition
 ]
 
 { #category : #presentation }

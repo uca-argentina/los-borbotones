@@ -1,3 +1,6 @@
+"
+Dice tests.
+"
 Class {
 	#name : #DiceTest,
 	#superclass : #TestCase,

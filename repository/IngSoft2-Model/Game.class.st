@@ -49,7 +49,7 @@ Game >> assertGameHasEnded [
 
 { #category : #status }
 Game >> hasEnded [
-	^ players anySatisfy: [ :player | player position > numberOfSteps ]
+	^ players anySatisfy: [ :player | player position >= numberOfSteps ]
 ]
 
 { #category : #status }
@@ -61,16 +61,10 @@ Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfD
 ]
 
 { #category : #presentation }
-Game >> playedNext [
+Game >> nextTurnPlayed [
 	self assertGameHasEnded.
 	self thePlayersTurn playsRolling: dices.
 	turnPosition := turnPosition % players size + 1
-]
-
-{ #category : #presentation }
-Game >> playedNextBy: aPlayer [
-	self assertGameHasEnded.
-	aPlayer playsRolling: dices
 ]
 
 { #category : #status }
