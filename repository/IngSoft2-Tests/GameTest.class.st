@@ -29,19 +29,19 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 	| lucia |
 	lucia := Player called: 'Lucia'.
 	players add: lucia.
-	game nextTurnPlayed.
-	self should: [ game playedNextBy: robert ] raise: Error
+	game turnIsPlayed.
+	self should: [ game turnIsPlayed  ] raise: Error
 ]
 
 { #category : #tests }
 GameTest >> testGameHasEnded [
-	game nextTurnPlayed.
+	game turnIsPlayed.
 	self assert: game hasEnded
 ]
 
 { #category : #tests }
 GameTest >> testGetWinnerOnceGameIsFinished [
-	game nextTurnPlayed.
+	game turnIsPlayed.
 	self assert: game winner name equals: 'Robert'
 ]
 
@@ -53,25 +53,26 @@ GameTest >> testIsRobertTurn [
 	players add: matt.
 	players add: martin.
 	game := Game playedBy: players withStepsToWin: 20 andUsing: dices.
-	game nextTurnPlayed.
-	game nextTurnPlayed.
-	game nextTurnPlayed.
-	self assert: game thePlayersTurn name equals: 'Robert'
-]
-
-{ #category : #tests }
-GameTest >> testPlayerMovesFourStepsWhenHeGetsAFour [
-	game nextTurnPlayed.
-	self assert: robert position equals: 4
+	game turnIsPlayed.
+	game turnIsPlayed.
+	game turnIsPlayed.
+	self assert: game currentPlayer name equals: 'Robert'
 ]
 
 { #category : #tests }
 GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	| fiveFaceDummyDice |
+	game := Game playedBy: players withStepsToWin: 9 andUsing: dices.
 	fiveFaceDummyDice := SameFaceDice withFaces: 5 andValue: 5.
 	dices add: fiveFaceDummyDice.
-	game nextTurnPlayed.
+	game turnIsPlayed.
 	self assert: robert position equals: 9
+]
+
+{ #category : #tests }
+GameTest >> testPlayerMovesThreeStepsWhenHeGetsAFour [
+	game turnIsPlayed.
+	self assert: robert position equals: 3
 ]
 
 { #category : #tests }
@@ -82,6 +83,6 @@ GameTest >> testThatLuciaCanNotPlayBecouseGameHasEnded [
 	players add: lucia.
 	players add: lucas.
 	game := Game playedBy: players withStepsToWin: 4 andUsing: dices.
-	game nextTurnPlayed.
-	self should: [ game nextTurnPlayed ] raise: Error
+	game turnIsPlayed.
+	self should: [ game turnIsPlayed ] raise: Error
 ]

@@ -58,17 +58,6 @@ Player >> name [
 	^ playerName
 ]
 
-{ #category : #initialize }
-Player >> playsRolling: dices [
-	| sumOfRollResults |
-	
-	sumOfRollResults := dices sum: #roll.
-	
-	self moveTo: position + sumOfRollResults.
-
-
-]
-
 { #category : #actions }
 Player >> position [
 	^ position
