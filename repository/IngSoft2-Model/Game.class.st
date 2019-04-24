@@ -47,32 +47,44 @@ Game >> assertGameHasEnded [
 		ifTrue: [ self error: 'Game is over. ' ]
 ]
 
-{ #category : #status }
-Game >> hasEnded [
-	^ players anySatisfy: [ :player | player position >= numberOfSteps ]
+{ #category : #presentation }
+Game >> calculateValidPositionFor: aPlayer withRollResult: aNumberOfSteps. [
+	^ (aPlayer position + aNumberOfSteps) min: numberOfSteps
 ]
 
 { #category : #status }
-Game >> initializeWithSteps: aStepsAmount players: setOfPlayers andUsing: setOfDices [
-	players := setOfPlayers.
+Game >> currentPlayer [
+	^ players at: turnPosition
+]
+
+{ #category : #status }
+Game >> hasEnded [
+	^ players anySatisfy: [ :player | player position = numberOfSteps ]
+]
+
+{ #category : #status }
+Game >> initializeWithSteps: aStepsAmount players: aSetOfPlayers andUsing: aSetOfDices [
+	players := aSetOfPlayers.
 	numberOfSteps := aStepsAmount.
-	dices := setOfDices.
+	dices := aSetOfDices.
 	turnPosition := 1
 ]
 
-{ #category : #presentation }
-Game >> nextTurnPlayed [
-	self assertGameHasEnded.
-	self thePlayersTurn playsRolling: dices.
-	turnPosition := turnPosition % players size + 1
+{ #category : #status }
+Game >> rollDicesFor: aPlayer [
+	|newPosition|
+	newPosition := self calculateValidPositionFor: aPlayer withRollResult: (dices sum: #roll).
+	aPlayer moveTo: newPosition.
 ]
 
-{ #category : #status }
-Game >> thePlayersTurn [
-	^ players at: turnPosition
+{ #category : #presentation }
+Game >> turnIsPlayed [
+	self assertGameHasEnded.
+	self rollDicesFor: self currentPlayer.
+	turnPosition := turnPosition % players size + 1
 ]
 
 { #category : #presentation }
 Game >> winner [
-	^ players detect: [ :player | player position > numberOfSteps ]
+	^ players detect: [ :player | player position = numberOfSteps ]
 ]
