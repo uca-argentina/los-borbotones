@@ -5,7 +5,6 @@ Class {
 	#name : #GameTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'fourFaceDummyDice',
 		'dices',
 		'players',
 		'game',
@@ -16,40 +15,62 @@ Class {
 
 { #category : #running }
 GameTest >> setUp [
+	| fourFaceDummyDice |
 	super setUp.
-	fourFaceDummyDice := SameFaceDice withFaces: 4 andValue: 4.
-	dices := LinkedList with: fourFaceDummyDice.
-	robert := Player called: 'Robert'.
-	players := LinkedList with: robert.
-	game := Game playedBy: players withStepsToWin: 3 andUsing: dices
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
+	dices := OrderedCollection with: fourFaceDummyDice.
+	robert := Player named: 'Robert'.
+	players := OrderedCollection with: robert
+]
+
+{ #category : #tests }
+GameTest >> testCanNotGetWinnerWhileGameIsRunning [
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
+	self deny: game hasEnded.
+	self
+		should: [ game winner ]
+		raise: Error
+		withExceptionDo: [ :signal | 
+			self
+				assert: signal messageText
+				equals: 'There is no winner yet. The game is not finished' ]
 ]
 
 { #category : #tests }
 GameTest >> testGameCantBePlayedOnceItIsOver [
-	| lucia |
-	lucia := Player called: 'Lucia'.
-	players add: lucia.
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
 	game turnIsPlayed.
-	self should: [ game turnIsPlayed  ] raise: Error
+	self
+		should: [ game turnIsPlayed ]
+		raise: Error
+		withExceptionDo: [ :signal | 
+			self
+				assert: signal messageText
+				equals: 'Game is over. ' ]
 ]
 
 { #category : #tests }
 GameTest >> testGameHasEnded [
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
+	self deny: game hasEnded.
 	game turnIsPlayed.
 	self assert: game hasEnded
 ]
 
 { #category : #tests }
 GameTest >> testGetWinnerOnceGameIsFinished [
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
+	self deny: game hasEnded.
 	game turnIsPlayed.
+	self assert: game hasEnded.
 	self assert: game winner name equals: 'Robert'
 ]
 
 { #category : #tests }
 GameTest >> testIsRobertTurn [
 	| matt martin |
-	matt := Player called: 'Matt'.
-	martin := Player called: 'Martin'.
+	matt := Player named: 'Matt'.
+	martin := Player named: 'Martin'.
 	players add: matt.
 	players add: martin.
 	game := Game playedBy: players withStepsToWin: 20 andUsing: dices.
@@ -60,29 +81,31 @@ GameTest >> testIsRobertTurn [
 ]
 
 { #category : #tests }
-GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
-	| fiveFaceDummyDice |
-	game := Game playedBy: players withStepsToWin: 9 andUsing: dices.
-	fiveFaceDummyDice := SameFaceDice withFaces: 5 andValue: 5.
-	dices add: fiveFaceDummyDice.
-	game turnIsPlayed.
-	self assert: robert position equals: 9
-]
-
-{ #category : #tests }
-GameTest >> testPlayerMovesThreeStepsWhenHeGetsAFour [
+GameTest >> testPlayerGetsA4AndMoves3BecouseTheGameHas3StepsToWin [
+	game := Game playedBy: players withStepsToWin: 3 andUsing: dices.
 	game turnIsPlayed.
 	self assert: robert position equals: 3
 ]
 
 { #category : #tests }
+GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
+	| fiveFaceDummyDice |
+	fiveFaceDummyDice := LoadedDice withFaces: 5 andValue: 5.
+	dices add: fiveFaceDummyDice.
+	game := Game playedBy: players withStepsToWin: 9 andUsing: dices.
+	game turnIsPlayed.
+	self assert: robert position equals: 9
+]
+
+{ #category : #tests }
 GameTest >> testThatLuciaCanNotPlayBecouseGameHasEnded [
-	| lucia lucas |
-	lucia := Player called: 'Lucia'.
-	lucas := Player called: 'Lucas'.
+	| lucia |
+	lucia := Player named: 'Lucia'.
 	players add: lucia.
-	players add: lucas.
 	game := Game playedBy: players withStepsToWin: 4 andUsing: dices.
 	game turnIsPlayed.
-	self should: [ game turnIsPlayed ] raise: Error
+	self
+		should: [ game turnIsPlayed ]
+		raise: Error
+		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Game is over. ' ]
 ]

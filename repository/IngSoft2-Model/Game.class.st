@@ -35,21 +35,23 @@ Class {
 }
 
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount  andUsing: dices [
+Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount andUsing: dices [
 	^ self new
-		 initializeWithSteps: aStepsAmount players: aSetOfPlayers andUsing: dices;
-		 yourself.
+		initializeWithSteps: aStepsAmount
+			players: aSetOfPlayers
+			andUsing: dices;
+		yourself
 ]
 
-{ #category : #presentation }
-Game >> assertGameHasEnded [
+{ #category : #'private-assertions' }
+Game >> assertGameHasNotEnded [
 	self hasEnded
 		ifTrue: [ self error: 'Game is over. ' ]
 ]
 
-{ #category : #presentation }
-Game >> calculateValidPositionFor: aPlayer withRollResult: aNumberOfSteps. [
-	^ (aPlayer position + aNumberOfSteps) min: numberOfSteps
+{ #category : #actions }
+Game >> calculateValidPositionFor: aPlayer withRollResult: aNumberOfSteps [
+	^ aPlayer position + aNumberOfSteps min: numberOfSteps
 ]
 
 { #category : #status }
@@ -62,7 +64,7 @@ Game >> hasEnded [
 	^ players anySatisfy: [ :player | player position = numberOfSteps ]
 ]
 
-{ #category : #status }
+{ #category : #initialize }
 Game >> initializeWithSteps: aStepsAmount players: aSetOfPlayers andUsing: aSetOfDices [
 	players := aSetOfPlayers.
 	numberOfSteps := aStepsAmount.
@@ -70,21 +72,25 @@ Game >> initializeWithSteps: aStepsAmount players: aSetOfPlayers andUsing: aSetO
 	turnPosition := 1
 ]
 
-{ #category : #status }
+{ #category : #actions }
 Game >> rollDicesFor: aPlayer [
-	|newPosition|
-	newPosition := self calculateValidPositionFor: aPlayer withRollResult: (dices sum: #roll).
-	aPlayer moveTo: newPosition.
+	| newPosition |
+	newPosition := self
+		calculateValidPositionFor: aPlayer
+		withRollResult: (dices sum: #roll).
+	aPlayer moveTo: newPosition
 ]
 
-{ #category : #presentation }
+{ #category : #actions }
 Game >> turnIsPlayed [
-	self assertGameHasEnded.
+	self assertGameHasNotEnded.
 	self rollDicesFor: self currentPlayer.
 	turnPosition := turnPosition % players size + 1
 ]
 
-{ #category : #presentation }
+{ #category : #status }
 Game >> winner [
-	^ players detect: [ :player | player position = numberOfSteps ]
+	^ players
+		detect: [ :player | player position = numberOfSteps ]
+		ifNone: [ self error: 'There is no winner yet. The game is not finished' ]
 ]
