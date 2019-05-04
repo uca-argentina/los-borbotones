@@ -4,18 +4,21 @@ I am a random dice.
 Class {
 	#name : #RandomDice,
 	#superclass : #Dice,
+	#instVars : [
+		'numberOfFaces'
+	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #creation }
-RandomDice class >> assertValidThatADiceHas3OrMoreFaces: aNumberOfFaces [
+{ #category : #'private-assertions' }
+RandomDice class >> assertValidNumberOfFaces: aNumberOfFaces [
 	aNumberOfFaces > 3
-		ifFalse: [ self error: 'Number of faces must be 4 or greater' ]
+		ifFalse: [ self error: 'Number of faces must be greater than 3' ]
 ]
 
 { #category : #creation }
 RandomDice class >> withFaces: aNumberOfFaces [
-	self assertValidThatADiceHas3OrMoreFaces: aNumberOfFaces.
+	self assertValidNumberOfFaces: aNumberOfFaces.
 	^ self new
 		initializeWithFaces: aNumberOfFaces;
 		yourself
@@ -24,6 +27,11 @@ RandomDice class >> withFaces: aNumberOfFaces [
 { #category : #initialize }
 RandomDice >> initializeWithFaces: aNumberOfFaces [
 	numberOfFaces := aNumberOfFaces
+]
+
+{ #category : #actions }
+RandomDice >> numberOfFaces [
+	^ numberOfFaces
 ]
 
 { #category : #actions }

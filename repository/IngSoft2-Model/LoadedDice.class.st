@@ -26,7 +26,7 @@ Internal Representation and Key Implementation Points.
     Implementation Points
 "
 Class {
-	#name : #SameFaceDice,
+	#name : #LoadedDice,
 	#superclass : #Dice,
 	#instVars : [
 		'value'
@@ -34,27 +34,26 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #asserting }
-SameFaceDice class >> assertValidThatADiceHas3OrMoreFaces: aNumberOfFaces [
+{ #category : #'private-assertions' }
+LoadedDice class >> assertValidNumberOfFaces: aNumberOfFaces [
 	aNumberOfFaces > 3
 		ifFalse: [ self error: 'Number of faces must be 4 or greater' ]
 ]
 
 { #category : #creation }
-SameFaceDice class >> withFaces: aNumberOfFaces andValue: aNumber [
-	self assertValidThatADiceHas3OrMoreFaces: aNumberOfFaces.
+LoadedDice class >> withFaces: aNumberOfFaces andValue: aNumber [
+	self assertValidNumberOfFaces: aNumberOfFaces.
 	^ self new
 		initializeWithFaces: aNumberOfFaces andValue: aNumber;
 		yourself
 ]
 
 { #category : #initialize }
-SameFaceDice >> initializeWithFaces: aNumberOfFaces andValue: aNumber [
-	numberOfFaces := aNumberOfFaces.
+LoadedDice >> initializeWithFaces: aNumberOfFaces andValue: aNumber [
 	value := aNumber
 ]
 
 { #category : #actions }
-SameFaceDice >> roll [
+LoadedDice >> roll [
 	^ value
 ]

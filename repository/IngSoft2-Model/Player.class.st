@@ -29,14 +29,14 @@ Class {
 	#name : #Player,
 	#superclass : #Object,
 	#instVars : [
-		'playerName',
+		'name',
 		'position'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Player class >> called: aName [
+Player class >> named: aName [
 	^ self new
 		initializeWithName: aName;
 		yourself
@@ -44,18 +44,18 @@ Player class >> called: aName [
 
 { #category : #initialize }
 Player >> initializeWithName: aName [
-	playerName := aName.
+	name := aName.
 	position := 0
 ]
 
-{ #category : #initialize }
+{ #category : #actions }
 Player >> moveTo: newPosition [
 	position := newPosition
 ]
 
 { #category : #presentation }
 Player >> name [
-	^ playerName
+	^ name
 ]
 
 { #category : #actions }

@@ -8,16 +8,17 @@ Class {
 }
 
 { #category : #tests }
-PlayerTest >> testAPlayerCalledRobertWithInitialPositionZero [
+PlayerTest >> testAPlayerNamedRobertMovetoPositionNumberFour [
 	| player |
-	player := Player called: 'Robert'.
-	self assert: player name equals: 'Robert'.
-	self assert: player position equals: 0
+	player := Player named: 'Robert'.
+	player moveTo: 4.
+	self assert: player position equals: 4
 ]
 
 { #category : #tests }
-PlayerTest >> testInitialPositionOfRobertIsZero [
+PlayerTest >> testAPlayerNamedRobertWithInitialPositionZero [
 	| player |
-	player := Player called: 'Robert'.
+	player := Player named: 'Robert'.
+	self assert: player name equals: 'Robert'.
 	self assert: player position equals: 0
 ]

@@ -28,16 +28,8 @@ Internal Representation and Key Implementation Points.
 Class {
 	#name : #Dice,
 	#superclass : #Object,
-	#instVars : [
-		'numberOfFaces'
-	],
 	#category : #'IngSoft2-Model'
 }
-
-{ #category : #actions }
-Dice >> numberOfFaces [
-	^ numberOfFaces
-]
 
 { #category : #actions }
 Dice >> roll [
