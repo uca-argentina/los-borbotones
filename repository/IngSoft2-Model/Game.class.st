@@ -26,7 +26,6 @@ Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'numberOfSteps',
 		'players',
 		'dices',
 		'turnPosition',
@@ -37,10 +36,10 @@ Class {
 }
 
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount withSteps: aStepsAmount using: dices [
+Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard using: dices [
 	^ self new
 		initializeWithLaps: aLapsAmount
-			stepsPerLap: aStepsAmount
+			board: aBoard
 			players: aSetOfPlayers
 			andUsing: dices;
 		yourself
@@ -68,26 +67,25 @@ Game >> hasEnded [
 ]
 
 { #category : #initialize }
-Game >> initializeWithLaps: aLapsAmount stepsPerLap: aStepsAmount players: aSetOfPlayers andUsing: aSetOfDices [
+Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers andUsing: aSetOfDices [
 	players := aSetOfPlayers.
 	laps := aLapsAmount.
-	numberOfSteps := aStepsAmount.
 	dices := aSetOfDices.
-	board := Board withSteps: aStepsAmount.
+	board := aBoard.
 	turnPosition := 1
 ]
 
 { #category : #actions }
 Game >> rollDicesFor: aPlayer [
 	| newPosition newLap rollResult |
-	
 	rollResult := dices sum: #roll.
-	
-	newLap := aPlayer laps + (aPlayer position + rollResult) / (board numberOfSteps) floor.
-	
-	newPosition := (aPlayer position + rollResult) % (board numberOfSteps) floor.
-	
+	newLap := (aPlayer laps + (aPlayer position + rollResult))
+		/ board numberOfTiles floor.
+	newPosition := ((aPlayer position + rollResult)
+		% board numberOfTiles + 1).
+		
 	aPlayer moveTo: newPosition lap: newLap.
+	(board effectAt: newPosition) affect: players withCurrentPlayer: turnPosition andNumberOfTiles: board numberOfTiles.
 ]
 
 { #category : #actions }
