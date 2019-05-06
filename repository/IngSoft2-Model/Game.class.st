@@ -26,18 +26,20 @@ Class {
 	#name : #Game,
 	#superclass : #Object,
 	#instVars : [
-		'numberOfSteps',
 		'players',
 		'dices',
-		'turnPosition'
+		'turnPosition',
+		'board',
+		'laps'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withStepsToWin: aStepsAmount andUsing: dices [
+Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard using: dices [
 	^ self new
-		initializeWithSteps: aStepsAmount
+		initializeWithLaps: aLapsAmount
+			board: aBoard
 			players: aSetOfPlayers
 			andUsing: dices;
 		yourself
@@ -49,9 +51,9 @@ Game >> assertGameHasNotEnded [
 		ifTrue: [ self error: 'Game is over. ' ]
 ]
 
-{ #category : #actions }
-Game >> calculateValidPositionFor: aPlayer withRollResult: aNumberOfSteps [
-	^ aPlayer position + aNumberOfSteps min: numberOfSteps
+{ #category : #components }
+Game >> board [
+	^board
 ]
 
 { #category : #status }
@@ -61,24 +63,30 @@ Game >> currentPlayer [
 
 { #category : #status }
 Game >> hasEnded [
-	^ players anySatisfy: [ :player | player position = numberOfSteps ]
+	^ players anySatisfy: [ :player | player laps >= laps ]
 ]
 
 { #category : #initialize }
-Game >> initializeWithSteps: aStepsAmount players: aSetOfPlayers andUsing: aSetOfDices [
+Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers andUsing: aSetOfDices [
 	players := aSetOfPlayers.
-	numberOfSteps := aStepsAmount.
+	laps := aLapsAmount.
 	dices := aSetOfDices.
+	board := aBoard.
 	turnPosition := 1
 ]
 
 { #category : #actions }
 Game >> rollDicesFor: aPlayer [
-	| newPosition |
-	newPosition := self
-		calculateValidPositionFor: aPlayer
-		withRollResult: (dices sum: #roll).
-	aPlayer moveTo: newPosition
+	| newPosition lap rollResult |
+	rollResult := dices sum: #roll.
+	
+	lap := (aPlayer laps + (aPlayer position + rollResult))
+		/ board numberOfTiles floor.
+	newPosition := ((aPlayer position + rollResult)
+		% board numberOfTiles + 1).
+		
+	aPlayer moveTo: newPosition lap: lap.
+	(board effectAt: newPosition) affect: players withCurrentPlayer: aPlayer on: self.
 ]
 
 { #category : #actions }
@@ -91,6 +99,6 @@ Game >> turnIsPlayed [
 { #category : #status }
 Game >> winner [
 	^ players
-		detect: [ :player | player position = numberOfSteps ]
+		detect: [ :player | player laps >= laps ]
 		ifNone: [ self error: 'There is no winner yet. The game is not finished' ]
 ]

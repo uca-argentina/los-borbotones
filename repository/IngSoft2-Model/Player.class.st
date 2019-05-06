@@ -30,7 +30,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'name',
-		'position'
+		'position',
+		'laps'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -45,11 +46,18 @@ Player class >> named: aName [
 { #category : #initialize }
 Player >> initializeWithName: aName [
 	name := aName.
-	position := 0
+	position := 0.
+	laps := 0.
+]
+
+{ #category : #accessing }
+Player >> laps [
+	^laps
 ]
 
 { #category : #actions }
-Player >> moveTo: newPosition [
+Player >> moveTo: newPosition lap: lap [
+	laps := lap.
 	position := newPosition
 ]
 
