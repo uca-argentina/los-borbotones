@@ -15,7 +15,7 @@ MoonWalk class >> withProbability: aNumber [
 ]
 
 { #category : #initialization }
-MoonWalk >> affect: players withCurrentPlayer: aPlayer on: aGame [
+MoonWalk >> affect: aGame [
 	"| targetPlayers newPosition lapsToGoBack| 
 	targetPlayers := players reject: [ :player | player = aPlayer ].
 	lapsToGoBack := (numberN / (aGame board numberOfTiles)) floor.

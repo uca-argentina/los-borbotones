@@ -12,7 +12,7 @@ TimeMachine class >> withProbability: aNumber [
 ]
 
 { #category : #creation }
-TimeMachine >> affect: players withCurrentPlayer: aPlayer on: aGame [
+TimeMachine >> affect: aGame [
 	
 ]
 

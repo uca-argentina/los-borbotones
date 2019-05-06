@@ -12,7 +12,7 @@ SpeedUp class >> withProbability: aNumber [
 ]
 
 { #category : #initialization }
-SpeedUp >> affect: players withCurrentPlayer: aPlayer on: aGame [
+SpeedUp >> affect: aGame [
 	"| position lap |
 	lap := (aPlayer laps + (aPlayer position + 4)) / aNumberOfTiles + 1.
 	position := (aPlayer position + 4) % aNumberOfTiles + 1.

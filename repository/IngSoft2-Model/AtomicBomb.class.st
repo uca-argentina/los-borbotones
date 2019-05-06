@@ -12,8 +12,8 @@ AtomicBomb class >> withProbability: aNumber [
 ]
 
 { #category : #initialization }
-AtomicBomb >> affect: players withCurrentPlayer: aPlayer on: aGame [
-	players do: [ :player | player moveTo:0 lap:0 ].
+AtomicBomb >> affect: aGame [
+	aGame players do: [ :player | player moveTo:1 lap:0 ].
 ]
 
 { #category : #initialization }

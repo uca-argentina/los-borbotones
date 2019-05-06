@@ -12,7 +12,7 @@ WormHole class >> withProbability: aNumber [
 ]
 
 { #category : #initialization }
-WormHole >> affect: players withCurrentPlayer: aPlayer on: aGame [
+WormHole >> affect: aGame [
 	"| position lap |
 	lap := (aPlayer laps + (aPlayer position - 4)) / aNumberOfTiles floor.
 	position := (aPlayer position - 4) % aNumberOfTiles floor.

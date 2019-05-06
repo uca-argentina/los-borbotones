@@ -75,6 +75,11 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers and
 	turnPosition := 1
 ]
 
+{ #category : #status }
+Game >> players [
+	^ players
+]
+
 { #category : #actions }
 Game >> rollDicesFor: aPlayer [
 	| newPosition lap rollResult |
@@ -86,7 +91,7 @@ Game >> rollDicesFor: aPlayer [
 		% board numberOfTiles + 1).
 		
 	aPlayer moveTo: newPosition lap: lap.
-	(board effectAt: newPosition) affect: players withCurrentPlayer: aPlayer on: self.
+	(board effectAt: newPosition) affect: self.
 ]
 
 { #category : #actions }
