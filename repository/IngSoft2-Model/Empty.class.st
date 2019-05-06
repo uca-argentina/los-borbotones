@@ -12,7 +12,7 @@ Empty class >> withProbability: aNumber [
 ]
 
 { #category : #initialization }
-Empty >> affect: players withCurrentPlayer: aPlayer andNumberOfTiles: aNumberOfTiles [
+Empty >> affect: players withCurrentPlayer: aPlayer on: aGame [
 	
 ]
 

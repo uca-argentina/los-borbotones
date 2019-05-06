@@ -77,15 +77,16 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers and
 
 { #category : #actions }
 Game >> rollDicesFor: aPlayer [
-	| newPosition newLap rollResult |
+	| newPosition lap rollResult |
 	rollResult := dices sum: #roll.
-	newLap := (aPlayer laps + (aPlayer position + rollResult))
+	
+	lap := (aPlayer laps + (aPlayer position + rollResult))
 		/ board numberOfTiles floor.
 	newPosition := ((aPlayer position + rollResult)
 		% board numberOfTiles + 1).
 		
-	aPlayer moveTo: newPosition lap: newLap.
-	(board effectAt: newPosition) affect: players withCurrentPlayer: turnPosition andNumberOfTiles: board numberOfTiles.
+	aPlayer moveTo: newPosition lap: lap.
+	(board effectAt: newPosition) affect: players withCurrentPlayer: aPlayer on: self.
 ]
 
 { #category : #actions }

@@ -15,13 +15,14 @@ MoonWalk class >> withProbability: aNumber [
 ]
 
 { #category : #initialization }
-MoonWalk >> affect: players withCurrentPlayer: aPlayer andNumberOfTiles: aNumberOfTiles [
-	"| targetPlayers newPosition | 
+MoonWalk >> affect: players withCurrentPlayer: aPlayer on: aGame [
+	"| targetPlayers newPosition lapsToGoBack| 
 	targetPlayers := players reject: [ :player | player = aPlayer ].
+	lapsToGoBack := (numberN / (aGame board numberOfTiles)) floor.
 	targetPlayers
 		do: [ :player | 
-			newPosition := ((aNumberOfTiles - (player position - numberN) abs) % aNumberOfTiles) floor.
-			player moveTo: newPosition lap: 0 ]"
+			newPosition := ((player position - numberN) abs % aGame board numberOfTiles) + 1.
+			player moveTo: newPosition lap: ((player laps - lapsToGoBack) max: 0). ]"
 ]
 
 { #category : #initialization }
