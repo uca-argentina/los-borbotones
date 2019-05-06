@@ -94,7 +94,7 @@ Game >> rollDicesFor: aPlayer [
 	newPosition := (aPlayer position + rollResult) % board numberOfTiles
 		+ 1.
 	aPlayer moveTo: newPosition lap: lap.
-	(board effectAt: newPosition) affect: self on: Game
+	(board effectAt: newPosition) affect: aPlayer on: self
 ]
 
 { #category : #actions }
