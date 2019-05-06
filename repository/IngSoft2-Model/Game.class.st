@@ -66,6 +66,11 @@ Game >> hasEnded [
 	^ players anySatisfy: [ :player | player laps >= laps ]
 ]
 
+{ #category : #actions }
+Game >> inactivePlayers [
+	^ players reject: [ :player | player = self currentPlayer ]
+]
+
 { #category : #initialize }
 Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers andUsing: aSetOfDices [
 	players := aSetOfPlayers.
@@ -84,14 +89,12 @@ Game >> players [
 Game >> rollDicesFor: aPlayer [
 	| newPosition lap rollResult |
 	rollResult := dices sum: #roll.
-	
 	lap := (aPlayer laps + (aPlayer position + rollResult))
 		/ board numberOfTiles floor.
-	newPosition := ((aPlayer position + rollResult)
-		% board numberOfTiles + 1).
-		
+	newPosition := (aPlayer position + rollResult) % board numberOfTiles
+		+ 1.
 	aPlayer moveTo: newPosition lap: lap.
-	(board effectAt: newPosition) affect: self.
+	(board effectAt: newPosition) affect: self on: Game
 ]
 
 { #category : #actions }

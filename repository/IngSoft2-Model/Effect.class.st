@@ -9,6 +9,6 @@ Class {
 }
 
 { #category : #action }
-Effect >> affect: aGame [
+Effect >> affect: aPlayer on: aGame [
 	^self subclassResponsibility.
 ]

@@ -12,8 +12,8 @@ TimeMachine class >> withProbability: aNumber [
 ]
 
 { #category : #creation }
-TimeMachine >> affect: aGame [
-	
+TimeMachine >> affect: aPlayer on: aGame [
+	aGame player: aPlayer goesBackTurns: 1.
 ]
 
 { #category : #creation }

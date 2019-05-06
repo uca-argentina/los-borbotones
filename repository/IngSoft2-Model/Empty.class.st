@@ -12,7 +12,7 @@ Empty class >> withProbability: aNumber [
 ]
 
 { #category : #initialization }
-Empty >> affect: aGame [
+Empty >> affect: aPlayer on: aGame [
 	
 ]
 
