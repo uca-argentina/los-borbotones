@@ -1,3 +1,6 @@
+"
+Retrocede 4 casilleros. Probabilidad de aparición: 15%.
+"
 Class {
 	#name : #WormHole,
 	#superclass : #Effect,

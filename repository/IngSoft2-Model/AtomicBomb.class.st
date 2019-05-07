@@ -1,3 +1,6 @@
+"
+Todos vuelven al principio. Probabilidad de aparición: 2%.
+"
 Class {
 	#name : #AtomicBomb,
 	#superclass : #Effect,

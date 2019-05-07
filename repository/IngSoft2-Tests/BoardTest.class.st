@@ -1,3 +1,6 @@
+"
+Board tests.
+"
 Class {
 	#name : #BoardTest,
 	#superclass : #TestCase,

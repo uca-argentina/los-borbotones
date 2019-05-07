@@ -172,3 +172,23 @@ GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 	self assert: lucia position equals: 0.
 	self assert: lucia laps equals: 0
 ]
+
+{ #category : #tests }
+GameTest >> testRobertCaNotMoveToANegativePosition [
+	| board |
+	board := Board
+		withSteps: 5
+		andEffects: (Array with: (Empty withProbability: 1)).
+	game := Game
+		playedBy: players
+		withLapsToWin: 3
+		board: board
+		using: dices.
+	game turnIsPlayed.
+	self assert: robert position equals: 4.
+	game player: robert movesBackwardsSteps: 4.
+	self assert: robert position equals: 0.
+	game player: robert movesBackwardsSteps: 5.
+	self assert: robert position equals: 0.
+	self assert: robert lap equals: 0
+]
