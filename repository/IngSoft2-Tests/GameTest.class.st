@@ -13,6 +13,16 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
+{ #category : #tests }
+GameTest >> juan [
+	^ Player named: 'Juan'
+]
+
+{ #category : #tests }
+GameTest >> lucas [
+	^ Player named: 'Lucas'
+]
+
 { #category : #running }
 GameTest >> setUp [
 	| fourFaceDummyDice |
@@ -20,7 +30,7 @@ GameTest >> setUp [
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
-	players := SortedCollection  with: robert
+	players := OrderedCollection    with: robert
 ]
 
 { #category : #tests }
@@ -195,9 +205,9 @@ GameTest >> testRobertCaNotMoveToANegativePosition [
 
 { #category : #tests }
 GameTest >> testThatRoberIsThirdLucasIsSecondAndJuanIsFirstInTheRanking [
-	| lucas juan board |
-	lucas := Player named: 'Lucas'.
-	juan := Player named: 'Juan'.
+	| board lucas juan |
+	lucas := self lucas.
+	juan := self juan.
 	players
 		add: lucas;
 		add: juan.
@@ -209,11 +219,10 @@ GameTest >> testThatRoberIsThirdLucasIsSecondAndJuanIsFirstInTheRanking [
 		withLapsToWin: 5
 		board: board
 		using: dices.
-		game turnIsPlayed .
-		lucas moveTo: 3 lap: 4.
-		juan moveTo: 5 lap: 5.
-		self assert: (game ranking at: 1) equals: juan.
-		self assert: (game ranking at: 2) equals: lucas.
-		self assert: (game ranking at: 3) equals: robert.
-		
+	game turnIsPlayed.
+	lucas moveTo: 3 lap: 4.
+	juan moveTo: 5 lap: 5.
+	self assert: (game ranking at: 1) equals: juan.
+	self assert: (game ranking at: 2) equals: lucas.
+	self assert: (game ranking at: 3) equals: robert
 ]

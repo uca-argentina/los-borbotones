@@ -30,7 +30,8 @@ Class {
 		'dices',
 		'turnPosition',
 		'board',
-		'laps'
+		'laps',
+		'ranking'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -74,23 +75,20 @@ Game >> inactivePlayers [
 { #category : #initialize }
 Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers andUsing: aSetOfDices [
 	players := aSetOfPlayers.
-	players
-		sortBlock:
-			[ :player1 :player2 | (player1 lap >= player2 lap) & (player1 position >= player2 position) ].
 	laps := aLapsAmount.
 	dices := aSetOfDices.
 	board := aBoard.
 	turnPosition := 1
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 Game >> movesToTheLastTurnPositionThePlayer: aPlayer [
 	aPlayer
 		moveTo: (aPlayer history at: (aPlayer history size - 2)) tile
 		lap: (aPlayer history at: (aPlayer history size - 2)) lap
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 Game >> player: aPlayer movesBackwardsSteps: aNumberOfSteps [ 
 	| totalStepsMade newPositionInSteps lap position|
 	totalStepsMade := (aPlayer laps * board numberOfTiles) + aPlayer position.
@@ -104,7 +102,7 @@ Game >> player: aPlayer movesBackwardsSteps: aNumberOfSteps [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 Game >> player: aPlayer movesForwardSteps: aStepsAmount [ 
 	|newPosition lap|
 	newPosition := (aPlayer position + aStepsAmount) % board numberOfTiles .
@@ -115,6 +113,14 @@ Game >> player: aPlayer movesForwardSteps: aStepsAmount [
 { #category : #status }
 Game >> players [
 	^ players
+]
+
+{ #category : #status }
+Game >> ranking [
+	^ players
+		asSortedCollection: [ :player1 :player2 | 
+			player1 lap * board numberOfTiles + player1 position
+				>= (player2 lap * board numberOfTiles + player2 position) ]
 ]
 
 { #category : #actions }
