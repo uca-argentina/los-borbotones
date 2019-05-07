@@ -1,3 +1,6 @@
+"
+Board game.
+"
 Class {
 	#name : #Board,
 	#superclass : #Object,

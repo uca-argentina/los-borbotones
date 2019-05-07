@@ -1,3 +1,6 @@
+"
+An effect.
+"
 Class {
 	#name : #Effect,
 	#superclass : #Object,

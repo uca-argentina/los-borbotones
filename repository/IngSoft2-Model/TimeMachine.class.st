@@ -1,3 +1,6 @@
+"
+Vuelve a la posición del turno anterior. Probabilidad de aparición: 8%.
+"
 Class {
 	#name : #TimeMachine,
 	#superclass : #Effect,

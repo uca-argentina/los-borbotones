@@ -1,3 +1,6 @@
+"
+Probabilidad de aparición: 55%.
+"
 Class {
 	#name : #Empty,
 	#superclass : #Effect,

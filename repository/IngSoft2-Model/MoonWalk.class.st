@@ -1,3 +1,6 @@
+"
+Los demás vuelven hacia atras N casilleros. Probabilidad de aparición: 5%.
+"
 Class {
 	#name : #MoonWalk,
 	#superclass : #Effect,

@@ -53,6 +53,11 @@ Player >> initializeWithName: aName [
 	history := LinkedList with: (Position tile: 0 andLap: 0).
 ]
 
+{ #category : #actions }
+Player >> lap [
+	^ history last lap
+]
+
 { #category : #accessing }
 Player >> laps [
 	^history last lap.
