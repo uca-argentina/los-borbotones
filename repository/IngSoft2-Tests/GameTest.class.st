@@ -146,7 +146,7 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 		andEffects: (Array with: (Empty withProbability: 1)).
 	game := Game playedBy: players withLapsToWin: 3 board: board using: dices.
 	game turnIsPlayed.
-	self assert: robert position equals: 1.
+	self assert: robert position equals: 0.
 	self assert: robert laps equals: 3
 ]
 
@@ -167,8 +167,8 @@ GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 		using: dices.
 		
 	game turnIsPlayed.
-	self assert: robert position equals: 1.
+	self assert: robert position equals: 0.
 	self assert: robert laps equals: 0.
-	self assert: lucia position equals: 1.
+	self assert: lucia position equals: 0.
 	self assert: lucia laps equals: 0
 ]

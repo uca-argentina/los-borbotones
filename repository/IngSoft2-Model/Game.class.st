@@ -80,6 +80,28 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers and
 	turnPosition := 1
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> player: aPlayer movesBackwardsSteps: aNumberOfSteps [ 
+	| totalStepsMade newPositionInSteps lap position|
+	totalStepsMade := (aPlayer laps * board numberOfTiles) + aPlayer position.
+	newPositionInSteps := totalStepsMade - aNumberOfSteps.
+	newPositionInSteps := newPositionInSteps max: 0.
+	lap := (newPositionInSteps / board numberOfTiles) floor.
+	position := ((newPositionInSteps) % board numberOfTiles).
+	aPlayer moveTo: position lap: lap.
+	
+	
+	
+]
+
+{ #category : #'as yet unclassified' }
+Game >> player: aPlayer movesForwardSteps: aStepsAmount [ 
+	|newPosition lap|
+	newPosition := (aPlayer position + aStepsAmount) % board numberOfTiles .
+	lap := ((aPlayer position + aStepsAmount) / board numberOfTiles) floor.
+	aPlayer moveTo: newPosition lap: lap.
+]
+
 { #category : #status }
 Game >> players [
 	^ players
@@ -87,14 +109,10 @@ Game >> players [
 
 { #category : #actions }
 Game >> rollDicesFor: aPlayer [
-	| newPosition lap rollResult |
+	| rollResult |
 	rollResult := dices sum: #roll.
-	lap := (aPlayer laps + (aPlayer position + rollResult))
-		/ board numberOfTiles floor.
-	newPosition := (aPlayer position + rollResult) % board numberOfTiles
-		+ 1.
-	aPlayer moveTo: newPosition lap: lap.
-	(board effectAt: newPosition) affect: aPlayer on: self
+	self player: aPlayer movesForwardSteps: rollResult.
+	(board effectAt: aPlayer position) affect: aPlayer on: self
 ]
 
 { #category : #actions }

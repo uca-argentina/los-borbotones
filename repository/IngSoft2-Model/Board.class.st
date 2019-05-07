@@ -25,7 +25,7 @@ Board class >> withSteps: aNumberOfSteps andEffects: anArrayOfEffects [
 
 { #category : #accessing }
 Board >> effectAt: aPosition [
-	^ tiles at:aPosition.
+	^ tiles at:aPosition + 1.
 ]
 
 { #category : #initialization }
