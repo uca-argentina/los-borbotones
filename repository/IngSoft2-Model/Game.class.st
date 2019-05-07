@@ -81,6 +81,13 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers and
 ]
 
 { #category : #'as yet unclassified' }
+Game >> movesToTheLastTurnPositionThePlayer: aPlayer [
+	aPlayer
+		moveTo: (aPlayer history at: (aPlayer history size - 2)) tile
+		lap: (aPlayer history at: (aPlayer history size - 2)) lap
+]
+
+{ #category : #'as yet unclassified' }
 Game >> player: aPlayer movesBackwardsSteps: aNumberOfSteps [ 
 	| totalStepsMade newPositionInSteps lap position|
 	totalStepsMade := (aPlayer laps * board numberOfTiles) + aPlayer position.

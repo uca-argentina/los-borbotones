@@ -89,6 +89,26 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 ]
 
 { #category : #tests }
+BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
+	| board game |
+	
+	board := Board
+		withSteps: 10
+		andEffects: (Array with: (TimeMachine   withProbability: 1)).
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		using: dices.
+	robert moveTo: 2 lap: 0.
+	robert moveTo: 3 lap:0. 
+	self assert: robert position equals: 3.
+	game turnIsPlayed.
+	self assert: robert position equals: 2.
+	
+]
+
+{ #category : #tests }
 BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
 	| board game |
 	
