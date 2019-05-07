@@ -8,7 +8,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #action }
-Effect >> affect: players withCurrentPlayer: aPlayer on: aNumberOfTiles [
+{ #category : #initialization }
+Effect >> affect: aPlayer on: aGame [
 	^self subclassResponsibility.
 ]

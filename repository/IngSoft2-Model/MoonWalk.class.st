@@ -2,7 +2,8 @@ Class {
 	#name : #MoonWalk,
 	#superclass : #Effect,
 	#instVars : [
-		'numberN'
+		'numberN',
+		'random'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -14,20 +15,30 @@ MoonWalk class >> withProbability: aNumber [
 		yourself
 ]
 
+{ #category : #creation }
+MoonWalk class >> withProbability: aProbability andN: aNumber [
+	^ self new
+		initializeWithProbability: aProbability andN: aNumber;
+		yourself
+]
+
 { #category : #initialization }
-MoonWalk >> affect: players withCurrentPlayer: aPlayer on: aGame [
-	"| targetPlayers newPosition lapsToGoBack| 
-	targetPlayers := players reject: [ :player | player = aPlayer ].
-	lapsToGoBack := (numberN / (aGame board numberOfTiles)) floor.
-	targetPlayers
-		do: [ :player | 
-			newPosition := ((player position - numberN) abs % aGame board numberOfTiles) + 1.
-			player moveTo: newPosition lap: ((player laps - lapsToGoBack) max: 0). ]"
+MoonWalk >> affect: aPlayer on: aGame [
+	aGame inactivePlayers
+		do: [ :player | aGame player: player movesBackwardsSteps: numberN ]
 ]
 
 { #category : #initialization }
 MoonWalk >> initializeWithProbability: aNumber [
 	probability := aNumber.
+	random := Random new.
+	numberN := (random next * 10) floor.
+]
+
+{ #category : #initialization }
+MoonWalk >> initializeWithProbability: aProbability andN: aNumber [
+	probability := aNumber.
+	numberN := aNumber.
 ]
 
 { #category : #accessing }

@@ -12,8 +12,8 @@ TimeMachine class >> withProbability: aNumber [
 ]
 
 { #category : #creation }
-TimeMachine >> affect: players withCurrentPlayer: aPlayer on: aGame [
-	
+TimeMachine >> affect: aPlayer on: aGame [
+	aGame movesToTheLastTurnPositionThePlayer: aPlayer
 ]
 
 { #category : #creation }
