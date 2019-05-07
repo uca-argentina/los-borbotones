@@ -1,3 +1,6 @@
+"
+I am a position.
+"
 Class {
 	#name : #Position,
 	#superclass : #Object,
