@@ -74,6 +74,9 @@ Game >> inactivePlayers [
 { #category : #initialize }
 Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers andUsing: aSetOfDices [
 	players := aSetOfPlayers.
+	players
+		sortBlock:
+			[ :player1 :player2 | (player1 lap >= player2 lap) & (player1 position >= player2 position) ].
 	laps := aLapsAmount.
 	dices := aSetOfDices.
 	board := aBoard.
