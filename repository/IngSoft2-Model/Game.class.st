@@ -30,8 +30,7 @@ Class {
 		'dices',
 		'turnPosition',
 		'board',
-		'laps',
-		'ranking'
+		'laps'
 	],
 	#category : #'IngSoft2-Model'
 }
