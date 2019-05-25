@@ -34,7 +34,7 @@ PlayerTest >> testAPlayerNamedRobertMovetoPositionNumberFour [
 	player := Player named: 'Robert'.
 	player moveTo: 4 lap:1.
 	self assert: player position equals: 4.
-	self assert: player laps equals: 1.
+	self assert: player lap equals: 1.
 ]
 
 { #category : #tests }
@@ -43,5 +43,5 @@ PlayerTest >> testAPlayerNamedRobertWithInitialPositionAndLapsZero [
 	player := Player named: 'Robert'.
 	self assert: player name equals: 'Robert'.
 	self assert: player position equals: 0.
-	self assert: player laps equals: 0.
+	self assert: player lap equals: 0.
 ]

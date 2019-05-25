@@ -7,13 +7,6 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #creation }
-WormHole class >> withProbability: aNumber [
-	^ self new
-		initializeWithProbability: aNumber;
-		yourself
-]
-
 { #category : #initialization }
 WormHole >> affect: aPlayer on: aGame [
 	aGame player: aPlayer movesBackwardsSteps: 4.

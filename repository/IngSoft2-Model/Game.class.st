@@ -48,7 +48,7 @@ Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard u
 { #category : #'private-assertions' }
 Game >> assertGameHasNotEnded [
 	self hasEnded
-		ifTrue: [ self error: 'Game is over. ' ]
+		ifTrue: [ GameModelError signal: 'Game is over. ' ]
 ]
 
 { #category : #components }
@@ -63,7 +63,7 @@ Game >> currentPlayer [
 
 { #category : #status }
 Game >> hasEnded [
-	^ players anySatisfy: [ :player | player laps >= laps ]
+	^ players anySatisfy: [ :player | player lap >= laps ]
 ]
 
 { #category : #actions }
@@ -81,7 +81,7 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers and
 ]
 
 { #category : #actions }
-Game >> movesToTheLastTurnPositionThePlayer: aPlayer [
+Game >> movePlayerToLastPosition: aPlayer [
 	aPlayer
 		moveTo: (aPlayer history at: (aPlayer history size - 2)) tile
 		lap: (aPlayer history at: (aPlayer history size - 2)) lap
@@ -90,7 +90,7 @@ Game >> movesToTheLastTurnPositionThePlayer: aPlayer [
 { #category : #actions }
 Game >> player: aPlayer movesBackwardsSteps: aNumberOfSteps [ 
 	| totalStepsMade newPositionInSteps lap position|
-	totalStepsMade := (aPlayer laps * board numberOfTiles) + aPlayer position.
+	totalStepsMade := (aPlayer lap * board numberOfTiles) + aPlayer position.
 	newPositionInSteps := totalStepsMade - aNumberOfSteps.
 	newPositionInSteps := newPositionInSteps max: 0.
 	lap := (newPositionInSteps / board numberOfTiles) floor.
@@ -140,6 +140,6 @@ Game >> turnIsPlayed [
 { #category : #status }
 Game >> winner [
 	^ players
-		detect: [ :player | player laps >= laps ]
-		ifNone: [ self error: 'There is no winner yet. The game is not finished' ]
+		detect: [ :player | player lap >= laps ]
+		ifNone: [ GameModelError signal: 'There is no winner yet. The game is not finished' ]
 ]

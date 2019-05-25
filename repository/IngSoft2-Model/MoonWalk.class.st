@@ -1,27 +1,16 @@
-"
-Los demás vuelven hacia atras N casilleros. Probabilidad de aparición: 5%.
-"
 Class {
 	#name : #MoonWalk,
 	#superclass : #Effect,
 	#instVars : [
-		'numberN',
-		'random'
+		'numberN'
 	],
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #creation }
-MoonWalk class >> withProbability: aNumber [
+{ #category : #'as yet unclassified' }
+MoonWalk class >> withNumber: aNumber [ 
 	^ self new
-		initializeWithProbability: aNumber;
-		yourself
-]
-
-{ #category : #creation }
-MoonWalk class >> withProbability: aProbability andN: aNumber [
-	^ self new
-		initializeWithProbability: aProbability andN: aNumber;
+		initializeWithNumber: aNumber;
 		yourself
 ]
 
@@ -31,20 +20,7 @@ MoonWalk >> affect: aPlayer on: aGame [
 		do: [ :player | aGame player: player movesBackwardsSteps: numberN ]
 ]
 
-{ #category : #initialization }
-MoonWalk >> initializeWithProbability: aNumber [
-	probability := aNumber.
-	random := Random new.
-	numberN := (random next * 10) floor.
-]
-
-{ #category : #initialization }
-MoonWalk >> initializeWithProbability: aProbability andN: aNumber [
-	probability := aNumber.
-	numberN := aNumber.
-]
-
-{ #category : #accessing }
-MoonWalk >> probability [
-	^probability
+{ #category : #'as yet unclassified' }
+MoonWalk >> initializeWithNumber: aNumber [
+	numberN := aNumber
 ]

@@ -7,13 +7,6 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #creation }
-Empty class >> withProbability: aNumber [
-	^ self new
-		initializeWithProbability: aNumber;
-		yourself
-]
-
 { #category : #initialization }
 Empty >> affect: aPlayer on: aGame [
 	

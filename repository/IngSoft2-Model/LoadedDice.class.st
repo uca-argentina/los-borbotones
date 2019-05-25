@@ -37,7 +37,7 @@ Class {
 { #category : #'private-assertions' }
 LoadedDice class >> assertValidNumberOfFaces: aNumberOfFaces [
 	aNumberOfFaces > 3
-		ifFalse: [ self error: 'Number of faces must be 4 or greater' ]
+		ifFalse: [ GameModelError signal:'Number of faces must be 4 or greater' ]
 ]
 
 { #category : #creation }

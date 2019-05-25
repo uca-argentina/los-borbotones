@@ -7,19 +7,33 @@ Class {
 	#instVars : [
 		'dices',
 		'players',
-		'robert'
+		'robert',
+		'atomicBombWithProbability',
+		'speedUpWithProbability',
+		'timeMachineWithProbability',
+		'emptyWithProbability',
+		'wormHoleWithProbability',
+		'moonWalkWithProbability'
 	],
 	#category : #'IngSoft2-Tests'
 }
 
 { #category : #running }
 BoardTest >> setUp [
-	| fourFaceDummyDice  |
+	| fourFaceDummyDice |
 	super setUp.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
-	players := OrderedCollection with: robert
+	players := OrderedCollection with: robert.
+	
+	moonWalkWithProbability := (MoonWalk withNumber: 5) -> 0.05.
+	
+	atomicBombWithProbability := AtomicBomb new -> 0.02.
+	speedUpWithProbability := SpeedUp new -> 0.15.
+	timeMachineWithProbability := TimeMachine new -> 0.08.
+	emptyWithProbability := Empty new -> 0.55.
+	wormHoleWithProbability := WormHole new -> 0.15
 ]
 
 { #category : #tests }
@@ -30,9 +44,8 @@ BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
 	lucas moveTo: 2 lap: 0.
 	juan moveTo: 3 lap: 3.
 	players add: lucas; add: juan.
-	board := Board
-		withSteps: 5
-		andEffects: (Array with: (AtomicBomb  withProbability: 1)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 5) withEffectProbabilityAssociation: atomicBombWithProbability; buildBoard. 
+	
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -54,9 +67,7 @@ BoardTest >> testMoonWalkEffectMakesInactivePlayersGoBackNSteps [
 	lucia moveTo: 1 lap: 0.
 	
 	players add: lucas; add: juan; add:lucia.
-	board := Board
-		withSteps: 6
-		andEffects: (Array with: (MoonWalk  withProbability: 1 andN: 5)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 6) withEffectProbabilityAssociation: moonWalkWithProbability; buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -65,20 +76,18 @@ BoardTest >> testMoonWalkEffectMakesInactivePlayersGoBackNSteps [
 	game turnIsPlayed.
 	
 	self assert: lucas position equals: 2.
-	self assert: lucas laps equals: 3.
+	self assert: lucas lap equals: 3.
 	self assert: juan position equals: 3.
-	self assert: juan laps equals: 0.
+	self assert: juan lap equals: 0.
 	self assert: lucia position equals: 0.
-	self assert: lucia laps equals: 0.
+	self assert: lucia lap equals: 0.
 ]
 
 { #category : #tests }
 BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 	| board game |
 	
-	board := Board
-		withSteps: 10
-		andEffects: (Array with: (SpeedUp  withProbability: 1)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 10) withEffectProbabilityAssociation: speedUpWithProbability; buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -95,9 +104,8 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 	| board game |
 	
-	board := Board
-		withSteps: 10
-		andEffects: (Array with: (TimeMachine   withProbability: 1)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 10) withEffectProbabilityAssociation: timeMachineWithProbability; buildBoard.
+		
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -115,9 +123,8 @@ BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
 	| board game |
 	
-	board := Board
-		withSteps: 10
-		andEffects: (Array with: (WormHole  withProbability: 1)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 10) withEffectProbabilityAssociation: wormHoleWithProbability; buildBoard.
+	
 	game := Game
 		playedBy: players
 		withLapsToWin: 4

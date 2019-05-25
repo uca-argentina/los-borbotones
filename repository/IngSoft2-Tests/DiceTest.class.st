@@ -11,7 +11,7 @@ Class {
 DiceTest >> testDiceCantHaveLessThanFourFaces [
 	self
 		should: [ RandomDice withFaces: 3 ]
-		raise: Error
+		raise: GameModelError
 		withExceptionDo: [ :signal | 
 			self
 				assert: signal messageText

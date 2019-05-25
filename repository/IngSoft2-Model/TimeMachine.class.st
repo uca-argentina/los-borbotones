@@ -8,15 +8,8 @@ Class {
 }
 
 { #category : #creation }
-TimeMachine class >> withProbability: aNumber [
-	^ self new
-		initializeWithProbability: aNumber;
-		yourself
-]
-
-{ #category : #creation }
 TimeMachine >> affect: aPlayer on: aGame [
-	aGame movesToTheLastTurnPositionThePlayer: aPlayer
+	aGame movePlayerToLastPosition: aPlayer
 ]
 
 { #category : #creation }
