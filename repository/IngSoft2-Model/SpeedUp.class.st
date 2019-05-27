@@ -7,17 +7,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialization }
+{ #category : #action }
 SpeedUp >> affect: aPlayer on: aGame [
-	aGame player: aPlayer movesForwardSteps: 4.
-]
-
-{ #category : #initialization }
-SpeedUp >> initializeWithProbability: aNumber [
-	probability := aNumber.
-]
-
-{ #category : #accessing }
-SpeedUp >> probability [
-	^probability
+	aGame moves: aPlayer stepsFoward: 4
 ]

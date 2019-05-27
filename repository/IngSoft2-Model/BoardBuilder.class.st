@@ -1,3 +1,6 @@
+"
+Board builder.
+"
 Class {
 	#name : #BoardBuilder,
 	#superclass : #Object,
@@ -15,7 +18,7 @@ BoardBuilder class >> startBoardWithSteps: aStepsAmount [
 	^self subclassResponsibility 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #actions }
 BoardBuilder >> buildBoard [
-	^self subclassResponsibility 
+	^ self subclassResponsibility
 ]

@@ -7,17 +7,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialization }
+{ #category : #action }
 Empty >> affect: aPlayer on: aGame [
 	
-]
-
-{ #category : #initialization }
-Empty >> initializeWithProbability: aNumber [
-	probability := aNumber.
-]
-
-{ #category : #accessing }
-Empty >> probability [
-	^probability
 ]

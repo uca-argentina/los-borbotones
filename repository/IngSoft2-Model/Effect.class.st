@@ -4,10 +4,6 @@ An effect.
 Class {
 	#name : #Effect,
 	#superclass : #Object,
-	#instVars : [
-		'probability',
-		'name'
-	],
 	#category : #'IngSoft2-Model'
 }
 

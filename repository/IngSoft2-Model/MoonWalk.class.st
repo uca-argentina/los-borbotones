@@ -1,3 +1,6 @@
+"
+Los demás vuelven hacia atras N casilleros. Probabilidad de aparición: 5%.
+"
 Class {
 	#name : #MoonWalk,
 	#superclass : #Effect,
@@ -14,13 +17,13 @@ MoonWalk class >> withNumber: aNumber [
 		yourself
 ]
 
-{ #category : #initialization }
+{ #category : #action }
 MoonWalk >> affect: aPlayer on: aGame [
 	aGame inactivePlayers
-		do: [ :player | aGame player: player movesBackwardsSteps: numberN ]
+		do: [ :player | aGame moves: player stepsBackwards: numberN ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 MoonWalk >> initializeWithNumber: aNumber [
 	numberN := aNumber
 ]

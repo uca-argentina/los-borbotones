@@ -7,17 +7,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #creation }
+{ #category : #action }
 TimeMachine >> affect: aPlayer on: aGame [
-	aGame movePlayerToLastPosition: aPlayer
-]
-
-{ #category : #creation }
-TimeMachine >> initializeWithProbability: aNumber [
-	probability := aNumber.
-]
-
-{ #category : #accessing }
-TimeMachine >> probability [
-	^probability
+	aGame moveToPreviousPosition: aPlayer
 ]

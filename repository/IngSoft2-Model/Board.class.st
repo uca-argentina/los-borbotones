@@ -18,15 +18,15 @@ Board class >> withTiles: tiles [
 ]
 
 { #category : #accessing }
-Board >> effectAt: aPosition [
-	^ tiles at:aPosition + 1.
+Board >> effectAt: aPosition affect: aPlayer on: game [
+	| effect |
+	effect := tiles at: aPosition + 1.
+	effect affect: aPlayer on: game
 ]
 
 { #category : #initialization }
 Board >> initializeWithTiles: tileCollection [
 	tiles := tileCollection
-		
-	
 ]
 
 { #category : #accessing }

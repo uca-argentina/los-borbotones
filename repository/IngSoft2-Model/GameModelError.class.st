@@ -1,3 +1,6 @@
+"
+GameModelError.
+"
 Class {
 	#name : #GameModelError,
 	#superclass : #Error,

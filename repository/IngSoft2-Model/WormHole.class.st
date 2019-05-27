@@ -7,17 +7,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialization }
+{ #category : #action }
 WormHole >> affect: aPlayer on: aGame [
-	aGame player: aPlayer movesBackwardsSteps: 4.
-]
-
-{ #category : #accessing }
-WormHole >> initializeWithProbability: aNumber [
-	probability := aNumber.
-]
-
-{ #category : #accessing }
-WormHole >> probability [
-	^probability
+	aGame moves: aPlayer stepsBackwards: 4
 ]
