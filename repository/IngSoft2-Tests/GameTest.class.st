@@ -21,7 +21,7 @@ Class {
 
 { #category : #asserting }
 GameTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
-	self assert: (aGame positionTileOf: aPlayer) equals: aNumberOfTile.
+	self assert: (aGame tilePositionOf: aPlayer) equals: aNumberOfTile.
 	self assert: (aGame positionLapOf: aPlayer) equals: aNumberOfLap
 ]
 

@@ -20,7 +20,7 @@ Class {
 
 { #category : #tests }
 BoardTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
-	self assert: (game positionTileOf: aPlayer) equals: aNumberOfTile.
+	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
 	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
 ]
 
@@ -60,7 +60,7 @@ BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
 	game changePositionOf: juan toTile: 3 andLap: 3.
 	game turnIsPlayed.
 	self
-		assert: (players allSatisfy: [ :player | (game positionTileOf: player) = 0 ])
+		assert: (players allSatisfy: [ :player | (game tilePositionOf: player) = 0 ])
 ]
 
 { #category : #tests }
@@ -113,9 +113,9 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 		withLapsToWin: 4
 		board: board
 		using: dices.
-	self assert: (game positionTileOf: robert) equals: 0.
+	self assert: (game tilePositionOf: robert) equals: 0.
 	game turnIsPlayed.
-	self assert: (game positionTileOf: robert) equals: 8
+	self assert: (game tilePositionOf: robert) equals: 8
 ]
 
 { #category : #tests }
@@ -131,9 +131,9 @@ BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 		using: dices.
 	game changePositionOf: robert toTile: 2 andLap: 0.
 	game changePositionOf: robert toTile: 3 andLap: 0.
-	self assert: (game positionTileOf: robert) equals: 3.
+	self assert: (game tilePositionOf: robert) equals: 3.
 	game turnIsPlayed.
-	self assert: (game positionTileOf: robert) equals: 2
+	self assert: (game tilePositionOf: robert) equals: 2
 ]
 
 { #category : #tests }
@@ -150,7 +150,7 @@ BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
 		board: board
 		using: dices.
 	game changePositionOf: robert toTile: 1 andLap: 0.
-	self assert: (game positionTileOf: robert) equals: 1.
+	self assert: (game tilePositionOf: robert) equals: 1.
 	game turnIsPlayed.
-	self assert: (game positionTileOf: robert) equals: 0
+	self assert: (game tilePositionOf: robert) equals: 0
 ]

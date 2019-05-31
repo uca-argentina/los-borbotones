@@ -31,6 +31,12 @@ Position >> initializeWithTileNumber: aTileNumber andLap: aLapNumber [
 ]
 
 { #category : #accessing }
+Position >> isAheadOf: aPosition [
+	^ (lap > aPosition lap) or: ((lap = aPosition lap) and: (tile > aPosition tile))
+
+]
+
+{ #category : #accessing }
 Position >> lap [
 	^ lap
 ]

@@ -177,17 +177,11 @@ Game >> positionOf: aPlayer [
 	^ (playersPositions at: (self indexOf: aPlayer)) last
 ]
 
-{ #category : #components }
-Game >> positionTileOf: aPlayer [
-	^ (self positionOf: aPlayer) tile
-]
-
 { #category : #status }
 Game >> ranking [
 	^ players
-		asSortedCollection: [ :player1 :player2 | 
-			player1 lap * board numberOfTiles + player1 position
-				>= (player2 lap * board numberOfTiles + player2 position) ]
+		asSortedCollection:
+			[ :player1 :player2 | (self positionOf: player1) isAheadOf: (self positionOf: player2) ]
 ]
 
 { #category : #actions }
@@ -197,9 +191,14 @@ Game >> rollDicesForCurrentPlayer [
 	rollResult := dices sum: #roll.
 	self moves: currentPlayer stepsFoward: rollResult.
 	board
-		effectAt: (self positionTileOf: currentPlayer)
+		effectAt: (self tilePositionOf: currentPlayer)
 		affect: currentPlayer
 		on: self
+]
+
+{ #category : #components }
+Game >> tilePositionOf: aPlayer [
+	^ (self positionOf: aPlayer) tile
 ]
 
 { #category : #components }
