@@ -7,24 +7,8 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #creation }
-AtomicBomb class >> withProbability: aNumber [
-	^ self new
-		initializeWithProbability: aNumber;
-		yourself
-]
-
-{ #category : #initialization }
+{ #category : #action }
 AtomicBomb >> affect: aPlayer on: aGame [
-	aGame players do: [ :player | player moveTo:0 lap:0 ].
-]
-
-{ #category : #initialization }
-AtomicBomb >> initializeWithProbability: aNumber [
-	probability := aNumber.
-]
-
-{ #category : #accessing }
-AtomicBomb >> probability [
-	^probability
+	aGame players
+		do: [ :player | aGame changePositionOf: player toTile: 0 andLap: 0 ]
 ]

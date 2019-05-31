@@ -7,125 +7,150 @@ Class {
 	#instVars : [
 		'dices',
 		'players',
-		'robert'
+		'robert',
+		'atomicBombWithProbability',
+		'speedUpWithProbability',
+		'timeMachineWithProbability',
+		'emptyWithProbability',
+		'wormHoleWithProbability',
+		'moonWalkWithProbability'
 	],
 	#category : #'IngSoft2-Tests'
 }
 
+{ #category : #tests }
+BoardTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
+	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
+	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
+]
+
 { #category : #running }
 BoardTest >> setUp [
-	| fourFaceDummyDice  |
+	| fourFaceDummyDice |
 	super setUp.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
-	players := OrderedCollection with: robert
+	players := OrderedCollection with: robert.
+	moonWalkWithProbability := (MoonWalk withNumber: 5) -> 0.05.
+	atomicBombWithProbability := AtomicBomb new -> 0.02.
+	speedUpWithProbability := SpeedUp new -> 0.15.
+	timeMachineWithProbability := TimeMachine new -> 0.08.
+	emptyWithProbability := Empty new -> 0.55.
+	wormHoleWithProbability := WormHole new -> 0.15
 ]
 
 { #category : #tests }
 BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
-	| board game lucas juan|
-	lucas:= Player named: 'Lucas'.
+	| board game lucas juan |
+	lucas := Player named: 'Lucas'.
 	juan := Player named: 'Juan'.
-	lucas moveTo: 2 lap: 0.
-	juan moveTo: 3 lap: 3.
-	players add: lucas; add: juan.
-	board := Board
-		withSteps: 5
-		andEffects: (Array with: (AtomicBomb  withProbability: 1)).
+	players
+		add: lucas;
+		add: juan.
+	board := (LoadedBoardBuilder startBoardWithSteps: 5)
+		withEffectProbabilityAssociation: atomicBombWithProbability;
+		buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		using: dices.
+	game changePositionOf: lucas toTile: 2 andLap: 0.
+	game changePositionOf: juan toTile: 3 andLap: 3.
 	game turnIsPlayed.
-	self assert: (players allSatisfy: [ :player | player position = 0 ])
+	self
+		assert: (players allSatisfy: [ :player | (game tilePositionOf: player) = 0 ])
 ]
 
 { #category : #tests }
 BoardTest >> testMoonWalkEffectMakesInactivePlayersGoBackNSteps [
-	| board game lucas juan lucia|
-	lucas:= Player named: 'Lucas'.
+	| board game lucas juan lucia |
+	lucas := Player named: 'Lucas'.
 	juan := Player named: 'Juan'.
 	lucia := Player named: 'Lucia'.
-	
-	lucas moveTo: 7 lap: 3.
-	juan moveTo: 2 lap: 1.
-	lucia moveTo: 1 lap: 0.
-	
-	players add: lucas; add: juan; add:lucia.
-	board := Board
-		withSteps: 6
-		andEffects: (Array with: (MoonWalk  withProbability: 1 andN: 5)).
+	players
+		add: lucas;
+		add: juan;
+		add: lucia.
+	board := (LoadedBoardBuilder startBoardWithSteps: 6)
+		withEffectProbabilityAssociation: moonWalkWithProbability;
+		buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		using: dices.
+	game changePositionOf: lucas toTile: 7 andLap: 3.
+	game changePositionOf: juan toTile: 2 andLap: 1.
+	game changePositionOf: lucia toTile: 1 andLap: 0.
 	game turnIsPlayed.
-	
-	self assert: lucas position equals: 2.
-	self assert: lucas laps equals: 3.
-	self assert: juan position equals: 3.
-	self assert: juan laps equals: 0.
-	self assert: lucia position equals: 0.
-	self assert: lucia laps equals: 0.
+	self
+		assertPosition: 2
+		andLap: 3
+		for: lucas
+		on: game.
+	self
+		assertPosition: 3
+		andLap: 0
+		for: juan
+		on: game.
+	self
+		assertPosition: 0
+		andLap: 0
+		for: lucia
+		on: game
 ]
 
 { #category : #tests }
 BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 	| board game |
-	
-	board := Board
-		withSteps: 10
-		andEffects: (Array with: (SpeedUp  withProbability: 1)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: speedUpWithProbability;
+		buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		using: dices.
-
-	self assert: robert position equals: 0.
+	self assert: (game tilePositionOf: robert) equals: 0.
 	game turnIsPlayed.
-	
-	self assert: robert position equals: 8.
+	self assert: (game tilePositionOf: robert) equals: 8
 ]
 
 { #category : #tests }
 BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 	| board game |
-	
-	board := Board
-		withSteps: 10
-		andEffects: (Array with: (TimeMachine   withProbability: 1)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: timeMachineWithProbability;
+		buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		using: dices.
-	robert moveTo: 2 lap: 0.
-	robert moveTo: 3 lap:0. 
-	self assert: robert position equals: 3.
+	game changePositionOf: robert toTile: 2 andLap: 0.
+	game changePositionOf: robert toTile: 3 andLap: 0.
+	self assert: (game tilePositionOf: robert) equals: 3.
 	game turnIsPlayed.
-	self assert: robert position equals: 2.
-	
+	self assert: (game tilePositionOf: robert) equals: 2
 ]
 
 { #category : #tests }
 BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
-	| board game |
-	
-	board := Board
-		withSteps: 10
-		andEffects: (Array with: (WormHole  withProbability: 1)).
+	| board game fourFaceDummyDice |
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: wormHoleWithProbability;
+		buildBoard.
+	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		using: dices.
-
-	self assert: robert position equals: 0.
+	game changePositionOf: robert toTile: 1 andLap: 0.
+	self assert: (game tilePositionOf: robert) equals: 1.
 	game turnIsPlayed.
-	
-	self assert: robert position equals: 0.
+	self assert: (game tilePositionOf: robert) equals: 0
 ]

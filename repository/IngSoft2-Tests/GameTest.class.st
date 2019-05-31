@@ -8,10 +8,22 @@ Class {
 		'dices',
 		'players',
 		'game',
-		'robert'
+		'robert',
+		'moonWalkWithProbability',
+		'atomicBombWithProbability',
+		'speedUpWithProbability',
+		'timeMachineWithProbability',
+		'emptyWithProbability',
+		'wormHoleWithProbability'
 	],
 	#category : #'IngSoft2-Tests'
 }
+
+{ #category : #asserting }
+GameTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
+	self assert: (aGame tilePositionOf: aPlayer) equals: aNumberOfTile.
+	self assert: (aGame positionLapOf: aPlayer) equals: aNumberOfLap
+]
 
 { #category : #tests }
 GameTest >> juan [
@@ -30,16 +42,21 @@ GameTest >> setUp [
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
-	players := OrderedCollection    with: robert
+	players := OrderedCollection with: robert.
+	moonWalkWithProbability := (MoonWalk withNumber: 5) -> 0.05.
+	atomicBombWithProbability := AtomicBomb new -> 0.02.
+	speedUpWithProbability := SpeedUp new -> 0.15.
+	timeMachineWithProbability := TimeMachine new -> 0.08.
+	emptyWithProbability := Empty new -> 0.55.
+	wormHoleWithProbability := WormHole new -> 0.15
 ]
 
 { #category : #tests }
 GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 	| board |
-	board := Board
-		withSteps: 3
-		andEffects: (Array with: (Empty withProbability: 1)).
-		
+	board := (LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -48,7 +65,7 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 	self deny: game hasEnded.
 	self
 		should: [ game winner ]
-		raise: Error
+		raise: GameModelError
 		withExceptionDo: [ :signal | 
 			self
 				assert: signal messageText
@@ -57,29 +74,34 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 
 { #category : #tests }
 GameTest >> testGameCantBePlayedOnceItIsOver [
-	|board|
-	board := Board
-		withSteps: 3
-		andEffects: (Array with: (Empty withProbability: 1)).
-		
-	game := Game playedBy: players withLapsToWin: 1 board: board using: dices.
+	| board |
+	board := (LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		using: dices.
 	game turnIsPlayed.
 	self
 		should: [ game turnIsPlayed ]
-		raise: Error
-		withExceptionDo: [ :signal | 
-			self
-				assert: signal messageText
-				equals: 'Game is over. ' ]
+		raise: GameModelError
+		withExceptionDo:
+			[ :signal | self assert: signal messageText equals: 'Game is over. ' ]
 ]
 
 { #category : #tests }
 GameTest >> testGameHasEnded [
-	|board|
-	board := Board
-		withSteps: 3
-		andEffects: (Array with: (Empty withProbability: 1)).
-	game := Game playedBy: players withLapsToWin: 1 board: board using: dices.
+	| board |
+	board := (LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		using: dices.
 	self deny: game hasEnded.
 	game turnIsPlayed.
 	self assert: game hasEnded
@@ -87,21 +109,29 @@ GameTest >> testGameHasEnded [
 
 { #category : #tests }
 GameTest >> testGameStartsWithA4StepsBoard [
-	|board|
-	board := Board
-		withSteps: 4
-		andEffects: (Array with: (Empty withProbability: 1)).
-	game := Game playedBy: players withLapsToWin: 1 board: board using: dices.
+	| board |
+	board := (LoadedBoardBuilder startBoardWithSteps: 4)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		using: dices.
 	self assert: game board numberOfTiles equals: 4
 ]
 
 { #category : #tests }
 GameTest >> testGetWinnerOnceGameIsFinished [
-	|board|
-	board := Board
-		withSteps: 3
-		andEffects: (Array with: (Empty withProbability: 1)).
-	game := Game playedBy: players withLapsToWin: 1 board: board using: dices.
+	| board |
+	board := (LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		using: dices.
 	self deny: game hasEnded.
 	game turnIsPlayed.
 	self assert: game hasEnded.
@@ -110,15 +140,19 @@ GameTest >> testGetWinnerOnceGameIsFinished [
 
 { #category : #tests }
 GameTest >> testIsRobertTurn [
-	| matt martin board|
+	| matt martin board |
 	matt := Player named: 'Matt'.
 	martin := Player named: 'Martin'.
 	players add: matt.
 	players add: martin.
-	board := Board
-		withSteps: 20
-		andEffects: (Array with: (Empty withProbability: 1)).
-	game := Game playedBy: players withLapsToWin: 1 board: board using: dices.
+	board := (LoadedBoardBuilder startBoardWithSteps: 20)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		using: dices.
 	game turnIsPlayed.
 	game turnIsPlayed.
 	game turnIsPlayed.
@@ -127,23 +161,23 @@ GameTest >> testIsRobertTurn [
 
 { #category : #tests }
 GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
-	| lucia board|
+	| lucia board |
 	lucia := Player named: 'Lucia'.
 	players add: lucia.
-	board := Board
-		withSteps: 3
-		andEffects: (Array with: (Empty withProbability: 1)).
-	game := Game playedBy: players withLapsToWin: 1 board: board using: dices.
+	board := (LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		using: dices.
 	game turnIsPlayed.
 	self
-		should: [ game turnIsPlayed  ]
-		raise: Error
-		withExceptionDo: [ :signal | 
-			self
-				assert: signal messageText
-				equals: 'Game is over. ' ]
-	
-	
+		should: [ game turnIsPlayed ]
+		raise: GameModelError
+		withExceptionDo:
+			[ :signal | self assert: signal messageText equals: 'Game is over. ' ]
 ]
 
 { #category : #tests }
@@ -151,13 +185,20 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	| fiveFaceDummyDice board |
 	fiveFaceDummyDice := LoadedDice withFaces: 5 andValue: 5.
 	dices add: fiveFaceDummyDice.
-	board := Board
-		withSteps: 3
-		andEffects: (Array with: (Empty withProbability: 1)).
-	game := Game playedBy: players withLapsToWin: 3 board: board using: dices.
+	board := (LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 3
+		board: board
+		using: dices.
 	game turnIsPlayed.
-	self assert: robert position equals: 0.
-	self assert: robert laps equals: 3
+	self
+		assertPosition: 0
+		andLap: 3
+		for: robert
+		on: game
 ]
 
 { #category : #tests }
@@ -165,42 +206,25 @@ GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 	| lucia board |
 	lucia := Player named: 'Lucia'.
 	players add: lucia.
-	board := Board
-		withSteps: 10
-		andEffects: (Array with: (AtomicBomb withProbability: 1)).
-		
-		
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: atomicBombWithProbability;
+		buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		using: dices.
-		
 	game turnIsPlayed.
-	self assert: robert position equals: 0.
-	self assert: robert laps equals: 0.
-	self assert: lucia position equals: 0.
-	self assert: lucia laps equals: 0
-]
-
-{ #category : #tests }
-GameTest >> testRobertCaNotMoveToANegativePosition [
-	| board |
-	board := Board
-		withSteps: 5
-		andEffects: (Array with: (Empty withProbability: 1)).
-	game := Game
-		playedBy: players
-		withLapsToWin: 3
-		board: board
-		using: dices.
-	game turnIsPlayed.
-	self assert: robert position equals: 4.
-	game player: robert movesBackwardsSteps: 4.
-	self assert: robert position equals: 0.
-	game player: robert movesBackwardsSteps: 5.
-	self assert: robert position equals: 0.
-	self assert: robert lap equals: 0
+	self
+		assertPosition: 0
+		andLap: 0
+		for: robert
+		on: game.
+	self
+		assertPosition: 0
+		andLap: 0
+		for: lucia
+		on: game
 ]
 
 { #category : #tests }
@@ -211,17 +235,17 @@ GameTest >> testThatRoberIsThirdLucasIsSecondAndJuanIsFirstInTheRanking [
 	players
 		add: lucas;
 		add: juan.
-	board := Board
-		withSteps: 16
-		andEffects: (Array with: (Empty withProbability: 1)).
+	board := (LoadedBoardBuilder startBoardWithSteps: 16)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 5
 		board: board
 		using: dices.
 	game turnIsPlayed.
-	lucas moveTo: 3 lap: 4.
-	juan moveTo: 5 lap: 5.
+	game changePositionOf: lucas toTile: 3 andLap: 4.
+	game changePositionOf: juan toTile: 5 andLap: 5.
 	self assert: (game ranking at: 1) equals: juan.
 	self assert: (game ranking at: 2) equals: lucas.
 	self assert: (game ranking at: 3) equals: robert

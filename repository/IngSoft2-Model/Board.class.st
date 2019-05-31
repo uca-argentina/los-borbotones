@@ -5,68 +5,28 @@ Class {
 	#name : #Board,
 	#superclass : #Object,
 	#instVars : [
-		'tiles',
-		'effects',
-		'random'
+		'tiles'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Board class >> withSteps: aNumberOfSteps [
+Board class >> withTiles: tiles [
 	^ self new
-		initializeWithSteps: aNumberOfSteps;
-		yourself
-]
-
-{ #category : #creation }
-Board class >> withSteps: aNumberOfSteps andEffects: anArrayOfEffects [
-	^ self new
-		initializeWithSteps: aNumberOfSteps andEffects: anArrayOfEffects ;
+		initializeWithTiles: tiles;
 		yourself
 ]
 
 { #category : #accessing }
-Board >> effectAt: aPosition [
-	^ tiles at:aPosition + 1.
+Board >> effectAt: aPosition affect: aPlayer on: game [
+	| effect |
+	effect := tiles at: aPosition + 1.
+	effect affect: aPlayer on: game
 ]
 
 { #category : #initialization }
-Board >> initializeWithSteps: aNumberOfSteps [
-	| prob cumulativeProbability |
-	random := Random new.
-	effects := Array
-		with: (MoonWalk withProbability: 0.05)
-		with: (AtomicBomb withProbability: 0.02)
-		with: (SpeedUp withProbability: 0.15)
-		with: (TimeMachine withProbability: 0.08)
-		with: (Empty withProbability: 0.55)
-		with: (WormHole withProbability: 0.15).
-		
-	tiles := (1 to: aNumberOfSteps)
-		collect: [ :index | 
-			cumulativeProbability := 0.
-			prob := random next.
-			effects
-				detect: [ :each | 
-					cumulativeProbability := cumulativeProbability + each probability.
-					cumulativeProbability >= prob ] ]
-]
-
-{ #category : #initialization }
-Board >> initializeWithSteps: aNumberOfSteps andEffects: anArrayOfEffects [
-	| prob cumulativeProbability |
-	random := Random new.
-	effects := anArrayOfEffects.
-		
-	tiles := (1 to: aNumberOfSteps)
-		collect: [ :index | 
-			cumulativeProbability := 0.
-			prob := random next.
-			effects
-				detect: [ :each | 
-					cumulativeProbability := cumulativeProbability + each probability.
-					cumulativeProbability >= prob ] ]
+Board >> initializeWithTiles: tileCollection [
+	tiles := tileCollection
 ]
 
 { #category : #accessing }

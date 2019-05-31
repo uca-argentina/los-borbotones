@@ -29,8 +29,7 @@ Class {
 	#name : #Player,
 	#superclass : #Object,
 	#instVars : [
-		'name',
-		'history'
+		'name'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -42,38 +41,12 @@ Player class >> named: aName [
 		yourself
 ]
 
-{ #category : #status }
-Player >> history [
-	^ history.
-]
-
 { #category : #initialize }
 Player >> initializeWithName: aName [
-	name := aName.
-	history := LinkedList with: (Position tile: 0 andLap: 0).
-]
-
-{ #category : #actions }
-Player >> lap [
-	^ history last lap
-]
-
-{ #category : #accessing }
-Player >> laps [
-	^history last lap.
-]
-
-{ #category : #actions }
-Player >> moveTo: tileNumber lap: lap [
-	history add: (Position tile: tileNumber andLap: lap)
+	name := aName
 ]
 
 { #category : #presentation }
 Player >> name [
 	^ name
-]
-
-{ #category : #actions }
-Player >> position [
-	^ history last tile.
 ]

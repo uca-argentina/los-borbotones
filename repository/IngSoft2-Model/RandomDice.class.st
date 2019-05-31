@@ -13,7 +13,7 @@ Class {
 { #category : #'private-assertions' }
 RandomDice class >> assertValidNumberOfFaces: aNumberOfFaces [
 	aNumberOfFaces > 3
-		ifFalse: [ self error: 'Number of faces must be greater than 3' ]
+		ifFalse: [ GameModelError signal: 'Number of faces must be greater than 3' ]
 ]
 
 { #category : #creation }

@@ -18,6 +18,12 @@ Position class >> tile: aTileNumber andLap: aLapNumber [
 		yourself
 ]
 
+{ #category : #accessing }
+Position >> changeTileTo: aTileNumber andChangeLapTo: aLapNumber [
+	tile := aTileNumber.
+	lap := aLapNumber
+]
+
 { #category : #initialization }
 Position >> initializeWithTileNumber: aTileNumber andLap: aLapNumber [
 	tile := aTileNumber.
@@ -25,11 +31,17 @@ Position >> initializeWithTileNumber: aTileNumber andLap: aLapNumber [
 ]
 
 { #category : #accessing }
+Position >> isAheadOf: aPosition [
+	^ (lap > aPosition lap) or: ((lap = aPosition lap) and: (tile > aPosition tile))
+
+]
+
+{ #category : #accessing }
 Position >> lap [
-	^lap
+	^ lap
 ]
 
 { #category : #accessing }
 Position >> tile [
-	^tile
+	^ tile
 ]
