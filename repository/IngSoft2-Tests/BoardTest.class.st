@@ -119,6 +119,22 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 ]
 
 { #category : #tests }
+BoardTest >> testStocasticBoardIsValid [
+	| boardBuilder board effects |
+	boardBuilder := StocasticBoardBuilder startBoardWithSteps: 6.
+	effects := OrderedCollection
+		with: moonWalkWithProbability
+		with: atomicBombWithProbability
+		with: timeMachineWithProbability
+		with: emptyWithProbability
+		with: wormHoleWithProbability.
+	boardBuilder withEffects: effects.
+	board := boardBuilder buildBoard.
+	self assert: board numberOfTiles equals: 6
+	
+]
+
+{ #category : #tests }
 BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 	| board game |
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)

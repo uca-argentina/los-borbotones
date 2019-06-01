@@ -19,8 +19,9 @@ MoonWalk class >> withNumber: aNumber [
 
 { #category : #action }
 MoonWalk >> affect: aPlayer on: aGame [
-	aGame inactivePlayers
+	aGame players
 		do: [ :player | aGame moves: player stepsBackwards: numberN ]
+		without: aGame currentPlayer
 ]
 
 { #category : #initialization }
