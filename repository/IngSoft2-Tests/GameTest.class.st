@@ -12,6 +12,7 @@ Class {
 		'moonWalkWithProbability',
 		'atomicBombWithProbability',
 		'speedUpWithProbability',
+		'cardDealingTileWithProbability',
 		'timeMachineWithProbability',
 		'emptyWithProbability',
 		'wormHoleWithProbability'
@@ -47,8 +48,9 @@ GameTest >> setUp [
 	atomicBombWithProbability := AtomicBomb new -> 0.02.
 	speedUpWithProbability := SpeedUp new -> 0.15.
 	timeMachineWithProbability := TimeMachine new -> 0.08.
-	emptyWithProbability := Empty new -> 0.55.
-	wormHoleWithProbability := WormHole new -> 0.15
+	emptyWithProbability := Empty new -> 0.45.
+	wormHoleWithProbability := WormHole new -> 0.15.
+	cardDealingTileWithProbability := CardDealingTile new -> 0.1
 ]
 
 { #category : #tests }
@@ -61,6 +63,7 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	self deny: game hasEnded.
 	self
@@ -82,13 +85,13 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	game turnIsPlayed.
 	self
 		should: [ game turnIsPlayed ]
 		raise: GameModelError
-		withExceptionDo:
-			[ :signal | self assert: signal messageText equals: 'Game is over. ' ]
+		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Game is over. ' ]
 ]
 
 { #category : #tests }
@@ -101,6 +104,7 @@ GameTest >> testGameHasEnded [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	self deny: game hasEnded.
 	game turnIsPlayed.
@@ -117,6 +121,7 @@ GameTest >> testGameStartsWithA4StepsBoard [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	self assert: game board numberOfTiles equals: 4
 ]
@@ -131,6 +136,7 @@ GameTest >> testGetWinnerOnceGameIsFinished [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	self deny: game hasEnded.
 	game turnIsPlayed.
@@ -152,6 +158,7 @@ GameTest >> testIsRobertTurn [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	game turnIsPlayed.
 	game turnIsPlayed.
@@ -171,13 +178,36 @@ GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	game turnIsPlayed.
 	self
 		should: [ game turnIsPlayed ]
 		raise: GameModelError
-		withExceptionDo:
-			[ :signal | self assert: signal messageText equals: 'Game is over. ' ]
+		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Game is over. ' ]
+]
+
+{ #category : #tests }
+GameTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
+	| board fourFaceDummyDice |
+	players add: self juan.
+	players add: self lucas.
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+	dices := OrderedCollection with: fourFaceDummyDice.
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		deck: (LoadedCardDeck withCard: PermanentCard new)
+		using: dices.
+	game turnIsPlayed.
+	self assert: robert cards size equals: 3.
+	self assert: game currentPlayer name equals: 'Juan'.
+	self should: [robert playsPermanentCardOn: game] raise: GameModelError
+		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Cannot play permanent card if it is not your turn. ' ]
 ]
 
 { #category : #tests }
@@ -192,6 +222,7 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 		playedBy: players
 		withLapsToWin: 3
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	game turnIsPlayed.
 	self
@@ -202,8 +233,31 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 ]
 
 { #category : #tests }
+GameTest >> testPlayerPlaysInstantCardOutOfHisTurn [
+	| board fourFaceDummyDice |
+	players add: self juan.
+	players add: self lucas.
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+	dices := OrderedCollection with: fourFaceDummyDice.
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		deck: (LoadedCardDeck withCard:  InstantCard new)
+		using: dices.
+	game turnIsPlayed.
+	self assert: robert cards size equals: 3.
+	self assert: game currentPlayer name equals: 'Juan'.
+	robert playsInstantCard.
+	self assert: robert cards size equals: 2.
+]
+
+{ #category : #tests }
 GameTest >> testPlayersStartWithTwoCards [
-	| board tomas lucia|
+	| board tomas lucia |
 	tomas := Player named: 'Tomas'.
 	lucia := Player named: 'Lucia'.
 	players add: tomas.
@@ -215,11 +269,10 @@ GameTest >> testPlayersStartWithTwoCards [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
-	
-	game players do: [ :player | self assert: player cards size equals: 2 ].
-	
-	
+	game players
+		do: [ :player | self assert: player cards size equals: 2 ]
 ]
 
 { #category : #tests }
@@ -234,6 +287,7 @@ GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	game turnIsPlayed.
 	self
@@ -263,6 +317,7 @@ GameTest >> testThatRoberIsThirdLucasIsSecondAndJuanIsFirstInTheRanking [
 		playedBy: players
 		withLapsToWin: 5
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	game turnIsPlayed.
 	game changePositionOf: lucas toTile: 3 andLap: 4.

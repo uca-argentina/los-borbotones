@@ -29,6 +29,7 @@ Class {
 		'players',
 		'playersPositions',
 		'dices',
+		'deck',
 		'turnPosition',
 		'board',
 		'laps'
@@ -37,11 +38,12 @@ Class {
 }
 
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard using: dices [
+Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard deck: aDeck using: dices [
 	^ self new
 		initializeWithLaps: aLapsAmount
 			board: aBoard
 			players: aSetOfPlayers
+			cardDeck: aDeck
 			andUsing: dices;
 		yourself
 ]
@@ -68,6 +70,11 @@ Game >> currentPlayer [
 	^ players at: turnPosition
 ]
 
+{ #category : #presentation }
+Game >> deck [
+	^ deck
+]
+
 { #category : #status }
 Game >> hasEnded [
 	^ players
@@ -85,13 +92,14 @@ Game >> indexOf: aPlayer [
 ]
 
 { #category : #initialize }
-Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers andUsing: aSetOfDices [
+Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers cardDeck: aDeck andUsing: aSetOfDices [
 	players := aSetOfPlayers.
 	playersPositions := players
 		collect: [ :player | OrderedCollection with: (Position tile: 0 andLap: 0) ].
 	laps := aLapsAmount.
 	dices := aSetOfDices.
 	board := aBoard.
+	deck := aDeck.
 	turnPosition := 1
 ]
 

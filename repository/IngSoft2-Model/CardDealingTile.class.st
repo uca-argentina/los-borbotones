@@ -31,5 +31,5 @@ Class {
 
 { #category : #action }
 CardDealingTile >> affect: aPlayer on: aGame [
-	aPlayer take: (CardDeck randomDeck dealCards:1).
+	aPlayer take: (aGame deck  dealCards:1).
 ]

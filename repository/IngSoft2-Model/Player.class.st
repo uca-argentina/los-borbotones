@@ -50,12 +50,27 @@ Player >> cards [
 { #category : #initialize }
 Player >> initializeWithName: aName [
 	name := aName.
-	cards := CardDeck randomDeck dealCards: 2.
+	cards := StocasticCardDeck randomDeck dealCards: 2.
 ]
 
 { #category : #presentation }
 Player >> name [
 	^ name
+]
+
+{ #category : #action }
+Player >> playsInstantCard [
+ 	|cardToPlay|
+	cardToPlay := cards detect: [ :card | card isInstantCard ].
+	cards remove: cardToPlay.
+]
+
+{ #category : #action }
+Player >> playsPermanentCardOn: aGame [
+	| cardToPlay |
+	(aGame currentPlayer name = name) ifFalse: [ GameModelError signal: 'Cannot play permanent card if it is not your turn. ' ].
+	cardToPlay := cards detect: [ :card | card isPermanentCard ].
+	cards remove: cardToPlay
 ]
 
 { #category : #action }
