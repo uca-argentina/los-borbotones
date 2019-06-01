@@ -1,5 +1,7 @@
 "
-""soy un jugador""
+I deal cards.
+
+
 Please comment me using the following template inspired by Class Responsibility Collaborator (CRC) design:
 
 For the Class part:  State a one line summary. For example, ""I represent a paragraph of text"".
@@ -18,47 +20,16 @@ Public API and Key Messages
  
 Internal Representation and Key Implementation Points.
 
-    Instance Variables
-	dice:		<Object>
-	playerName:		<Object>
-
 
     Implementation Points
 "
 Class {
-	#name : #Player,
-	#superclass : #Object,
-	#instVars : [
-		'name',
-		'cards'
-	],
+	#name : #CardDealingTile,
+	#superclass : #Effect,
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #creation }
-Player class >> named: aName [
-	^ self new
-		initializeWithName: aName;
-		yourself
-]
-
-{ #category : #accessing }
-Player >> cards [
-	^cards copy
-]
-
-{ #category : #initialize }
-Player >> initializeWithName: aName [
-	name := aName.
-	cards := CardDeck randomDeck dealCards: 2.
-]
-
-{ #category : #presentation }
-Player >> name [
-	^ name
-]
-
 { #category : #action }
-Player >> take: aSetOfCards [
-	cards addAll: aSetOfCards.
+CardDealingTile >> affect: aPlayer on: aGame [
+	aPlayer take: (CardDeck randomDeck dealCards:1).
 ]

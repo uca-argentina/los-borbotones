@@ -11,6 +11,7 @@ Class {
 		'atomicBombWithProbability',
 		'speedUpWithProbability',
 		'timeMachineWithProbability',
+		'cardDealingTileWithProbability',
 		'emptyWithProbability',
 		'wormHoleWithProbability',
 		'moonWalkWithProbability'
@@ -36,8 +37,32 @@ BoardTest >> setUp [
 	atomicBombWithProbability := AtomicBomb new -> 0.02.
 	speedUpWithProbability := SpeedUp new -> 0.15.
 	timeMachineWithProbability := TimeMachine new -> 0.08.
-	emptyWithProbability := Empty new -> 0.55.
-	wormHoleWithProbability := WormHole new -> 0.15
+	emptyWithProbability := Empty new -> 0.45.
+	wormHoleWithProbability := WormHole new -> 0.15.
+	cardDealingTileWithProbability := CardDealingTile new -> 0.1
+]
+
+{ #category : #tests }
+BoardTest >> testCardDealingTileGivesPlayerOneCard [
+	| board game fourFaceDummyDice |
+	
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+		
+	dices := OrderedCollection with: fourFaceDummyDice.
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		using: dices.
+	
+	game turnIsPlayed.
+	self assert: robert cards size equals: 3.
+	game turnIsPlayed.
+	self assert: robert cards size equals: 4.
 ]
 
 { #category : #tests }

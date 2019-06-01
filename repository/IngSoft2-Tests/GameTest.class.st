@@ -202,6 +202,27 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 ]
 
 { #category : #tests }
+GameTest >> testPlayersStartWithTwoCards [
+	| board tomas lucia|
+	tomas := Player named: 'Tomas'.
+	lucia := Player named: 'Lucia'.
+	players add: tomas.
+	players add: lucia.
+	board := (LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		using: dices.
+	
+	game players do: [ :player | self assert: player cards size equals: 2 ].
+	
+	
+]
+
+{ #category : #tests }
 GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 	| lucia board |
 	lucia := Player named: 'Lucia'.

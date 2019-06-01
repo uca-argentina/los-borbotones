@@ -7,7 +7,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #initialization }
+{ #category : #action }
 Effect >> affect: aPlayer on: aGame [
 	^self subclassResponsibility.
 ]
