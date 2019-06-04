@@ -201,15 +201,19 @@ Game >> ranking [
 ]
 
 { #category : #actions }
+Game >> removePermanentCard: aCard [ 
+	permanentCards remove: aCard ifAbsent: [].
+]
+
+{ #category : #actions }
 Game >> rollDicesForCurrentPlayer [
-	| rollResult currentPlayer resultChangingCards |
+	| rollResult currentPlayer |
 	currentPlayer := self currentPlayer.
 	rollResult := dices sum: #roll.
-	
 	permanentCards
-		select: [ :card | card changesRollResult and: (card appliesTo: currentPlayer) ]
+		select:
+			[ :card | card changesRollResult and: (card appliesTo: currentPlayer) ]
 		thenDo: [ :card | rollResult := 0 max: rollResult + card quantity ].
-		
 	self moves: currentPlayer stepsFoward: rollResult.
 	board
 		effectAt: (self tilePositionOf: currentPlayer)

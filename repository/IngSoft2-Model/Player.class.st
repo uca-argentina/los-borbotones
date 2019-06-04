@@ -59,9 +59,10 @@ Player >> name [
 ]
 
 { #category : #action }
-Player >> playsInstantCard [
+Player >> playsInstantCardOn: aGame [
  	|cardToPlay|
 	cardToPlay := cards detect: [ :card | card isInstantCard ].
+	cardToPlay actOn: aGame.
 	cards remove: cardToPlay.
 ]
 
