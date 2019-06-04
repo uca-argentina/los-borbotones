@@ -14,7 +14,7 @@ Class {
 { #category : #creation }
 StocasticBoardBuilder class >> startBoardWithSteps: aStepsAmount [
 	^ self
-		new;
+		new 
 		initializeBoardWithSteps: aStepsAmount
 ]
 
@@ -30,15 +30,19 @@ StocasticBoardBuilder >> initializeBoardWithSteps: aStepsAmount [
 ]
 
 { #category : #creation }
-StocasticBoardBuilder >> withEffects: effectProbabilityPair [
-	| cumulativeProbability prob |
-	tiles := (1 to: steps)
-		collect: [ :index | 
-			cumulativeProbability := 0.
-			prob := random next.
-			effectProbabilityPair
-				detect:
-					[ :each | 
-					cumulativeProbability := cumulativeProbability + each value.
-					cumulativeProbability >= prob ] key ]
+StocasticBoardBuilder >> selectEffectFrom: effectProbabilityPairs [
+	| prob cumulativeProbability |
+	^ [ :index | cumulativeProbability := 0.
+	prob := random next.
+	effectProbabilityPairs
+		detect:
+			[ :each | 
+			cumulativeProbability := cumulativeProbability + each value.
+			cumulativeProbability >= prob ] key ]
+]
+
+{ #category : #creation }
+StocasticBoardBuilder >> withEffects: effectProbabilityPairs [
+	tiles := OrderedCollection new.
+	steps timesRepeat: [ tiles add: (self selectEffectFrom: effectProbabilityPairs)]
 ]

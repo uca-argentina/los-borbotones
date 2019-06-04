@@ -79,11 +79,6 @@ Game >> historyPositionOf: aPlayer [
 	^ playersPositions at: (self indexOf: aPlayer)
 ]
 
-{ #category : #actions }
-Game >> inactivePlayers [
-	^ players reject: [ :player | player = self currentPlayer ]
-]
-
 { #category : #components }
 Game >> indexOf: aPlayer [
 	^ players indexOf: aPlayer
