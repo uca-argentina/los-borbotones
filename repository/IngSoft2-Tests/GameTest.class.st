@@ -188,29 +188,6 @@ GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
 ]
 
 { #category : #tests }
-GameTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
-	| board fourFaceDummyDice |
-	players add: self juan.
-	players add: self lucas.
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
-	board := (LoadedBoardBuilder startBoardWithSteps: 10)
-		withEffectProbabilityAssociation: cardDealingTileWithProbability;
-		buildBoard.
-	dices := OrderedCollection with: fourFaceDummyDice.
-	game := Game
-		playedBy: players
-		withLapsToWin: 4
-		board: board
-		deck: (LoadedCardDeck withCard: PermanentCard new)
-		using: dices.
-	game turnIsPlayed.
-	self assert: robert cards size equals: 3.
-	self assert: game currentPlayer name equals: 'Juan'.
-	self should: [robert playsPermanentCardOn: game] raise: GameModelError
-		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Cannot play permanent card if it is not your turn. ' ]
-]
-
-{ #category : #tests }
 GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	| fiveFaceDummyDice board |
 	fiveFaceDummyDice := LoadedDice withFaces: 5 andValue: 5.
@@ -230,29 +207,6 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 		andLap: 3
 		for: robert
 		on: game
-]
-
-{ #category : #tests }
-GameTest >> testPlayerPlaysInstantCardOutOfHisTurn [
-	| board fourFaceDummyDice |
-	players add: self juan.
-	players add: self lucas.
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
-	board := (LoadedBoardBuilder startBoardWithSteps: 10)
-		withEffectProbabilityAssociation: cardDealingTileWithProbability;
-		buildBoard.
-	dices := OrderedCollection with: fourFaceDummyDice.
-	game := Game
-		playedBy: players
-		withLapsToWin: 4
-		board: board
-		deck: (LoadedCardDeck withCard:  InstantCard new)
-		using: dices.
-	game turnIsPlayed.
-	self assert: robert cards size equals: 3.
-	self assert: game currentPlayer name equals: 'Juan'.
-	robert playsInstantCard.
-	self assert: robert cards size equals: 2.
 ]
 
 { #category : #tests }

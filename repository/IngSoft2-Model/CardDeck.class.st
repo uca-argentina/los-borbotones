@@ -1,3 +1,6 @@
+"
+Abstract cardDeck.
+"
 Class {
 	#name : #CardDeck,
 	#superclass : #Object,

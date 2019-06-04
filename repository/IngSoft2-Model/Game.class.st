@@ -32,7 +32,8 @@ Class {
 		'deck',
 		'turnPosition',
 		'board',
-		'laps'
+		'laps',
+		'permanentCards'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -46,6 +47,11 @@ Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard d
 			cardDeck: aDeck
 			andUsing: dices;
 		yourself
+]
+
+{ #category : #actions }
+Game >> addPermanentCard: aPermanentCard [ 
+	permanentCards add: aPermanentCard 
 ]
 
 { #category : #'private-assertions' }
@@ -100,7 +106,9 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers car
 	dices := aSetOfDices.
 	board := aBoard.
 	deck := aDeck.
-	turnPosition := 1
+	permanentCards := OrderedCollection new.
+	turnPosition := 1.
+	players do: [ :player | player take: (deck dealCards: 2)]
 ]
 
 { #category : #actions }
@@ -165,6 +173,11 @@ Game >> newTotalStepsBackwardMadeBy: aPlayer calculatedWith: aStepsAmount [
 	^ (self totalStepsMadeOf: aPlayer) - aStepsAmount max: 0
 ]
 
+{ #category : #presentation }
+Game >> permanentCards [
+	^permanentCards copy.
+]
+
 { #category : #status }
 Game >> players [
 	^ players
@@ -189,9 +202,14 @@ Game >> ranking [
 
 { #category : #actions }
 Game >> rollDicesForCurrentPlayer [
-	| rollResult currentPlayer |
+	| rollResult currentPlayer resultChangingCards |
 	currentPlayer := self currentPlayer.
 	rollResult := dices sum: #roll.
+	
+	permanentCards
+		select: [ :card | card changesRollResult and: (card appliesTo: currentPlayer) ]
+		thenDo: [ :card | rollResult := 0 max: rollResult + card quantity ].
+		
 	self moves: currentPlayer stepsFoward: rollResult.
 	board
 		effectAt: (self tilePositionOf: currentPlayer)

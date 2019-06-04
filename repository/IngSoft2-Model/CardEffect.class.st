@@ -1,3 +1,6 @@
+"
+CardDeck.
+"
 Class {
 	#name : #CardEffect,
 	#superclass : #Object,

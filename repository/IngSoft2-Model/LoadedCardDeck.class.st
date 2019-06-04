@@ -1,3 +1,6 @@
+"
+LoadedCardDeck
+"
 Class {
 	#name : #LoadedCardDeck,
 	#superclass : #CardDeck,

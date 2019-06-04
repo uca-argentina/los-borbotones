@@ -1,3 +1,6 @@
+"
+CardCancellation
+"
 Class {
 	#name : #CardCancellation,
 	#superclass : #CardEffect,

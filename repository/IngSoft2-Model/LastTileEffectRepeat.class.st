@@ -1,3 +1,6 @@
+"
+LastTileEffectRepeat
+"
 Class {
 	#name : #LastTileEffectRepeat,
 	#superclass : #CardEffect,

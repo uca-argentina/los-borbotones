@@ -1,3 +1,6 @@
+"
+RedoLastCardEffect
+"
 Class {
 	#name : #RedoLastCardEffect,
 	#superclass : #CardEffect,

@@ -50,7 +50,7 @@ Player >> cards [
 { #category : #initialize }
 Player >> initializeWithName: aName [
 	name := aName.
-	cards := StocasticCardDeck randomDeck dealCards: 2.
+	cards := OrderedCollection new.
 ]
 
 { #category : #presentation }
@@ -70,6 +70,7 @@ Player >> playsPermanentCardOn: aGame [
 	| cardToPlay |
 	(aGame currentPlayer name = name) ifFalse: [ GameModelError signal: 'Cannot play permanent card if it is not your turn. ' ].
 	cardToPlay := cards detect: [ :card | card isPermanentCard ].
+	aGame addPermanentCard: cardToPlay.
 	cards remove: cardToPlay
 ]
 
