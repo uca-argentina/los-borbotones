@@ -37,13 +37,9 @@ CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	| board fourFaceDummyDice permanentCard juan |
 	juan := self juan.
 	players add: juan.
-	
 	permanentCard := PermanentCard
 		named: 'Overload'
 		withEffect: (ModifyDiceResult modifyResultBy: -1).
-		
-
-				
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
@@ -56,7 +52,7 @@ CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 		deck: (LoadedCardDeck withCard: permanentCard)
 		using: dices.
 	self assert: robert cards size equals: 2.
-	robert playsCard: permanentCard affecting: (OrderedCollection with: juan) on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	self assert: robert cards size equals: 1.
 	self assert: game permanentCards size equals: 1.
 	self assert: game currentPlayer name equals: 'Robert'.
@@ -69,7 +65,6 @@ CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	
 	self assert: (game positionOf: juan) tile equals: 4.
 	self assert: (game positionOf: juan) lap equals: 0
 ]
@@ -130,7 +125,7 @@ CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
 	self assert: game currentPlayer name equals: 'Juan'.
-	self should: [robert playsCard: permanentCard affecting: (OrderedCollection with: juan) on: game] raise: GameModelError
+	self should: [robert playsCard: permanentCard affecting: 'Juan' on: game] raise: GameModelError
 		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Cannot play permanent card if it is not your turn. ' ]
 ]
 
@@ -141,7 +136,7 @@ CardsTest >> testPlayerPlaysAccelerationCard [
 	players add: juan.
 	permanentCard := PermanentCard
 		named: 'Acceleration'
-		withEffect: (ModifyDiceResult modifyResultBy: 1).
+		withEffect: (ModifyDiceResultOfAllPlayers  modifyResultBy: 1).
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
@@ -174,7 +169,7 @@ CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 	players add: juan.
 	permanentCard := PermanentCard
 		named: 'Acceleration'
-		withEffect: (ModifyDiceResult modifyResultBy: 1).
+		withEffect: (ModifyDiceResultOfAllPlayers  modifyResultBy: 1).
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 9.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
@@ -250,7 +245,7 @@ CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
 	self assert: game currentPlayer name equals: 'Juan'.
-	robert playsCard: instantCard affecting: robert on: game.
+	robert playsCard: instantCard affecting: (OrderedCollection with: robert) on: game.
 	self assert: robert cards size equals: 2
 ]
 
@@ -274,7 +269,7 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
 		deck: (LoadedCardDeck withCard: permanentCard)
 		using: dices.
 	self assert: robert cards size equals: 2.
-	robert playsCard: permanentCard affecting: players on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	
 	self assert: robert cards size equals: 1.
 	self assert: game permanentCards size equals: 1.
@@ -305,8 +300,8 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
 		deck: (LoadedCardDeck withCard: permanentCard)
 		using: dices.
 	self assert: robert cards size equals: 2.
-	robert playsCard: permanentCard affecting: players on: game.
-	robert playsCard: permanentCard affecting: players on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	self assert: robert cards size equals: 0.
 	self assert: game permanentCards size equals: 2.
 	game turnIsPlayed.
@@ -369,15 +364,18 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 		
 	robert take: (secondDeck dealCards: 1).
 	self assert: game currentPlayer name equals: 'Robert'.
-	robert playsCard: permanentCard affecting: robert on: game. 
+	robert playsCard: permanentCard affecting: 'Robert' on: game. 
 	self assert: game permanentCards  size equals: 1.
 	robert playsCard: instantCard affecting: juan on: game.
 	self assert: game permanentCards  size equals: 2.
+	robert playsCard: instantCard affecting: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRepeatCard [
-	| board fourFaceDummyDice instantCard |
+	| board fourFaceDummyDice instantCard juan |
+	juan := self juan.
+	players add: juan.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	instantCard := InstantCard withEffect: RepeatLastTileEffect new.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
@@ -390,10 +388,9 @@ CardsTest >> testPlayerPlaysRepeatCard [
 		board: board
 		deck: (LoadedCardDeck withCard: instantCard)
 		using: dices.
-		
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
-	robert playsCard: instantCard affecting: players on: game
+	robert playsCard: instantCard affecting: 'Juan' on: game
 ]
 
 { #category : #tests }
@@ -416,7 +413,7 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
 		deck: (LoadedCardDeck withCard: permanentCard)
 		using: dices.
 	self assert: robert cards size equals: 2.
-	robert playsCard: permanentCard affecting: players on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	self assert: robert cards size equals: 1.
 	self assert: game permanentCards size equals: 1.
 	game turnIsPlayed.
@@ -447,9 +444,9 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 		using: dices.
 	robert take: (game deck dealCards: 1).
 	self assert: robert cards size equals: 3.
-	robert playsCard: permanentCard affecting: players on: game.
-	robert playsCard: permanentCard affecting: players on: game.
-	robert playsCard: permanentCard affecting: players on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	self assert: robert cards size equals: 0.
 	self assert: game permanentCards size equals: 3.
 	game turnIsPlayed.
@@ -482,6 +479,6 @@ CardsTest >> testRedoCardHasNoEffectWhenNoCardWasPlayedBefore [
 		
 	
 	self assert: game currentPlayer name equals: 'Robert'.
-	robert playsCard: instantCard affecting: robert on: game.
+	robert playsCard: instantCard affecting: (OrderedCollection with: robert) on: game.
 	self assert: game permanentCards  size equals: 0.
 ]

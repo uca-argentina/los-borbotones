@@ -61,6 +61,21 @@ Game >> assertGameHasNotEnded [
 		ifTrue: [ GameModelError signal: 'Game is over. ' ]
 ]
 
+{ #category : #asserting }
+Game >> assertValidPlayer: aPlayerName [
+	(players anySatisfy: [ :aPlayer | aPlayer name = aPlayerName  ])
+		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
+]
+
+{ #category : #'as yet unclassified' }
+Game >> assertValidPlayers: aPlayersCollection [
+	| playersName |
+	playersName := players collect: [ :player | player name ].
+	(playersName
+		includesAll: (aPlayersCollection collect: [ :player | player name ]))
+		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
+]
+
 { #category : #components }
 Game >> board [
 	^ board
@@ -212,6 +227,14 @@ Game >> removePermanentCard: aCard [
 	permanentCards remove: aCard ifAbsent: [].
 ]
 
+{ #category : #'as yet unclassified' }
+Game >> repeatLastEffectTileOf: aPlayer [ 
+	board
+		effectAt: (self tilePositionOf: aPlayer)
+		affect: aPlayer 
+		on: self
+]
+
 { #category : #actions }
 Game >> rollDicesForCurrentPlayer [
 	| rollResult currentPlayer |
@@ -226,6 +249,19 @@ Game >> rollDicesForCurrentPlayer [
 		effectAt: (self tilePositionOf: currentPlayer)
 		affect: currentPlayer
 		on: self
+]
+
+{ #category : #'as yet unclassified' }
+Game >> selectPlayerNamed: aPlayerName [
+	self assertValidPlayer: aPlayerName .
+	^ players
+		detect: [ :aPlayer | aPlayer name = aPlayerName ]
+]
+
+{ #category : #'as yet unclassified' }
+Game >> selectPlayers: aPlayersCollection [
+	self assertValidPlayers: aPlayersCollection.
+	^ players
 ]
 
 { #category : #action }

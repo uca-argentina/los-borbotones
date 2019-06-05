@@ -30,7 +30,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'name',
-		'cards'
+		'cards',
+		'playerChoosen'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -45,6 +46,11 @@ Player class >> named: aName [
 { #category : #accessing }
 Player >> cards [
 	^cards copy
+]
+
+{ #category : #'as yet unclassified' }
+Player >> choose: aPlayerName inOrderToPlayCardOn: aGame [
+	playerChoosen := aGame selectPlayers: aPlayerName
 ]
 
 { #category : #initialize }

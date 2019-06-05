@@ -6,8 +6,7 @@ Class {
 	#superclass : #Card,
 	#instVars : [
 		'name',
-		'effect',
-		'affectedPlayers'
+		'effect'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -18,15 +17,15 @@ PermanentCard class >> named: aName withEffect: aCardEffect [
 ]
 
 { #category : #action }
-PermanentCard >> actOn: aGame affect: aSetOfPlayers [ 
-	affectedPlayers :=  aSetOfPlayers.
+PermanentCard >> actOn: aGame affect: aSetOfPlayers [
+	effect actOn: aGame affect: aSetOfPlayers.
 	aGame setLastCard: self.
 	aGame addPermanentCard: self
 ]
 
 { #category : #presentation }
 PermanentCard >> appliesTo: aPlayer [ 
-	^affectedPlayers anySatisfy: [ :player | player name = aPlayer name ] 
+	^effect appliesTo: aPlayer
 ]
 
 { #category : #presentation }
@@ -37,8 +36,7 @@ PermanentCard >> changesRollResult [
 { #category : #initialize }
 PermanentCard >> initializeWithName: aName withEffect: aCardEffect [
 	name := aName.
-	effect := aCardEffect.
-	affectedPlayers := OrderedCollection new
+	effect := aCardEffect
 ]
 
 { #category : #presentation }

@@ -11,6 +11,11 @@ Class {
 DummyEffect >> actOn: aGame affect: aPlayer [ 
 ]
 
+{ #category : #'as yet unclassified' }
+DummyEffect >> appliesTo: aPlayer [
+	^ true
+]
+
 { #category : #presentation }
 DummyEffect >> changesRollResult [
 	^false

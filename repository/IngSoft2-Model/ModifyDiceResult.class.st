@@ -16,6 +16,22 @@ ModifyDiceResult class >> modifyResultBy: aQuantity [
 	^self new initializeWithModificationQuantity: aQuantity
 ]
 
+{ #category : #action }
+ModifyDiceResult >> actOn: aGame affect: aPlayer [
+	aGame assertValidPlayer: aPlayer.
+	affectedPlayer := aGame selectPlayerNamed: aPlayer
+]
+
+{ #category : #'as yet unclassified' }
+ModifyDiceResult >> affectedPlayers: aPlayer [
+	affectedPlayer := aPlayer
+]
+
+{ #category : #presentation }
+ModifyDiceResult >> appliesTo: aPlayer [
+	^ affectedPlayer name = aPlayer name
+]
+
 { #category : #presentation }
 ModifyDiceResult >> changesRollResult [
 	^true.

@@ -8,6 +8,8 @@ Class {
 }
 
 { #category : #action }
-RepeatLastTileEffect >> actOn: aGame affect: anObject [ 
-	self shouldBeImplemented.
+RepeatLastTileEffect >> actOn: aGame affect: aPlayerName [
+	| aPlayer |
+	aPlayer := aGame selectPlayerNamed: aPlayerName.
+	aGame repeatLastEffectTileOf: aPlayer
 ]
