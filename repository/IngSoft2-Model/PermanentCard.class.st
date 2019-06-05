@@ -39,6 +39,11 @@ PermanentCard >> initializeWithName: aName withEffect: aCardEffect [
 	effect := aCardEffect
 ]
 
+{ #category : #'as yet unclassified' }
+PermanentCard >> isDummyCard [
+	^ false
+]
+
 { #category : #presentation }
 PermanentCard >> isInstantCard [
 	^false.

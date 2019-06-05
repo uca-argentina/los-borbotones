@@ -350,7 +350,7 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 		withEffect: DummyEffect new.
 		
 	dices := OrderedCollection with: fourFaceDummyDice.
-	instantCard := InstantCard withEffect: (RedoLastCardEffect new).
+	instantCard := InstantCard withEffect: (RedoLastCardEffect withNoExcecutedCard).
 	loadedDeck := LoadedCardDeck withCard: instantCard.
 	
 	secondDeck := LoadedCardDeck withCard: permanentCard.
@@ -458,27 +458,26 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 
 { #category : #tests }
 CardsTest >> testRedoCardHasNoEffectWhenNoCardWasPlayedBefore [
-	| board fourFaceDummyDice instantCard  loadedDeck  |
+	| board fourFaceDummyDice instantCard loadedDeck |
 	players add: self juan.
-	
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
-		
 	dices := OrderedCollection with: fourFaceDummyDice.
-	instantCard := InstantCard withEffect: (RedoLastCardEffect new).
+	instantCard := InstantCard
+		withEffect: RedoLastCardEffect withNoExcecutedCard.
 	loadedDeck := LoadedCardDeck withCard: instantCard.
-	
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		deck: loadedDeck
 		using: dices.
-		
-	
 	self assert: game currentPlayer name equals: 'Robert'.
-	robert playsCard: instantCard affecting: (OrderedCollection with: robert) on: game.
-	self assert: game permanentCards  size equals: 0.
+	robert
+		playsCard: instantCard
+		affecting: (OrderedCollection with: robert)
+		on: game.
+	self assert: game permanentCards size equals: 0
 ]
