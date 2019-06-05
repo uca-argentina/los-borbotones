@@ -20,6 +20,7 @@ PermanentCard class >> named: aName withEffect: aCardEffect [
 { #category : #action }
 PermanentCard >> actOn: aGame affect: aSetOfPlayers [ 
 	affectedPlayers :=  aSetOfPlayers.
+	aGame setLastCard: self.
 	aGame addPermanentCard: self
 ]
 
@@ -53,4 +54,9 @@ PermanentCard >> isPermanentCard [
 { #category : #presentation }
 PermanentCard >> quantity [
 	^effect quantity
+]
+
+{ #category : #action }
+PermanentCard >> redoAffecting: anObject on: aGame [
+	self actOn: aGame affect: anObject.
 ]

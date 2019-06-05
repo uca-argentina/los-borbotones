@@ -9,6 +9,6 @@ Class {
 
 { #category : #action }
 Cancellation >> actOn: aGame affect: aPermanentCard [ 
-	aGame permanentCards notEmpty ifFalse: [ GameModelError signal: 'Cannot play Cancellation card if there are no active permanent cards. '].
+	aGame permanentCards isEmpty ifTrue: [ GameModelError signal: 'Cannot play Cancellation card if there are no active permanent cards. '].
 	aGame removePermanentCard: aPermanentCard 
 ]

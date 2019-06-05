@@ -341,17 +341,24 @@ CardsTest >> testPlayerPlaysPermanentCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
-	| board fourFaceDummyDice instantCard  loadedDeck  |
-	players add: self juan.
+	| board fourFaceDummyDice instantCard  loadedDeck  permanentCard secondDeck juan|
+	juan := self juan.
+	players add: juan.
 	
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
 		
+	permanentCard := PermanentCard
+		named: 'Test'
+		withEffect: DummyEffect new.
+		
 	dices := OrderedCollection with: fourFaceDummyDice.
 	instantCard := InstantCard withEffect: (RedoLastCardEffect new).
 	loadedDeck := LoadedCardDeck withCard: instantCard.
+	
+	secondDeck := LoadedCardDeck withCard: permanentCard.
 	
 	game := Game
 		playedBy: players
@@ -360,10 +367,33 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 		deck: loadedDeck
 		using: dices.
 		
-	
-	self assert: game currentPlayer name equals: 'Juan'.
-	robert playsInstantCardOn: game.
-	self assert: game permanentCards  size equals: 0.
+	robert take: (secondDeck dealCards: 1).
+	self assert: game currentPlayer name equals: 'Robert'.
+	robert playsCard: permanentCard affecting: robert on: game. 
+	self assert: game permanentCards  size equals: 1.
+	robert playsCard: instantCard affecting: juan on: game.
+	self assert: game permanentCards  size equals: 2.
+]
+
+{ #category : #tests }
+CardsTest >> testPlayerPlaysRepeatCard [
+	| board fourFaceDummyDice instantCard |
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	instantCard := InstantCard withEffect: RepeatLastTileEffect new.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+	dices := OrderedCollection with: fourFaceDummyDice.
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		deck: (LoadedCardDeck withCard: instantCard)
+		using: dices.
+		
+	game turnIsPlayed.
+	self assert: robert cards size equals: 3.
+	robert playsCard: instantCard affecting: players on: game
 ]
 
 { #category : #tests }
@@ -427,4 +457,31 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 	game turnIsPlayed.
 	self assert: (game positionOf: juan) tile equals: 6.
 	self assert: (game positionOf: juan) lap equals: 0
+]
+
+{ #category : #tests }
+CardsTest >> testRedoCardHasNoEffectWhenNoCardWasPlayedBefore [
+	| board fourFaceDummyDice instantCard  loadedDeck  |
+	players add: self juan.
+	
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+		
+	dices := OrderedCollection with: fourFaceDummyDice.
+	instantCard := InstantCard withEffect: (RedoLastCardEffect new).
+	loadedDeck := LoadedCardDeck withCard: instantCard.
+	
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		deck: loadedDeck
+		using: dices.
+		
+	
+	self assert: game currentPlayer name equals: 'Robert'.
+	robert playsCard: instantCard affecting: robert on: game.
+	self assert: game permanentCards  size equals: 0.
 ]

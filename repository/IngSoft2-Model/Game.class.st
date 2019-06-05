@@ -33,7 +33,8 @@ Class {
 		'turnPosition',
 		'board',
 		'laps',
-		'permanentCards'
+		'permanentCards',
+		'lastCardPlayed'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -106,9 +107,15 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers car
 	dices := aSetOfDices.
 	board := aBoard.
 	deck := aDeck.
+	lastCardPlayed := DummyCard new.
 	permanentCards := OrderedCollection new.
 	turnPosition := 1.
 	players do: [ :player | player take: (deck dealCards: 2)]
+]
+
+{ #category : #presentation }
+Game >> lastCardPlayed [
+	^ lastCardPlayed.
 ]
 
 { #category : #actions }
@@ -219,6 +226,11 @@ Game >> rollDicesForCurrentPlayer [
 		effectAt: (self tilePositionOf: currentPlayer)
 		affect: currentPlayer
 		on: self
+]
+
+{ #category : #action }
+Game >> setLastCard: aCard [ 
+	lastCardPlayed := aCard.
 ]
 
 { #category : #components }
