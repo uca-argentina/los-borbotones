@@ -58,6 +58,11 @@ Player >> name [
 	^ name
 ]
 
+{ #category : #'as yet unclassified' }
+Player >> playsAccelerationCardOn: aGame [ 
+	self shouldBeImplemented.
+]
+
 { #category : #action }
 Player >> playsInstantCardOn: aGame [
  	|cardToPlay|
@@ -67,10 +72,13 @@ Player >> playsInstantCardOn: aGame [
 ]
 
 { #category : #action }
-Player >> playsPermanentCardOn: aGame [
+Player >> playsPermanentCardOn: aGame affecting: aSetOfPlayers [
 	| cardToPlay |
-	(aGame currentPlayer name = name) ifFalse: [ GameModelError signal: 'Cannot play permanent card if it is not your turn. ' ].
+	aGame currentPlayer name = name
+		ifFalse: [ GameModelError
+				signal: 'Cannot play permanent card if it is not your turn. ' ].
 	cardToPlay := cards detect: [ :card | card isPermanentCard ].
+	cardToPlay affect: aSetOfPlayers.
 	aGame addPermanentCard: cardToPlay.
 	cards remove: cardToPlay
 ]

@@ -13,8 +13,13 @@ Class {
 }
 
 { #category : #creation }
-PermanentCard class >> named: aName withEffect: aCardEffect affect: aSetOfPlayers [ 
-	^self new initializeWithName: aName withEffect: aCardEffect  affecting: aSetOfPlayers
+PermanentCard class >> named: aName withEffect: aCardEffect [ 
+	^self new initializeWithName: aName withEffect: aCardEffect
+]
+
+{ #category : #'as yet unclassified' }
+PermanentCard >> affect: aSetOfPlayers [
+	affectedPlayers := aSetOfPlayers
 ]
 
 { #category : #presentation }
@@ -28,10 +33,10 @@ PermanentCard >> changesRollResult [
 ]
 
 { #category : #initialize }
-PermanentCard >> initializeWithName: aName withEffect: aCardEffect affecting: aSetOfPlayers [
+PermanentCard >> initializeWithName: aName withEffect: aCardEffect [
 	name := aName.
 	effect := aCardEffect.
-	affectedPlayers := aSetOfPlayers
+	affectedPlayers := OrderedCollection new
 ]
 
 { #category : #presentation }
