@@ -20,6 +20,11 @@ InstantCard >> actOn: aGame [
 	^effect actOn: aGame
 ]
 
+{ #category : #action }
+InstantCard >> actOn: aGame affect: anObject [ 
+	effect actOn: aGame affect: anObject  
+]
+
 { #category : #initialization }
 InstantCard >> initializeWithEffect: aDummyEffect [ 
 	effect := aDummyEffect 

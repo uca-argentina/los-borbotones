@@ -16,11 +16,6 @@ ModifyDiceResult class >> modifyResultBy: aQuantity [
 	^self new initializeWithModificationQuantity: aQuantity
 ]
 
-{ #category : #creation }
-ModifyDiceResult class >> modifyResultBy: aQuantity affect: aPlayer [ 
-	^self new initializeWithModificationQuantity: aQuantity affecting: aPlayer
-]
-
 { #category : #presentation }
 ModifyDiceResult >> changesRollResult [
 	^true.

@@ -8,11 +8,15 @@ Class {
 }
 
 { #category : #action }
-DummyEffect >> actOn: aGame [ 
-	
+DummyEffect >> actOn: aGame affect: aPlayer [ 
 ]
 
 { #category : #presentation }
 DummyEffect >> changesRollResult [
 	^false
+]
+
+{ #category : #presentation }
+DummyEffect >> quantity [
+
 ]

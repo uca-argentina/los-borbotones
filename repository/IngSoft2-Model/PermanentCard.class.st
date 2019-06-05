@@ -17,9 +17,10 @@ PermanentCard class >> named: aName withEffect: aCardEffect [
 	^self new initializeWithName: aName withEffect: aCardEffect
 ]
 
-{ #category : #'as yet unclassified' }
-PermanentCard >> affect: aSetOfPlayers [
-	affectedPlayers := aSetOfPlayers
+{ #category : #action }
+PermanentCard >> actOn: aGame affect: aSetOfPlayers [ 
+	affectedPlayers :=  aSetOfPlayers.
+	aGame addPermanentCard: self
 ]
 
 { #category : #presentation }
