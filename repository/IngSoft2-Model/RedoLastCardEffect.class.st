@@ -19,14 +19,20 @@ RedoLastCardEffect class >> withNoExcecutedCard [
 
 { #category : #action }
 RedoLastCardEffect >> actOn: aGame affect: aPlayer [
-	executedCard isDummyCard
-		ifTrue: [ aGame lastCardPlayed redoAffecting: aPlayer on: aGame.
-			executedCard := aGame lastCardPlayed ]
-		ifFalse: [ executedCard redoAffecting: aPlayer on: aGame.
-			executedCard := aGame lastCardPlayed ]
+	| cardToRedo |
+	cardToRedo := self selectCardToRedoBasedOnPreviousRedosAnd: aGame.
+	cardToRedo redoAffecting: aPlayer on: aGame.
+	executedCard := aGame lastCardPlayed
 ]
 
 { #category : #initialization }
 RedoLastCardEffect >> initializeWithDummyCard [
 	executedCard := DummyCard new
+]
+
+{ #category : #action }
+RedoLastCardEffect >> selectCardToRedoBasedOnPreviousRedosAnd: aGame [
+	^ executedCard isDummyCard
+		ifTrue: [ aGame lastCardPlayed ]
+		ifFalse: [ executedCard ]
 ]

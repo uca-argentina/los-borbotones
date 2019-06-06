@@ -19,7 +19,7 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #tests }
+{ #category : #asserting }
 BoardTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
 	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
 	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap

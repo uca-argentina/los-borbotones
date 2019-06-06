@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #actions }
+CardDeck >> dealACard [
+	self subclassResponsibility .
+]
+
+{ #category : #actions }
 CardDeck >> dealCards: aCardsAmount [
 	^self subclassResponsibility.
 ]

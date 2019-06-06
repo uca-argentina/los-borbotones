@@ -16,6 +16,11 @@ LoadedCardDeck class >> withCard: aCard [
 ]
 
 { #category : #actions }
+LoadedCardDeck >> dealACard [
+	^self dealCards:1
+]
+
+{ #category : #actions }
 LoadedCardDeck >> dealCards: aCardsAmount [
 	| cardsToBeDelt |
 	cardsToBeDelt := OrderedCollection new.

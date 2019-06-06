@@ -10,10 +10,18 @@ Class {
 		'game',
 		'robert',
 		'cardDealingTileWithProbability',
-		'emptyWithProbability'
+		'emptyWithProbability',
+		'juan',
+		'fourFaceDummyDice'
 	],
 	#category : #'IngSoft2-Tests'
 }
+
+{ #category : #asserting }
+CardsTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
+	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
+	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
+]
 
 { #category : #tests }
 CardsTest >> juan [
@@ -22,25 +30,22 @@ CardsTest >> juan [
 
 { #category : #running }
 CardsTest >> setUp [
-		| fourFaceDummyDice |
 	super setUp.
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
+	juan := self juan.
 	emptyWithProbability := Empty new -> 0.45.
-	players := OrderedCollection with: robert.
+	players := OrderedCollection with: robert with:juan.
 	cardDealingTileWithProbability := CardDealingTile new -> 0.1
 ]
 
 { #category : #tests }
 CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
-	| board fourFaceDummyDice permanentCard juan |
-	juan := self juan.
-	players add: juan.
+	| board  permanentCard  |
 	permanentCard := PermanentCard
 		named: 'Overload'
 		withEffect: (ModifyDiceResult modifyResultBy: -1).
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
@@ -59,21 +64,17 @@ CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 2.
-	self assert: (game positionOf: juan) lap equals: 0.
+	self assertPosition: 2 andLap: 0 for: juan on: game.
 	self assert: game currentPlayer name equals: 'Robert'.
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 4.
-	self assert: (game positionOf: juan) lap equals: 0
+	self assertPosition: 4 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
-	| board fourFaceDummyDice instantCard permanentCard loadedDeck |
-	players add: self juan.
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	| board  instantCard permanentCard loadedDeck |
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
@@ -105,10 +106,7 @@ CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
 
 { #category : #tests }
 CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
-	| board fourFaceDummyDice juan permanentCard|
-	juan := self juan.
-	players add: juan.
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	| board permanentCard|
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
@@ -131,9 +129,7 @@ CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCard [
-	| board fourFaceDummyDice permanentCard juan |
-	juan := self juan.
-	players add: juan.
+	| board  permanentCard  |
 	permanentCard := PermanentCard
 		named: 'Acceleration'
 		withEffect: (ModifyDiceResultOfAllPlayers  modifyResultBy: 1).
@@ -156,17 +152,13 @@ CardsTest >> testPlayerPlaysAccelerationCard [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 4.
-	self assert: (game positionOf: juan) lap equals: 0.
-	self assert: (game positionOf: robert) tile equals: 4.
-	self assert: (game positionOf: robert) lap equals: 0
+	self assertPosition: 4 andLap: 0 for: juan on: game.
+	self assertPosition: 4 andLap: 0 for: robert on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
-	| board fourFaceDummyDice permanentCard juan |
-	juan := self juan.
-	players add: juan.
+	| board  permanentCard  |
 	permanentCard := PermanentCard
 		named: 'Acceleration'
 		withEffect: (ModifyDiceResultOfAllPlayers  modifyResultBy: 1).
@@ -188,16 +180,13 @@ CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 0.
-	self assert: (game positionOf: juan) lap equals: 1.
-	self assert: (game positionOf: robert) tile equals: 0.
-	self assert: (game positionOf: robert) lap equals: 1
+	self assertPosition: 0 andLap: 1 for: juan on: game.
+	self assertPosition: 0 andLap: 1 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
-	| board fourFaceDummyDice instantCard permanentCard loadedDeck secondLoadedDeck |
-	players add: self juan.
+	| board  instantCard permanentCard loadedDeck secondLoadedDeck |
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
@@ -228,8 +217,7 @@ CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
-	| board fourFaceDummyDice instantCard |
-	players add: self juan.
+	| board  instantCard |
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
@@ -251,9 +239,7 @@ CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
-	| board fourFaceDummyDice permanentCard juan |
-	juan := self juan.
-	players add: juan.
+	| board  permanentCard  |
 	permanentCard := PermanentCard
 		named: 'Overload'
 		withEffect: (ModifyDiceResult modifyResultBy: -2).
@@ -276,15 +262,12 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 1.
-	self assert: (game positionOf: juan) lap equals: 0
+	self assertPosition: 1 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
-	| board fourFaceDummyDice permanentCard juan |
-	juan := self juan.
-	players add: juan.
+	| board  permanentCard  |
 	permanentCard := PermanentCard
 		named: 'Overload'
 		withEffect: (ModifyDiceResult modifyResultBy: -1).
@@ -307,14 +290,13 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 1.
-	self assert: (game positionOf: juan) lap equals: 0
+	self assertPosition: 1 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysPermanentCard [
-	| board fourFaceDummyDice permanentCard |
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	| board  permanentCard |
+	players remove:juan.
 	permanentCard := PermanentCard
 		named: 'Test'
 		withEffect: DummyEffect new.
@@ -336,11 +318,8 @@ CardsTest >> testPlayerPlaysPermanentCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
-	| board fourFaceDummyDice instantCard  loadedDeck  permanentCard secondDeck juan|
-	juan := self juan.
-	players add: juan.
+	| board  instantCard  loadedDeck  permanentCard secondDeck |
 	
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
@@ -373,10 +352,7 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRepeatCard [
-	| board fourFaceDummyDice instantCard juan |
-	juan := self juan.
-	players add: juan.
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	| board instantCard  |
 	instantCard := InstantCard withEffect: RepeatLastTileEffect new.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
@@ -395,9 +371,7 @@ CardsTest >> testPlayerPlaysRepeatCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
-	| board fourFaceDummyDice permanentCard juan |
-	juan := self juan.
-	players add: juan.
+	| board permanentCard |
 	permanentCard := PermanentCard
 		named: 'Speed'
 		withEffect: (ModifyDiceResult modifyResultBy: 1).
@@ -419,15 +393,12 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 4.
-	self assert: (game positionOf: juan) lap equals: 0
+	self assertPosition: 4 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
-	| board fourFaceDummyDice permanentCard juan |
-	juan := self juan.
-	players add: juan.
+	| board  permanentCard  |
 	permanentCard := PermanentCard
 		named: 'Speed'
 		withEffect: (ModifyDiceResult modifyResultBy: 1).
@@ -452,15 +423,12 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assert: (game positionOf: juan) tile equals: 6.
-	self assert: (game positionOf: juan) lap equals: 0
+	self assertPosition: 6 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testRedoCardHasNoEffectWhenNoCardWasPlayedBefore [
-	| board fourFaceDummyDice instantCard loadedDeck |
-	players add: self juan.
-	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	| board instantCard loadedDeck |
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.

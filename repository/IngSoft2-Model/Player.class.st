@@ -48,7 +48,7 @@ Player >> cards [
 	^cards copy
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 Player >> choose: aPlayerName inOrderToPlayCardOn: aGame [
 	playerChoosen := aGame selectPlayers: aPlayerName
 ]

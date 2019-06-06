@@ -21,10 +21,6 @@ ModifyDiceResultOfAllPlayers >> actOn: aGame affect: aPlayer [
 	affectedPlayers := aGame players 
 ]
 
-{ #category : #'as yet unclassified' }
-ModifyDiceResultOfAllPlayers >> affectedPlayers: aPlayer [
-]
-
 { #category : #presentation }
 ModifyDiceResultOfAllPlayers >> appliesTo: aPlayer [
 	^ true

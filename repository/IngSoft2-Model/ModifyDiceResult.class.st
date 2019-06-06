@@ -22,11 +22,6 @@ ModifyDiceResult >> actOn: aGame affect: aPlayer [
 	affectedPlayer := aGame selectPlayerNamed: aPlayer
 ]
 
-{ #category : #'as yet unclassified' }
-ModifyDiceResult >> affectedPlayers: aPlayer [
-	affectedPlayer := aPlayer
-]
-
 { #category : #presentation }
 ModifyDiceResult >> appliesTo: aPlayer [
 	^ affectedPlayer name = aPlayer name
@@ -42,7 +37,7 @@ ModifyDiceResult >> initializeWithModificationQuantity: aQuantity [
 	quantity := aQuantity.
 ]
 
-{ #category : #presentation }
+{ #category : #accessing }
 ModifyDiceResult >> quantity [
 	^ quantity
 ]

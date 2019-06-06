@@ -12,7 +12,7 @@ DummyCard >> actOn: aGame affect: aCollection [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #presentation }
 DummyCard >> isDummyCard [
 	^ true
 ]

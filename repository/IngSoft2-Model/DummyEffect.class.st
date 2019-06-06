@@ -11,7 +11,7 @@ Class {
 DummyEffect >> actOn: aGame affect: aPlayer [ 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #action }
 DummyEffect >> appliesTo: aPlayer [
 	^ true
 ]
