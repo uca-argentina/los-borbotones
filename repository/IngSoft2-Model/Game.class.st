@@ -29,27 +29,51 @@ Class {
 		'players',
 		'playersPositions',
 		'dices',
+		'deck',
 		'turnPosition',
 		'board',
-		'laps'
+		'laps',
+		'permanentCards',
+		'lastCardPlayed'
 	],
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard using: dices [
+Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard deck: aDeck using: dices [
 	^ self new
 		initializeWithLaps: aLapsAmount
 			board: aBoard
 			players: aSetOfPlayers
+			cardDeck: aDeck
 			andUsing: dices;
 		yourself
+]
+
+{ #category : #actions }
+Game >> addPermanentCard: aPermanentCard [ 
+	permanentCards add: aPermanentCard 
 ]
 
 { #category : #'private-assertions' }
 Game >> assertGameHasNotEnded [
 	self hasEnded
 		ifTrue: [ GameModelError signal: 'Game is over. ' ]
+]
+
+{ #category : #asserting }
+Game >> assertValidPlayer: aPlayerName [
+	(players anySatisfy: [ :aPlayer | aPlayer name = aPlayerName  ])
+		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
+]
+
+{ #category : #'private-assertions' }
+Game >> assertValidPlayers: aPlayersCollection [
+	| playersName |
+	playersName := players collect: [ :player | player name ].
+	(playersName
+		includesAll: (aPlayersCollection collect: [ :player | player name ]))
+		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
 ]
 
 { #category : #components }
@@ -66,6 +90,11 @@ Game >> changePositionOf: aPlayer toTile: aNumberOfTile andLap: aNumberOfLap [
 { #category : #status }
 Game >> currentPlayer [
 	^ players at: turnPosition
+]
+
+{ #category : #presentation }
+Game >> deck [
+	^ deck
 ]
 
 { #category : #status }
@@ -85,14 +114,23 @@ Game >> indexOf: aPlayer [
 ]
 
 { #category : #initialize }
-Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers andUsing: aSetOfDices [
+Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers cardDeck: aDeck andUsing: aSetOfDices [
 	players := aSetOfPlayers.
 	playersPositions := players
 		collect: [ :player | OrderedCollection with: (Position tile: 0 andLap: 0) ].
 	laps := aLapsAmount.
 	dices := aSetOfDices.
 	board := aBoard.
-	turnPosition := 1
+	deck := aDeck.
+	lastCardPlayed := DummyCard new.
+	permanentCards := OrderedCollection new.
+	turnPosition := 1.
+	players do: [ :player | player take: (deck dealCards: 2)]
+]
+
+{ #category : #presentation }
+Game >> lastCardPlayed [
+	^ lastCardPlayed.
 ]
 
 { #category : #actions }
@@ -157,6 +195,11 @@ Game >> newTotalStepsBackwardMadeBy: aPlayer calculatedWith: aStepsAmount [
 	^ (self totalStepsMadeOf: aPlayer) - aStepsAmount max: 0
 ]
 
+{ #category : #presentation }
+Game >> permanentCards [
+	^permanentCards copy.
+]
+
 { #category : #status }
 Game >> players [
 	^ players
@@ -180,15 +223,50 @@ Game >> ranking [
 ]
 
 { #category : #actions }
+Game >> removePermanentCard: aCard [ 
+	permanentCards remove: aCard ifAbsent: [].
+]
+
+{ #category : #actions }
+Game >> repeatLastEffectTileOf: aPlayer [ 
+	board
+		effectAt: (self tilePositionOf: aPlayer)
+		affect: aPlayer 
+		on: self
+]
+
+{ #category : #actions }
 Game >> rollDicesForCurrentPlayer [
 	| rollResult currentPlayer |
 	currentPlayer := self currentPlayer.
 	rollResult := dices sum: #roll.
+	permanentCards
+		select:
+			[ :card | card changesRollResult and: (card appliesTo: currentPlayer) ]
+		thenDo: [ :card | rollResult := 0 max: rollResult + card quantity ].
 	self moves: currentPlayer stepsFoward: rollResult.
 	board
 		effectAt: (self tilePositionOf: currentPlayer)
 		affect: currentPlayer
 		on: self
+]
+
+{ #category : #actions }
+Game >> selectPlayerNamed: aPlayerName [
+	self assertValidPlayer: aPlayerName .
+	^ players
+		detect: [ :aPlayer | aPlayer name = aPlayerName ]
+]
+
+{ #category : #actions }
+Game >> selectPlayers: aPlayersCollection [
+	self assertValidPlayers: aPlayersCollection.
+	^ players
+]
+
+{ #category : #actions }
+Game >> setLastCard: aCard [ 
+	lastCardPlayed := aCard.
 ]
 
 { #category : #components }

@@ -11,6 +11,7 @@ Class {
 		'atomicBombWithProbability',
 		'speedUpWithProbability',
 		'timeMachineWithProbability',
+		'cardDealingTileWithProbability',
 		'emptyWithProbability',
 		'wormHoleWithProbability',
 		'moonWalkWithProbability'
@@ -18,7 +19,7 @@ Class {
 	#category : #'IngSoft2-Tests'
 }
 
-{ #category : #tests }
+{ #category : #asserting }
 BoardTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
 	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
 	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
@@ -36,8 +37,29 @@ BoardTest >> setUp [
 	atomicBombWithProbability := AtomicBomb new -> 0.02.
 	speedUpWithProbability := SpeedUp new -> 0.15.
 	timeMachineWithProbability := TimeMachine new -> 0.08.
-	emptyWithProbability := Empty new -> 0.55.
-	wormHoleWithProbability := WormHole new -> 0.15
+	emptyWithProbability := Empty new -> 0.45.
+	wormHoleWithProbability := WormHole new -> 0.15.
+	cardDealingTileWithProbability := CardDealingTile new -> 0.1
+]
+
+{ #category : #tests }
+BoardTest >> testCardDealingTileGivesPlayerOneCard [
+	| board game fourFaceDummyDice |
+	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+	dices := OrderedCollection with: fourFaceDummyDice.
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		deck: StocasticCardDeck randomDeck
+		using: dices.
+	game turnIsPlayed.
+	self assert: robert cards size equals: 3.
+	game turnIsPlayed.
+	self assert: robert cards size equals: 4
 ]
 
 { #category : #tests }
@@ -55,6 +77,7 @@ BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
+		deck: StocasticCardDeck randomDeck
 		using: dices.
 	game changePositionOf: lucas toTile: 2 andLap: 0.
 	game changePositionOf: juan toTile: 3 andLap: 3.
@@ -80,6 +103,7 @@ BoardTest >> testMoonWalkEffectMakesInactivePlayersGoBackNSteps [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
+		deck: StocasticCardDeck randomDeck
 		using: dices.
 	game changePositionOf: lucas toTile: 7 andLap: 3.
 	game changePositionOf: juan toTile: 2 andLap: 1.
@@ -112,6 +136,7 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
+		deck: StocasticCardDeck randomDeck 
 		using: dices.
 	self assert: (game tilePositionOf: robert) equals: 0.
 	game turnIsPlayed.
@@ -144,6 +169,7 @@ BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
+		deck: StocasticCardDeck randomDeck
 		using: dices.
 	game changePositionOf: robert toTile: 2 andLap: 0.
 	game changePositionOf: robert toTile: 3 andLap: 0.
@@ -164,6 +190,7 @@ BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
+		deck: StocasticCardDeck randomDeck
 		using: dices.
 	game changePositionOf: robert toTile: 1 andLap: 0.
 	self assert: (game tilePositionOf: robert) equals: 1.

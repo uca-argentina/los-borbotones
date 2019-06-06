@@ -29,7 +29,9 @@ Class {
 	#name : #Player,
 	#superclass : #Object,
 	#instVars : [
-		'name'
+		'name',
+		'cards',
+		'playerChoosen'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -41,12 +43,44 @@ Player class >> named: aName [
 		yourself
 ]
 
+{ #category : #accessing }
+Player >> cards [
+	^cards copy
+]
+
+{ #category : #action }
+Player >> choose: aPlayerName inOrderToPlayCardOn: aGame [
+	playerChoosen := aGame selectPlayers: aPlayerName
+]
+
 { #category : #initialize }
 Player >> initializeWithName: aName [
-	name := aName
+	name := aName.
+	cards := OrderedCollection new.
 ]
 
 { #category : #presentation }
 Player >> name [
 	^ name
+]
+
+{ #category : #action }
+Player >> playsCard: aCard affecting: anObject on: aGame [
+	| cardToPlay |
+	cardToPlay := cards
+		detect: [ :card | card = aCard ]
+		ifNone: [ GameModelError signal: 'No such card in hand. ' ].
+	
+	aCard isPermanentCard ifTrue: [  	
+	aGame currentPlayer name = name
+		ifFalse: [ GameModelError
+				signal: 'Cannot play permanent card if it is not your turn. ' ]].
+			
+	cardToPlay actOn: aGame affect: anObject.
+	cards remove: cardToPlay
+]
+
+{ #category : #action }
+Player >> take: aSetOfCards [
+	cards addAll: aSetOfCards.
 ]

@@ -1,13 +1,13 @@
 "
-An effect.
+A card.
 "
 Class {
-	#name : #Effect,
+	#name : #Card,
 	#superclass : #Object,
 	#category : #'IngSoft2-Model'
 }
 
 { #category : #action }
-Effect >> affect: aPlayer on: aGame [
+Card >> actOn: aGame affect: aCollection [ 
 	^self subclassResponsibility.
 ]

@@ -10,7 +10,7 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #creation }
 MoonWalk class >> withNumber: aNumber [ 
 	^ self new
 		initializeWithNumber: aNumber;
