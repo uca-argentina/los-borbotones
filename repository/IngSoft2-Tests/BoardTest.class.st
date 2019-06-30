@@ -43,6 +43,21 @@ BoardTest >> setUp [
 ]
 
 { #category : #tests }
+BoardTest >> stocasticCardDeck [
+	|cards redo overload speed acceleration cancellation repeat|
+	
+	overload := PermanentCard named: 'Overload' withEffect: (ModifyDiceResult modifyResultBy: -2).
+	speed := PermanentCard named: 'Speed' withEffect: (ModifyDiceResult modifyResultBy: 1).
+	acceleration := PermanentCard named: 'Acceleration' withEffect: (ModifyDiceResultOfAllPlayers  modifyResultBy: 1).
+	redo := InstantCard withEffect: RedoLastCardEffect withNoExcecutedCard.
+	cancellation := InstantCard withEffect: Cancellation new.
+	repeat := InstantCard withEffect: RedoLastCardEffect new.
+
+	cards := OrderedCollection with: overload with: speed with: redo with: acceleration with: repeat 	with: cancellation.
+	^CardDeck withCards: cards.
+]
+
+{ #category : #tests }
 BoardTest >> testCardDealingTileGivesPlayerOneCard [
 	| board game fourFaceDummyDice |
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
@@ -54,7 +69,7 @@ BoardTest >> testCardDealingTileGivesPlayerOneCard [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: (self stocasticCardDeck)
 		using: dices.
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
@@ -77,7 +92,7 @@ BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck 
 		using: dices.
 	game changePositionOf: lucas toTile: 2 andLap: 0.
 	game changePositionOf: juan toTile: 3 andLap: 3.
@@ -103,7 +118,7 @@ BoardTest >> testMoonWalkEffectMakesInactivePlayersGoBackNSteps [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck
 		using: dices.
 	game changePositionOf: lucas toTile: 7 andLap: 3.
 	game changePositionOf: juan toTile: 2 andLap: 1.
@@ -136,7 +151,7 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck 
 		using: dices.
 	self assert: (game tilePositionOf: robert) equals: 0.
 	game turnIsPlayed.
@@ -144,19 +159,50 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 ]
 
 { #category : #tests }
+BoardTest >> testStocasticBoardCantBeBuiltWhenSumOfProbabilitiesAreLessThanOne [
+	| boardBuilder  effects |
+	boardBuilder := StocasticBoardBuilder startBoardWithSteps: 6.
+	effects := OrderedCollection new.
+	effects add:  moonWalkWithProbability.
+	effects add:  atomicBombWithProbability.
+	effects add:  timeMachineWithProbability.
+	effects add:  speedUpWithProbability. 
+	effects add:  emptyWithProbability.
+	effects add:  wormHoleWithProbability.
+	self should: [ boardBuilder withEffects: effects. ] raise: GameModelError withExceptionDo: 
+	[ :exception | self assert: exception messageText equals: 'Sum of probabilities must be equal to 1.'  ]
+	
+]
+
+{ #category : #tests }
+BoardTest >> testStocasticBoardCantBeBuiltWithInvalidProbabilities [
+	| boardBuilder effects |
+	moonWalkWithProbability := (MoonWalk withNumber: 5) -> -0.5.
+	atomicBombWithProbability := AtomicBomb new -> 1.5.
+	boardBuilder := StocasticBoardBuilder startBoardWithSteps: 6.
+	effects := OrderedCollection new.
+	effects add:  moonWalkWithProbability.
+	effects add:  atomicBombWithProbability.
+	self should: [ boardBuilder withEffects: effects. ] raise: GameModelError withExceptionDo: 
+	[ :exception | self assert: exception messageText equals: 'Probabilities must be between 0 and 1.'  ]
+	
+]
+
+{ #category : #tests }
 BoardTest >> testStocasticBoardIsValid [
 	| boardBuilder board effects |
 	boardBuilder := StocasticBoardBuilder startBoardWithSteps: 6.
-	effects := OrderedCollection
-		with: moonWalkWithProbability
-		with: atomicBombWithProbability
-		with: timeMachineWithProbability
-		with: emptyWithProbability
-		with: wormHoleWithProbability.
+	effects := OrderedCollection new.
+	effects add:  moonWalkWithProbability.
+	effects add:  atomicBombWithProbability.
+	effects add:  timeMachineWithProbability.
+	effects add:  speedUpWithProbability. 
+	effects add:  emptyWithProbability.
+	effects add:  wormHoleWithProbability.
+	effects add: cardDealingTileWithProbability.
 	boardBuilder withEffects: effects.
 	board := boardBuilder buildBoard.
 	self assert: board numberOfTiles equals: 6
-	
 ]
 
 { #category : #tests }
@@ -169,7 +215,7 @@ BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck
 		using: dices.
 	game changePositionOf: robert toTile: 2 andLap: 0.
 	game changePositionOf: robert toTile: 3 andLap: 0.
@@ -190,7 +236,7 @@ BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck
 		using: dices.
 	game changePositionOf: robert toTile: 1 andLap: 0.
 	self assert: (game tilePositionOf: robert) equals: 1.

@@ -64,7 +64,7 @@ Game >> assertGameHasNotEnded [
 { #category : #asserting }
 Game >> assertValidPlayer: aPlayerName [
 	(players anySatisfy: [ :aPlayer | aPlayer name = aPlayerName  ])
-		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
+		ifFalse: [ GameModelError signal: 'There is no such player.' ]
 ]
 
 { #category : #'private-assertions' }
@@ -141,58 +141,39 @@ Game >> moveToPreviousPosition: aPlayer [
 ]
 
 { #category : #actions }
-Game >> moves: aPlayer stepsBackwards: aStepsAmount [
+Game >> moves: aPlayer steps: aStepsAmount [
 	| newPosition newLap playerHistoryPosition |
 	playerHistoryPosition := self historyPositionOf: aPlayer.
 	newPosition := self
-		newPositionBackwardFor: aPlayer
+		newPositionFor: aPlayer
 		calculatedWith: aStepsAmount.
-	newLap := self newLapBackwardFor: aPlayer calculatedWith: newPosition.
+	newLap := self newLapFor: aPlayer calculatedWith: aStepsAmount.
 	playerHistoryPosition
 		add: (Position tile: newPosition andLap: newLap)
 ]
 
 { #category : #actions }
-Game >> moves: aPlayer stepsFoward: aStepsAmount [
-	| newPosition newLap playerHistoryPosition |
-	playerHistoryPosition := self historyPositionOf: aPlayer.
-	newPosition := self
-		newPositionForwardFor: aPlayer
-		calculatedWith: aStepsAmount.
-	newLap := self newLapFowardFor: aPlayer calculatedWith: aStepsAmount.
-	playerHistoryPosition
-		add: (Position tile: newPosition andLap: newLap)
+Game >> moves: aPlayer stepsBackwards: aPositiveStepsAmount [
+	self moves: aPlayer steps: -1*aPositiveStepsAmount.
 ]
 
 { #category : #components }
-Game >> newLapBackwardFor: aPlayer calculatedWith: aStepsAmount [
+Game >> newLapFor: aPlayer calculatedWith: aStepsAmount [
 	^ ((self
-		newTotalStepsBackwardMadeBy: aPlayer
+		newTotalStepsMadeBy: aPlayer
 		calculatedWith: aStepsAmount) / board numberOfTiles) floor
 ]
 
 { #category : #components }
-Game >> newLapFowardFor: aPlayer calculatedWith: aStepsAmount [
-	^ (((self positionOf: aPlayer) lap + aStepsAmount)
-		/ board numberOfTiles) floor
-]
-
-{ #category : #components }
-Game >> newPositionBackwardFor: aPlayer calculatedWith: aStepsAmount [
+Game >> newPositionFor: aPlayer calculatedWith: aStepsAmount [
 	^ (self
-		newTotalStepsBackwardMadeBy: aPlayer
+		newTotalStepsMadeBy: aPlayer
 		calculatedWith: aStepsAmount) % board numberOfTiles
 ]
 
 { #category : #components }
-Game >> newPositionForwardFor: aPlayer calculatedWith: aStepsAmount [
-	^ ((self positionOf: aPlayer) tile + aStepsAmount)
-		% board numberOfTiles
-]
-
-{ #category : #components }
-Game >> newTotalStepsBackwardMadeBy: aPlayer calculatedWith: aStepsAmount [
-	^ (self totalStepsMadeOf: aPlayer) - aStepsAmount max: 0
+Game >> newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount [
+	^ (self totalStepsMadeOf: aPlayer) + aStepsAmount max: 0
 ]
 
 { #category : #presentation }
@@ -239,12 +220,10 @@ Game >> repeatLastEffectTileOf: aPlayer [
 Game >> rollDicesForCurrentPlayer [
 	| rollResult currentPlayer |
 	currentPlayer := self currentPlayer.
-	rollResult := dices sum: #roll.
-	permanentCards
-		select:
-			[ :card | card changesRollResult and: (card appliesTo: currentPlayer) ]
-		thenDo: [ :card | rollResult := 0 max: rollResult + card quantity ].
-	self moves: currentPlayer stepsFoward: rollResult.
+	rollResult := permanentCards
+		inject: (dices sum: #roll)
+		into: [ :result :card | card update: result for: self ].
+	self moves: currentPlayer steps: rollResult.
 	board
 		effectAt: (self tilePositionOf: currentPlayer)
 		affect: currentPlayer

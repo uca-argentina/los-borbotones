@@ -54,6 +54,21 @@ GameTest >> setUp [
 ]
 
 { #category : #tests }
+GameTest >> stocasticCardDeck [
+	|cards redo overload speed acceleration cancellation repeat|
+	
+	overload := PermanentCard named: 'Overload' withEffect: (ModifyDiceResult modifyResultBy: -2).
+	speed := PermanentCard named: 'Speed' withEffect: (ModifyDiceResult modifyResultBy: 1).
+	acceleration := PermanentCard named: 'Acceleration' withEffect: (ModifyDiceResultOfAllPlayers  modifyResultBy: 1).
+	redo := InstantCard withEffect: RedoLastCardEffect withNoExcecutedCard.
+	cancellation := InstantCard withEffect: Cancellation new.
+	repeat := InstantCard withEffect: RedoLastCardEffect new.
+
+	cards := OrderedCollection with: overload with: speed with: redo with: acceleration with: repeat 	with: cancellation.
+	^CardDeck withCards: cards.
+]
+
+{ #category : #tests }
 GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 	| board |
 	board := (LoadedBoardBuilder startBoardWithSteps: 3)
@@ -63,7 +78,7 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck
 		using: dices.
 	self deny: game hasEnded.
 	self
@@ -85,7 +100,7 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck
 		using: dices.
 	game turnIsPlayed.
 	self
@@ -104,7 +119,7 @@ GameTest >> testGameHasEnded [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck 
 		using: dices.
 	self deny: game hasEnded.
 	game turnIsPlayed.
@@ -121,7 +136,7 @@ GameTest >> testGameStartsWithA4StepsBoard [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck
 		using: dices.
 	self assert: game board numberOfTiles equals: 4
 ]
@@ -136,7 +151,7 @@ GameTest >> testGetWinnerOnceGameIsFinished [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck
 		using: dices.
 	self deny: game hasEnded.
 	game turnIsPlayed.
@@ -158,7 +173,7 @@ GameTest >> testIsRobertTurn [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck
 		using: dices.
 	game turnIsPlayed.
 	game turnIsPlayed.
@@ -178,7 +193,7 @@ GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck
 		using: dices.
 	game turnIsPlayed.
 	self
@@ -199,7 +214,7 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 		playedBy: players
 		withLapsToWin: 3
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck 
 		using: dices.
 	game turnIsPlayed.
 	self
@@ -223,7 +238,7 @@ GameTest >> testPlayersStartWithTwoCards [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck 
 		using: dices.
 	game players
 		do: [ :player | self assert: player cards size equals: 2 ]
@@ -241,7 +256,7 @@ GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck 
 		using: dices.
 	game turnIsPlayed.
 	self
@@ -271,7 +286,7 @@ GameTest >> testThatRoberIsThirdLucasIsSecondAndJuanIsFirstInTheRanking [
 		playedBy: players
 		withLapsToWin: 5
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck
 		using: dices.
 	game turnIsPlayed.
 	game changePositionOf: lucas toTile: 3 andLap: 4.

@@ -17,20 +17,12 @@ PermanentCard class >> named: aName withEffect: aCardEffect [
 ]
 
 { #category : #action }
-PermanentCard >> actOn: aGame affect: aSetOfPlayers [
-	effect actOn: aGame affect: aSetOfPlayers.
+PermanentCard >> actOn: aGame affect: aSetOfPlayers by: aPlayer [
+	aGame currentPlayer name = aPlayer name
+		ifFalse: [ GameModelError signal: 'Cannot play permanent card if it is not your turn. ' ].
+	effect actOn: aGame affect: aSetOfPlayers by: aPlayer.
 	aGame setLastCard: self.
 	aGame addPermanentCard: self
-]
-
-{ #category : #presentation }
-PermanentCard >> appliesTo: aPlayer [ 
-	^effect appliesTo: aPlayer
-]
-
-{ #category : #presentation }
-PermanentCard >> changesRollResult [
-	^effect changesRollResult
 ]
 
 { #category : #initialize }
@@ -39,27 +31,13 @@ PermanentCard >> initializeWithName: aName withEffect: aCardEffect [
 	effect := aCardEffect
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #presentation }
 PermanentCard >> isDummyCard [
 	^ false
 ]
 
-{ #category : #presentation }
-PermanentCard >> isInstantCard [
-	^false.
-]
-
-{ #category : #presentation }
-PermanentCard >> isPermanentCard [
-	^true
-]
-
-{ #category : #presentation }
-PermanentCard >> quantity [
-	^effect quantity
-]
-
 { #category : #action }
-PermanentCard >> redoAffecting: anObject on: aGame [
-	self actOn: aGame affect: anObject.
+PermanentCard >> update: aResult for: aGame [
+	^(effect appliesTo: aGame currentPlayer) ifTrue: [ aResult + effect quantity ] ifFalse: [aResult].
+	
 ]

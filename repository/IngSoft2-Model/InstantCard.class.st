@@ -16,9 +16,9 @@ InstantCard class >> withEffect: anEffect [
 ]
 
 { #category : #action }
-InstantCard >> actOn: aGame affect: anObject [ 
-	effect actOn: aGame affect: anObject.
-	aGame setLastCard: self 
+InstantCard >> actOn: aGame affect: aSetOfPlayers by: aPlayer [
+	effect actOn: aGame affect: aSetOfPlayers by: aPlayer.
+	aGame setLastCard: self
 ]
 
 { #category : #initialization }
@@ -27,16 +27,6 @@ InstantCard >> initializeWithEffect: aDummyEffect [
 ]
 
 { #category : #presentation }
-InstantCard >> isInstantCard [
-	^true
-]
-
-{ #category : #presentation }
-InstantCard >> isPermanentCard [
+InstantCard >> isDummyCard [
 	^false
-]
-
-{ #category : #action }
-InstantCard >> redoAffecting: anObject on: aGame [
-	self actOn: aGame affect: anObject.
 ]

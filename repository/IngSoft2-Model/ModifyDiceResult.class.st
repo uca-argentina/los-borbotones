@@ -17,7 +17,7 @@ ModifyDiceResult class >> modifyResultBy: aQuantity [
 ]
 
 { #category : #action }
-ModifyDiceResult >> actOn: aGame affect: aPlayer [
+ModifyDiceResult >> actOn: aGame affect: aPlayer by: actingPlayer [
 	aGame assertValidPlayer: aPlayer.
 	affectedPlayer := aGame selectPlayerNamed: aPlayer
 ]
@@ -25,11 +25,6 @@ ModifyDiceResult >> actOn: aGame affect: aPlayer [
 { #category : #presentation }
 ModifyDiceResult >> appliesTo: aPlayer [
 	^ affectedPlayer name = aPlayer name
-]
-
-{ #category : #presentation }
-ModifyDiceResult >> changesRollResult [
-	^true.
 ]
 
 { #category : #initialize }

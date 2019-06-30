@@ -8,15 +8,11 @@ Class {
 }
 
 { #category : #action }
-DummyCard >> actOn: aGame affect: aCollection [ 
+DummyCard >> actOn: aGame affect: aCollection by: anObject [ 
 
 ]
 
 { #category : #presentation }
 DummyCard >> isDummyCard [
 	^ true
-]
-
-{ #category : #action }
-DummyCard >> redoAffecting: anObject on: aGame [
 ]
