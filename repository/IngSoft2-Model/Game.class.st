@@ -222,7 +222,7 @@ Game >> rollDicesForCurrentPlayer [
 	currentPlayer := self currentPlayer.
 	rollResult := permanentCards
 		inject: (dices sum: #roll)
-		into: [ :result :card | card update: result for: self ].
+		into: [ :result :card | card update: result for: currentPlayer ].
 	self moves: currentPlayer steps: rollResult.
 	board
 		effectAt: (self tilePositionOf: currentPlayer)

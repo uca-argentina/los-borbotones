@@ -8,7 +8,8 @@ Class {
 }
 
 { #category : #action }
-DummyCard >> actOn: aGame affect: aCollection by: anObject [ 
+DummyCard >> actOn: aGame affect: aCollection by: aPlayer [
+	"Does nothing." 
 
 ]
 

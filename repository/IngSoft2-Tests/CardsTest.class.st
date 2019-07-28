@@ -26,52 +26,52 @@ CardsTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on:
 	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> cancellationCard [
 	^ RealCard
 		named: 'Cancellation'
 		andAction: (InstantAction withEffect: Cancellation new)
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> cardDeckWithCard: aCard [ 
 	^CardDeck withCards: (OrderedCollection with: aCard)
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> dummyInstantCard [
 	^ RealCard
 		named: 'Test'
 		andAction: (InstantAction  withEffect: DummyEffect new)
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> dummyPermanentCard [
 	^ RealCard
 		named: 'Test'
 		andAction: (PermanentAction withEffect: DummyEffect new)
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> juan [
 	^ Player named: 'Juan'
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> loadedBoard [
  	^(LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> overloadCard [
 	^ RealCard
 		named: 'Overload'
 		andAction: (PermanentAction withEffect: overloadCardEffect).
 ]
 
-{ #category : #tests }
+{ #category : #running }
 CardsTest >> redoCard [
 	^ RealCard
 		named: 'Test'
@@ -93,6 +93,23 @@ CardsTest >> setUp [
 	speedCardEffect := ModifyDiceResult modifyResultBy: 1.
 	accelerationCardEffect := ModifyDiceResultOfAllPlayers  modifyResultBy: 1.
 	
+]
+
+{ #category : #tests }
+CardsTest >> should: aBlock raise: anError withErrorMessage: aMessage [
+	self should: aBlock
+		raise: anError
+		withExceptionDo: [ :signal | 
+			self
+				assert: signal messageText
+				equals: aMessage ]
+]
+
+{ #category : #tests }
+CardsTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
+	self should: aBlock
+		raise: GameModelError 
+		withErrorMessage: aMessage.
 ]
 
 { #category : #tests }
@@ -197,7 +214,7 @@ CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
 
 { #category : #tests }
 CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
-	| board permanentCard|
+	| board permanentCard |
 	board := self loadedBoard.
 	permanentCard := self dummyPermanentCard.
 	game := Game
@@ -209,8 +226,9 @@ CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
 	self assert: game currentPlayer name equals: 'Juan'.
-	self should: [robert playsCard: permanentCard affecting: 'Juan' on: game] raise: GameModelError
-		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Cannot play permanent card if it is not your turn. ' ]
+	self
+		should: [ robert playsCard: permanentCard affecting: 'Juan' on: game ]
+		raiseGameErrorWithMessage: 'Cannot play permanent card if it is not your turn. '
 ]
 
 { #category : #tests }
@@ -389,7 +407,6 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 	instantCard := self redoCard.
 	loadedDeck := (self cardDeckWithCard: instantCard ).
 	secondDeck := (self cardDeckWithCard: permanentCard).
-	
 	game := Game
 		playedBy: players
 		withLapsToWin: 4

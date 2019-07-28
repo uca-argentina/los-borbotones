@@ -21,7 +21,7 @@ InstantAction >> initializeWithEffect: anEffect [
 ]
 
 { #category : #action }
-InstantAction >> update: aResult for: aGame [
+InstantAction >> update: aResult for: aPlayer [
 
 ]
 

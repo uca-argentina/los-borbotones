@@ -21,8 +21,8 @@ PermanentAction >> initializeWithEffect: anEffect [
 ]
 
 { #category : #action }
-PermanentAction >> update: aResult for: aGame [
-	^(effect appliesTo: aGame currentPlayer) ifTrue: [ aResult + effect quantity ] ifFalse: [aResult].
+PermanentAction >> update: aResult for: aPlayer [
+	^effect update: aResult for: aPlayer.
 ]
 
 { #category : #action }

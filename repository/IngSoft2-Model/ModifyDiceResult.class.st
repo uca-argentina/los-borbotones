@@ -22,17 +22,14 @@ ModifyDiceResult >> actOn: aGame affect: aPlayer by: actingPlayer [
 	affectedPlayer := aGame selectPlayerNamed: aPlayer
 ]
 
-{ #category : #presentation }
-ModifyDiceResult >> appliesTo: aPlayer [
-	^ affectedPlayer name = aPlayer name
-]
-
 { #category : #initialize }
 ModifyDiceResult >> initializeWithModificationQuantity: aQuantity [
 	quantity := aQuantity.
 ]
 
-{ #category : #accessing }
-ModifyDiceResult >> quantity [
-	^ quantity
+{ #category : #presentation }
+ModifyDiceResult >> update: aResult for: aPlayer [
+	^ affectedPlayer name = aPlayer name
+		ifTrue: [ aResult + quantity ]
+		ifFalse: [ aResult ]
 ]

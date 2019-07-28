@@ -5,23 +5,29 @@ Class {
 	#name : #GameTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'dices',
-		'players',
 		'game',
+		'fourFaceDummyDice',
+		'dices',
 		'robert',
+		'players',
 		'moonWalkWithProbability',
 		'atomicBombWithProbability',
 		'speedUpWithProbability',
-		'cardDealingTileWithProbability',
 		'timeMachineWithProbability',
 		'emptyWithProbability',
 		'wormHoleWithProbability',
+		'cardDealingTileWithProbability',
 		'overloadCardEffect',
 		'speedCardEffect',
 		'accelerationCardEffect'
 	],
 	#category : #'IngSoft2-Tests'
 }
+
+{ #category : #accessing }
+GameTest class >> resources [ 
+	^{GameElementsResource}
+]
 
 { #category : #asserting }
 GameTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
@@ -38,7 +44,7 @@ GameTest >> juan [
 GameTest >> loadedBoard [
 	^(LoadedBoardBuilder startBoardWithSteps: 3)
 		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard
+		buildBoard 
 ]
 
 { #category : #tests }
@@ -48,7 +54,6 @@ GameTest >> lucas [
 
 { #category : #running }
 GameTest >> setUp [
-	| fourFaceDummyDice |
 	super setUp.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
 	dices := OrderedCollection with: fourFaceDummyDice.
@@ -61,10 +66,28 @@ GameTest >> setUp [
 	emptyWithProbability := Empty new -> 0.45.
 	wormHoleWithProbability := WormHole new -> 0.15.
 	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
-	
 	overloadCardEffect := ModifyDiceResult modifyResultBy: -2.
 	speedCardEffect := ModifyDiceResult modifyResultBy: 1.
-	accelerationCardEffect := ModifyDiceResultOfAllPlayers  modifyResultBy: 1.
+	accelerationCardEffect := ModifyDiceResultOfAllPlayers
+		modifyResultBy: 1.
+	
+]
+
+{ #category : #asserting }
+GameTest >> should: aBlock raise: anError withErrorMessage: aMessage [
+	self should: aBlock
+		raise: anError
+		withExceptionDo: [ :signal | 
+			self
+				assert: signal messageText
+				equals: aMessage ]
+]
+
+{ #category : #asserting }
+GameTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
+	self should: aBlock
+		raise: GameModelError 
+		withErrorMessage: aMessage.
 ]
 
 { #category : #tests }
@@ -113,11 +136,7 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 	self deny: game hasEnded.
 	self
 		should: [ game winner ]
-		raise: GameModelError
-		withExceptionDo: [ :signal | 
-			self
-				assert: signal messageText
-				equals: 'There is no winner yet. The game is not finished' ]
+		raiseGameErrorWithMessage: 'There is no winner yet. The game is not finished'.
 ]
 
 { #category : #tests }
@@ -133,8 +152,7 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 	game turnIsPlayed.
 	self
 		should: [ game turnIsPlayed ]
-		raise: GameModelError
-		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Game is over. ' ]
+		raiseGameErrorWithMessage: 'Game is over. '.
 ]
 
 { #category : #tests }
@@ -220,8 +238,7 @@ GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
 	game turnIsPlayed.
 	self
 		should: [ game turnIsPlayed ]
-		raise: GameModelError
-		withExceptionDo: [ :signal | self assert: signal messageText equals: 'Game is over. ' ]
+		raiseGameErrorWithMessage: 'Game is over. '.
 ]
 
 { #category : #tests }
@@ -309,7 +326,7 @@ GameTest >> testThatRoberIsThirdLucasIsSecondAndJuanIsFirstInTheRanking [
 	game turnIsPlayed.
 	game changePositionOf: lucas toTile: 3 andLap: 4.
 	game changePositionOf: juan toTile: 5 andLap: 5.
-	self assert: (game ranking at: 1) equals: juan.
-	self assert: (game ranking at: 2) equals: lucas.
-	self assert: (game ranking at: 3) equals: robert
+	self assert: game ranking first equals: juan.
+	self assert: game ranking second equals: lucas.
+	self assert: game ranking third equals: robert
 ]
