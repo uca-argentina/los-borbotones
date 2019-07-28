@@ -15,7 +15,10 @@ Class {
 		'cardDealingTileWithProbability',
 		'timeMachineWithProbability',
 		'emptyWithProbability',
-		'wormHoleWithProbability'
+		'wormHoleWithProbability',
+		'overloadCardEffect',
+		'speedCardEffect',
+		'accelerationCardEffect'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -29,6 +32,13 @@ GameTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: 
 { #category : #tests }
 GameTest >> juan [
 	^ Player named: 'Juan'
+]
+
+{ #category : #tests }
+GameTest >> loadedBoard [
+	^(LoadedBoardBuilder startBoardWithSteps: 3)
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard
 ]
 
 { #category : #tests }
@@ -50,30 +60,50 @@ GameTest >> setUp [
 	timeMachineWithProbability := TimeMachine new -> 0.08.
 	emptyWithProbability := Empty new -> 0.45.
 	wormHoleWithProbability := WormHole new -> 0.15.
-	cardDealingTileWithProbability := CardDealingTile new -> 0.1
+	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
+	
+	overloadCardEffect := ModifyDiceResult modifyResultBy: -2.
+	speedCardEffect := ModifyDiceResult modifyResultBy: 1.
+	accelerationCardEffect := ModifyDiceResultOfAllPlayers  modifyResultBy: 1.
 ]
 
 { #category : #tests }
 GameTest >> stocasticCardDeck [
-	|cards redo overload speed acceleration cancellation repeat|
-	
-	overload := PermanentCard named: 'Overload' withEffect: (ModifyDiceResult modifyResultBy: -2).
-	speed := PermanentCard named: 'Speed' withEffect: (ModifyDiceResult modifyResultBy: 1).
-	acceleration := PermanentCard named: 'Acceleration' withEffect: (ModifyDiceResultOfAllPlayers  modifyResultBy: 1).
-	redo := InstantCard withEffect: RedoLastCardEffect withNoExcecutedCard.
-	cancellation := InstantCard withEffect: Cancellation new.
-	repeat := InstantCard withEffect: RedoLastCardEffect new.
-
-	cards := OrderedCollection with: overload with: speed with: redo with: acceleration with: repeat 	with: cancellation.
-	^CardDeck withCards: cards.
+	| cards redo overload speed acceleration cancellation repeat |
+	overload := RealCard
+		named: 'Overload'
+		andAction: (PermanentAction withEffect: overloadCardEffect).
+	speed := RealCard
+		named: 'Speed'
+		andAction: (PermanentAction withEffect: speedCardEffect).
+	acceleration := RealCard
+		named: 'Acceleration'
+		andAction: (PermanentAction withEffect: accelerationCardEffect).
+	redo := RealCard
+		named: 'RedoLastCardEffect'
+		andAction: (InstantAction withEffect: RedoLastCardEffect withNoExcecutedCard).
+	cancellation := RealCard
+		named: 'Cancellation'
+		andAction: (InstantAction withEffect: Cancellation new).
+		
+	repeat := RealCard
+		named: 'Redo'
+		andAction: (InstantAction withEffect: RedoLastCardEffect new).
+		
+	cards := OrderedCollection
+		with: overload
+		with: speed
+		with: redo
+		with: acceleration
+		with: repeat
+		with: cancellation.
+	^ CardDeck withCards: cards
 ]
 
 { #category : #tests }
 GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 	| board |
-	board := (LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
+	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -93,9 +123,7 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 { #category : #tests }
 GameTest >> testGameCantBePlayedOnceItIsOver [
 	| board |
-	board := (LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
+	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -112,9 +140,7 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 { #category : #tests }
 GameTest >> testGameHasEnded [
 	| board |
-	board := (LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
+	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -144,9 +170,7 @@ GameTest >> testGameStartsWithA4StepsBoard [
 { #category : #tests }
 GameTest >> testGetWinnerOnceGameIsFinished [
 	| board |
-	board := (LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
+	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -186,9 +210,7 @@ GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
 	| lucia board |
 	lucia := Player named: 'Lucia'.
 	players add: lucia.
-	board := (LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
+	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -207,9 +229,7 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 	| fiveFaceDummyDice board |
 	fiveFaceDummyDice := LoadedDice withFaces: 5 andValue: 5.
 	dices add: fiveFaceDummyDice.
-	board := (LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
+	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 3
@@ -231,9 +251,7 @@ GameTest >> testPlayersStartWithTwoCards [
 	lucia := Player named: 'Lucia'.
 	players add: tomas.
 	players add: lucia.
-	board := (LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
+	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
