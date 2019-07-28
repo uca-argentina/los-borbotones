@@ -5,21 +5,14 @@ Class {
 	#name : #GameTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'game',
 		'fourFaceDummyDice',
+		'game',
 		'dices',
 		'robert',
 		'players',
-		'moonWalkWithProbability',
 		'atomicBombWithProbability',
-		'speedUpWithProbability',
-		'timeMachineWithProbability',
 		'emptyWithProbability',
-		'wormHoleWithProbability',
-		'cardDealingTileWithProbability',
-		'overloadCardEffect',
-		'speedCardEffect',
-		'accelerationCardEffect'
+		'gameElementsResource'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -30,7 +23,7 @@ GameTest class >> resources [
 ]
 
 { #category : #asserting }
-GameTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
+GameTest >> assertTile: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
 	self assert: (aGame tilePositionOf: aPlayer) equals: aNumberOfTile.
 	self assert: (aGame positionLapOf: aPlayer) equals: aNumberOfLap
 ]
@@ -55,21 +48,16 @@ GameTest >> lucas [
 { #category : #running }
 GameTest >> setUp [
 	super setUp.
+	gameElementsResource := GameElementsResource current.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
+	
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
 	players := OrderedCollection with: robert.
-	moonWalkWithProbability := (MoonWalk withNumber: 5) -> 0.05.
+	
 	atomicBombWithProbability := AtomicBomb new -> 0.02.
-	speedUpWithProbability := SpeedUp new -> 0.15.
-	timeMachineWithProbability := TimeMachine new -> 0.08.
 	emptyWithProbability := Empty new -> 0.45.
-	wormHoleWithProbability := WormHole new -> 0.15.
-	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
-	overloadCardEffect := ModifyDiceResult modifyResultBy: -2.
-	speedCardEffect := ModifyDiceResult modifyResultBy: 1.
-	accelerationCardEffect := ModifyDiceResultOfAllPlayers
-		modifyResultBy: 1.
+	
 	
 ]
 
@@ -92,35 +80,7 @@ GameTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
 
 { #category : #tests }
 GameTest >> stocasticCardDeck [
-	| cards redo overload speed acceleration cancellation repeat |
-	overload := RealCard
-		named: 'Overload'
-		andAction: (PermanentAction withEffect: overloadCardEffect).
-	speed := RealCard
-		named: 'Speed'
-		andAction: (PermanentAction withEffect: speedCardEffect).
-	acceleration := RealCard
-		named: 'Acceleration'
-		andAction: (PermanentAction withEffect: accelerationCardEffect).
-	redo := RealCard
-		named: 'RedoLastCardEffect'
-		andAction: (InstantAction withEffect: RedoLastCardEffect withNoExcecutedCard).
-	cancellation := RealCard
-		named: 'Cancellation'
-		andAction: (InstantAction withEffect: Cancellation new).
-		
-	repeat := RealCard
-		named: 'Redo'
-		andAction: (InstantAction withEffect: RedoLastCardEffect new).
-		
-	cards := OrderedCollection
-		with: overload
-		with: speed
-		with: redo
-		with: acceleration
-		with: repeat
-		with: cancellation.
-	^ CardDeck withCards: cards
+	^gameElementsResource stocasticCardDeck.
 ]
 
 { #category : #tests }
@@ -255,7 +215,7 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 		using: dices.
 	game turnIsPlayed.
 	self
-		assertPosition: 0
+		assertTile: 0
 		andLap: 3
 		for: robert
 		on: game
@@ -295,12 +255,12 @@ GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 		using: dices.
 	game turnIsPlayed.
 	self
-		assertPosition: 0
+		assertTile: 0
 		andLap: 0
 		for: robert
 		on: game.
 	self
-		assertPosition: 0
+		assertTile: 0
 		andLap: 0
 		for: lucia
 		on: game

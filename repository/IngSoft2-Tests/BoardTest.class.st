@@ -14,16 +14,13 @@ Class {
 		'cardDealingTileWithProbability',
 		'emptyWithProbability',
 		'wormHoleWithProbability',
-		'moonWalkWithProbability',
-		'overloadCardEffect',
-		'speedCardEffect',
-		'accelerationCardEffect'
+		'moonWalkWithProbability'
 	],
 	#category : #'IngSoft2-Tests'
 }
 
 { #category : #asserting }
-BoardTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
+BoardTest >> assertTile: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
 	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
 	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
 ]
@@ -44,42 +41,11 @@ BoardTest >> setUp [
 	wormHoleWithProbability := WormHole new -> 0.15.
 	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
 	
-	overloadCardEffect := ModifyDiceResult modifyResultBy: -2.
-	speedCardEffect := ModifyDiceResult modifyResultBy: 1.
-	accelerationCardEffect := ModifyDiceResultOfAllPlayers  modifyResultBy: 1.
 ]
 
 { #category : #tests }
 BoardTest >> stocasticCardDeck [
-	| cards redo overload speed acceleration cancellation repeat |
-	overload := RealCard
-		named: 'Overload'
-		andAction: (PermanentAction withEffect: overloadCardEffect).
-	speed := RealCard
-		named: 'Speed'
-		andAction: (PermanentAction withEffect: speedCardEffect).
-	acceleration := RealCard
-		named: 'Acceleration'
-		andAction: (PermanentAction withEffect: accelerationCardEffect).
-	redo := RealCard
-		named: 'RedoLastCardEffect'
-		andAction: (InstantAction withEffect: RedoLastCardEffect withNoExcecutedCard).
-	cancellation := RealCard
-		named: 'Cancellation'
-		andAction: (InstantAction withEffect: Cancellation new).
-		
-	repeat := RealCard
-		named: 'Redo'
-		andAction: (InstantAction withEffect: RedoLastCardEffect new).
-		
-	cards := OrderedCollection
-		with: overload
-		with: speed
-		with: redo
-		with: acceleration
-		with: repeat
-		with: cancellation.
-	^ CardDeck withCards: cards
+	^ GameElementsResource current stocasticCardDeck.
 ]
 
 { #category : #tests }
@@ -150,17 +116,17 @@ BoardTest >> testMoonWalkEffectMakesInactivePlayersGoBackNSteps [
 	game changePositionOf: lucia toTile: 1 andLap: 0.
 	game turnIsPlayed.
 	self
-		assertPosition: 2
+		assertTile: 2
 		andLap: 3
 		for: lucas
 		on: game.
 	self
-		assertPosition: 3
+		assertTile: 3
 		andLap: 0
 		for: juan
 		on: game.
 	self
-		assertPosition: 0
+		assertTile: 0
 		andLap: 0
 		for: lucia
 		on: game

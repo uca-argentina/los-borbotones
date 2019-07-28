@@ -5,56 +5,27 @@ Class {
 	#name : #CardsTest,
 	#superclass : #TestCase,
 	#instVars : [
+		'gameElementsResource',
 		'dices',
 		'players',
 		'game',
 		'robert',
 		'cardDealingTileWithProbability',
-		'emptyWithProbability',
 		'juan',
-		'fourFaceDummyDice',
-		'overloadCardEffect',
-		'speedCardEffect',
-		'accelerationCardEffect'
+		'fourFaceDummyDice'
 	],
 	#category : #'IngSoft2-Tests'
 }
 
 { #category : #asserting }
-CardsTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
+CardsTest >> assertTile: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGame [
 	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
 	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
 ]
 
 { #category : #running }
-CardsTest >> cancellationCard [
-	^ RealCard
-		named: 'Cancellation'
-		andAction: (InstantAction withEffect: Cancellation new)
-]
-
-{ #category : #running }
 CardsTest >> cardDeckWithCard: aCard [ 
 	^CardDeck withCards: (OrderedCollection with: aCard)
-]
-
-{ #category : #running }
-CardsTest >> dummyInstantCard [
-	^ RealCard
-		named: 'Test'
-		andAction: (InstantAction  withEffect: DummyEffect new)
-]
-
-{ #category : #running }
-CardsTest >> dummyPermanentCard [
-	^ RealCard
-		named: 'Test'
-		andAction: (PermanentAction withEffect: DummyEffect new)
-]
-
-{ #category : #running }
-CardsTest >> juan [
-	^ Player named: 'Juan'
 ]
 
 { #category : #running }
@@ -65,34 +36,16 @@ CardsTest >> loadedBoard [
 ]
 
 { #category : #running }
-CardsTest >> overloadCard [
-	^ RealCard
-		named: 'Overload'
-		andAction: (PermanentAction withEffect: overloadCardEffect).
-]
-
-{ #category : #running }
-CardsTest >> redoCard [
-	^ RealCard
-		named: 'Test'
-		andAction: (InstantAction withEffect: RedoLastCardEffect withNoExcecutedCard)
-]
-
-{ #category : #running }
 CardsTest >> setUp [
 	super setUp.
+	gameElementsResource := GameElementsResource current.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
-	juan := self juan.
-	emptyWithProbability := Empty new -> 0.45.
+	juan := Player named: 'Juan'.
 	players := OrderedCollection with: robert with:juan.
-	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
 	
-	overloadCardEffect := ModifyDiceResult modifyResultBy: -2.
-	speedCardEffect := ModifyDiceResult modifyResultBy: 1.
-	accelerationCardEffect := ModifyDiceResultOfAllPlayers  modifyResultBy: 1.
-	
+	cardDealingTileWithProbability := CardDealingTile new -> 0.1.	
 ]
 
 { #category : #tests }
@@ -114,15 +67,13 @@ CardsTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
 
 { #category : #tests }
 CardsTest >> speedCard [ 
-	^ RealCard
-		named: 'Overload'
-		andAction: (PermanentAction withEffect: speedCardEffect ).
+	^gameElementsResource speedCard.
 ]
 
 { #category : #tests }
 CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	| board permanentCard |
-	permanentCard := self overloadCard.
+	permanentCard := gameElementsResource  overloadCard.
 	board := self loadedBoard.
 	game := Game
 		playedBy: players
@@ -138,13 +89,13 @@ CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	self
-		assertPosition: 0
+		assertTile: 0
 		andLap: 0
 		for: juan
 		on: game.
 	game turnIsPlayed.
 	self
-		assertPosition: 1
+		assertTile: 1
 		andLap: 0
 		for: juan
 		on: game.
@@ -153,7 +104,7 @@ CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
 	self
-		assertPosition: 2
+		assertTile: 2
 		andLap: 0
 		for: juan
 		on: game
@@ -180,7 +131,7 @@ CardsTest >> testPlayerCannotMoveToNegativeLapAndTileValuesOnCardEffects [
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
 	self
-		assertPosition: 0
+		assertTile: 0
 		andLap: 0
 		for: juan
 		on: game
@@ -190,8 +141,8 @@ CardsTest >> testPlayerCannotMoveToNegativeLapAndTileValuesOnCardEffects [
 CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
 	| board instantCard permanentCard loadedDeck |
 	board := self loadedBoard.
-	permanentCard := self dummyPermanentCard.
-	instantCard := self cancellationCard.
+	permanentCard := gameElementsResource  dummyPermanentCard.
+	instantCard := gameElementsResource cancellationCard.
 	loadedDeck := self cardDeckWithCard: instantCard.
 	game := Game
 		playedBy: players
@@ -216,7 +167,7 @@ CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
 CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 	| board permanentCard |
 	board := self loadedBoard.
-	permanentCard := self dummyPermanentCard.
+	permanentCard := gameElementsResource dummyPermanentCard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -234,9 +185,7 @@ CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCard [
 	| board  permanentCard  |
-	permanentCard := RealCard
-		named: 'Acceleration'
-		andAction: (PermanentAction withEffect: accelerationCardEffect).
+	permanentCard := gameElementsResource accelerationCard.
 	board := self loadedBoard.
 	game := Game
 		playedBy: players
@@ -252,16 +201,14 @@ CardsTest >> testPlayerPlaysAccelerationCard [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertPosition: 4 andLap: 0 for: juan on: game.
-	self assertPosition: 4 andLap: 0 for: robert on: game.
+	self assertTile: 4 andLap: 0 for: juan on: game.
+	self assertTile: 4 andLap: 0 for: robert on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 	| board  permanentCard  |
-	permanentCard := RealCard
-		named: 'Acceleration'
-		andAction: (PermanentAction withEffect: accelerationCardEffect).
+	permanentCard := gameElementsResource accelerationCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 9.
 	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
@@ -278,8 +225,8 @@ CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertPosition: 0 andLap: 1 for: juan on: game.
-	self assertPosition: 0 andLap: 1 for: juan on: game.
+	self assertTile: 0 andLap: 1 for: juan on: game.
+	self assertTile: 0 andLap: 1 for: juan on: game.
 ]
 
 { #category : #tests }
@@ -289,8 +236,8 @@ CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	board := self loadedBoard.
-	permanentCard := self dummyPermanentCard.
-	instantCard := self cancellationCard.
+	permanentCard := gameElementsResource dummyPermanentCard.
+	instantCard := gameElementsResource cancellationCard.
 	loadedDeck := (self cardDeckWithCard: instantCard).
 	secondLoadedDeck := (self cardDeckWithCard: permanentCard).
 	game := Game
@@ -315,7 +262,7 @@ CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
-	instantCard := self dummyInstantCard.
+	instantCard := gameElementsResource dummyInstantCard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -332,7 +279,7 @@ CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
 	| board  permanentCard  |
-	permanentCard := self overloadCard.
+	permanentCard := gameElementsResource overloadCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
@@ -350,13 +297,13 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertPosition: 1 andLap: 0 for: juan on: game.
+	self assertTile: 1 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
 	| board  permanentCard  |
-	permanentCard := self overloadCard.
+	permanentCard := gameElementsResource overloadCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 5.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	board := self loadedBoard.
@@ -374,14 +321,14 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertPosition: 1 andLap: 0 for: juan on: game.
+	self assertTile: 1 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysPermanentCard [
 	| board  permanentCard |
 	players remove:juan.
-	permanentCard := self dummyPermanentCard.
+	permanentCard := gameElementsResource dummyPermanentCard.
 	board := self loadedBoard.
 	game := Game
 		playedBy: players
@@ -401,10 +348,10 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 	
 	board := self loadedBoard.
 		
-	permanentCard := self dummyPermanentCard.
+	permanentCard := gameElementsResource dummyPermanentCard.
 		
 	dices := OrderedCollection with: fourFaceDummyDice.
-	instantCard := self redoCard.
+	instantCard := gameElementsResource redoCard.
 	loadedDeck := (self cardDeckWithCard: instantCard ).
 	secondDeck := (self cardDeckWithCard: permanentCard).
 	game := Game
@@ -429,8 +376,8 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurnTwiceAndRedoesAnInstantCard [
 	
 	board := self loadedBoard.
 		
-	instantCard2 := self dummyInstantCard.
-	instantCard := self redoCard.
+	instantCard2 := gameElementsResource dummyInstantCard.
+	instantCard := gameElementsResource redoCard.
 	loadedDeck := (self cardDeckWithCard: instantCard ).
 	
 	secondDeck := (self cardDeckWithCard: instantCard2).
@@ -452,7 +399,7 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurnTwiceAndRedoesAnInstantCard [
 { #category : #tests }
 CardsTest >> testPlayerPlaysRepeatCard [
 	| board instantCard  |
-	instantCard := self redoCard.
+	instantCard := gameElementsResource repeatCard.
 	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
@@ -486,7 +433,7 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertPosition: 4 andLap: 0 for: juan on: game.
+	self assertTile: 4 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
@@ -512,7 +459,7 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertPosition: 6 andLap: 0 for: juan on: game.
+	self assertTile: 6 andLap: 0 for: juan on: game.
 ]
 
 { #category : #tests }
@@ -520,7 +467,7 @@ CardsTest >> testRedoCardHasNoEffectWhenNoCardWasPlayedBefore [
 	| board instantCard loadedDeck |
 	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
-	instantCard := self redoCard.
+	instantCard := gameElementsResource redoCard.
 	loadedDeck := (self cardDeckWithCard: instantCard ).
 	game := Game
 		playedBy: players
