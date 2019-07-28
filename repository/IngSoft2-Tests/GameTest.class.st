@@ -100,6 +100,48 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 ]
 
 { #category : #tests }
+GameTest >> testCantInstantiatiateGameWithInvalidLapsAmount [
+	|board gameBlock|
+	board := self loadedBoard.
+	gameBlock := [ Game
+		playedBy: players
+		withLapsToWin: -3
+		board: board
+		deck: self stocasticCardDeck
+		using: dices ].
+	
+	self should: gameBlock raiseGameErrorWithMessage: 'Laps amount must be a positive integer. '.
+]
+
+{ #category : #tests }
+GameTest >> testCantInstantiatiateGameWithoutDices [
+	|board gameBlock|
+	board := self loadedBoard.
+	gameBlock := [ Game
+		playedBy: players
+		withLapsToWin: 5
+		board: board
+		deck: self stocasticCardDeck
+		using: {  } ].
+	
+	self should: gameBlock raiseGameErrorWithMessage: 'Invalid set of dices. '.
+]
+
+{ #category : #tests }
+GameTest >> testCantInstantiatiateGameWithoutPlayers [
+	|board gameBlock|
+	board := self loadedBoard.
+	gameBlock := [ Game
+		playedBy: {}
+		withLapsToWin: 5
+		board: board
+		deck: self stocasticCardDeck
+		using: dices ].
+	
+	self should: gameBlock raiseGameErrorWithMessage: 'Invalid set of players. '.
+]
+
+{ #category : #tests }
 GameTest >> testGameCantBePlayedOnceItIsOver [
 	| board |
 	board := self loadedBoard.

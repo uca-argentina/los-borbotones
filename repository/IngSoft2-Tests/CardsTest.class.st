@@ -71,6 +71,11 @@ CardsTest >> speedCard [
 ]
 
 { #category : #tests }
+CardsTest >> testCantCreateCardDeckWithNoCards [
+	self should: [ CardDeck withCards: { } ] raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '.
+]
+
+{ #category : #tests }
 CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	| board permanentCard |
 	permanentCard := gameElementsResource  overloadCard.
@@ -115,7 +120,7 @@ CardsTest >> testPlayerCannotMoveToNegativeLapAndTileValuesOnCardEffects [
 	| board permanentCard |
 	permanentCard := RealCard
 		named: 'GoBack4'
-		andAction: (PermanentAction withEffect: (ModifyDiceResult modifyResultBy: -4)).
+		withAction: (PermanentAction withEffect: (ModifyDiceResult modifyResultBy: -4)).
 	board := self loadedBoard.
 	game := Game
 		playedBy: players

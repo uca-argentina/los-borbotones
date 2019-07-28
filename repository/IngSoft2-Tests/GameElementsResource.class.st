@@ -13,28 +13,28 @@ Class {
 GameElementsResource >> accelerationCard [
 	^ RealCard
 		named: 'Acceleration'
-		andAction: (PermanentAction withEffect: accelerationCardEffect)
+		withAction: (PermanentAction withEffect: accelerationCardEffect)
 ]
 
 { #category : #running }
 GameElementsResource >> cancellationCard [
 	^ RealCard
 		named: 'Cancellation'
-		andAction: (InstantAction withEffect: Cancellation new)
+		withAction: (InstantAction withEffect: Cancellation new)
 ]
 
 { #category : #running }
 GameElementsResource >> dummyInstantCard [
 	^ RealCard
 		named: 'Test'
-		andAction: (InstantAction  withEffect: DummyEffect new)
+		withAction: (InstantAction  withEffect: DummyEffect new)
 ]
 
 { #category : #running }
 GameElementsResource >> dummyPermanentCard [
 	^ RealCard
 		named: 'Test'
-		andAction: (PermanentAction withEffect: DummyEffect new)
+		withAction: (PermanentAction withEffect: DummyEffect new)
 ]
 
 { #category : #running }
@@ -46,21 +46,21 @@ GameElementsResource >> isAvaliable [
 GameElementsResource >> overloadCard [
 	^ RealCard
 		named: 'Overload'
-		andAction: (PermanentAction withEffect: overloadCardEffect).
+		withAction: (PermanentAction withEffect: overloadCardEffect).
 ]
 
 { #category : #running }
 GameElementsResource >> redoCard [
 	^ RealCard
 		named: 'Redo'
-		andAction: (InstantAction withEffect: RedoLastCardEffect withNoExcecutedCard)
+		withAction: (InstantAction withEffect: RedoLastCardEffect withNoExcecutedCard)
 ]
 
 { #category : #running }
 GameElementsResource >> repeatCard [
 	^ RealCard
 		named: 'Repeat'
-		andAction: (InstantAction withEffect: RepeatLastTileEffect new)
+		withAction: (InstantAction withEffect: RepeatLastTileEffect new)
 ]
 
 { #category : #running }
@@ -77,7 +77,7 @@ GameElementsResource >> setUp [
 GameElementsResource >> speedCard [
 	^ RealCard
 		named: 'Speed'
-		andAction: (PermanentAction withEffect: speedCardEffect)
+		withAction: (PermanentAction withEffect: speedCardEffect)
 ]
 
 { #category : #running }

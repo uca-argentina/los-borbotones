@@ -11,9 +11,9 @@ Class {
 }
 
 { #category : #creation }
-Board class >> withTiles: tiles [
+Board class >> withTiles: aTilesCollection [
 	^ self new
-		initializeWithTiles: tiles;
+		initializeWithTiles: aTilesCollection;
 		yourself
 ]
 

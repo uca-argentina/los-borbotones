@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : #creation }
-RealCard class >> named: aName andAction: anAction [
+RealCard class >> named: aName withAction: anAction [
 	^self new initializeWithName: aName andAction: anAction.
 ]
 

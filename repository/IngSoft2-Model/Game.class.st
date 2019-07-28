@@ -39,14 +39,32 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'private-assertions' }
+Game class >> assertLapsAmountIsPositive: aLapsAmount [ 
+	(aLapsAmount < 1) ifTrue: [ GameModelError signal: 'Laps amount must be a positive integer. ' ]
+]
+
+{ #category : #'private-assertions' }
+Game class >> assertSetOfDicesIsValid: aSetOfDices [ 
+	aSetOfDices size < 1 ifTrue: [ GameModelError signal: 'Invalid set of dices. ' ]
+]
+
+{ #category : #'private-assertions' }
+Game class >> assertValidSetOfPlayers: aSetOfPlayers [ 
+	(aSetOfPlayers size == 0) ifTrue: [ GameModelError signal: 'Invalid set of players. ' ]
+]
+
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard deck: aDeck using: dices [
+Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard deck: aDeck using: aSetOfDices [
+	self assertValidSetOfPlayers: aSetOfPlayers.
+	self assertLapsAmountIsPositive: aLapsAmount.
+	self assertSetOfDicesIsValid: aSetOfDices.
 	^ self new
 		initializeWithLaps: aLapsAmount
 			board: aBoard
 			players: aSetOfPlayers
 			cardDeck: aDeck
-			andUsing: dices;
+			andUsing: aSetOfDices;
 		yourself
 ]
 

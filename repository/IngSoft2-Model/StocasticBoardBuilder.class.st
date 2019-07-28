@@ -12,10 +12,14 @@ Class {
 }
 
 { #category : #creation }
+StocasticBoardBuilder class >> assertPositiveAmount: aStepsAmount [
+	(aStepsAmount>0) ifFalse: [ GameModelError signal:'Steps amount must be a positive integer. ' ]
+]
+
+{ #category : #creation }
 StocasticBoardBuilder class >> startBoardWithSteps: aStepsAmount [
-	^ self
-		new 
-		initializeBoardWithSteps: aStepsAmount
+	self assertPositiveAmount: aStepsAmount.
+	^ self new initializeBoardWithSteps: aStepsAmount
 ]
 
 { #category : #'private - assertions' }

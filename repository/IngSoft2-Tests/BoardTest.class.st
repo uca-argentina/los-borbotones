@@ -43,9 +43,34 @@ BoardTest >> setUp [
 	
 ]
 
+{ #category : #asserting }
+BoardTest >> should: aBlock raise: anError withErrorMessage: aMessage [
+	self should: aBlock
+		raise: anError
+		withExceptionDo: [ :signal | 
+			self
+				assert: signal messageText
+				equals: aMessage ]
+]
+
+{ #category : #asserting }
+BoardTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
+	self should: aBlock
+		raise: GameModelError 
+		withErrorMessage: aMessage.
+]
+
 { #category : #tests }
 BoardTest >> stocasticCardDeck [
 	^ GameElementsResource current stocasticCardDeck.
+]
+
+{ #category : #tests }
+BoardTest >> testCantBuildBoardWithNonPositiveSteps [
+	self should: [(LoadedBoardBuilder startBoardWithSteps: -1)
+		withEffectProbabilityAssociation: speedUpWithProbability;
+		buildBoard] raiseGameErrorWithMessage: 'Steps amount must be a positive integer. '.
+	
 ]
 
 { #category : #tests }
