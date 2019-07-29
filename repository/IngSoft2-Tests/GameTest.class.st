@@ -289,6 +289,24 @@ GameTest >> testPlayersStartWithTwoCards [
 ]
 
 { #category : #tests }
+GameTest >> testPositionNotFound [
+	| board  lucia|
+	lucia := Player named: 'Lucia'.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: atomicBombWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		deck: self stocasticCardDeck 
+		using: dices.
+	game turnIsPlayed.
+	
+	self should: [ game changePositionOf: lucia toTile: 0 andLap:0  ] raiseGameErrorWithMessage: 'Player not found. '.
+]
+
+{ #category : #tests }
 GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 	| lucia board |
 	lucia := Player named: 'Lucia'.

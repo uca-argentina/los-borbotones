@@ -23,7 +23,7 @@ PlayersPositions >> changePositionOf: aPlayer toTile: aNumberOfTile andLap: aNum
 
 { #category : #components }
 PlayersPositions >> historyPositionOf: aPlayer [
-	^ playersPositions at: aPlayer
+	^ playersPositions at: aPlayer ifAbsent: [ GameModelError signal: 'Player not found. ' ]
 ]
 
 { #category : #accessing }
