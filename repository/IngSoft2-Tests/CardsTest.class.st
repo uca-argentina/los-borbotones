@@ -12,7 +12,8 @@ Class {
 		'robert',
 		'cardDealingTileWithProbability',
 		'juan',
-		'fourFaceDummyDice'
+		'fourFaceDummyDice',
+		'board'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -46,6 +47,7 @@ CardsTest >> setUp [
 	players := OrderedCollection with: robert with:juan.
 	
 	cardDealingTileWithProbability := CardDealingTile new -> 0.1.	
+	board := self loadedBoard.
 ]
 
 { #category : #tests }
@@ -77,9 +79,8 @@ CardsTest >> testCantCreateCardDeckWithNoCards [
 
 { #category : #tests }
 CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
-	| board permanentCard |
+	| permanentCard |
 	permanentCard := gameElementsResource  overloadCard.
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -117,11 +118,10 @@ CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 
 { #category : #tests }
 CardsTest >> testPlayerCannotMoveToNegativeLapAndTileValuesOnCardEffects [
-	| board permanentCard |
+	| permanentCard |
 	permanentCard := RealCard
 		named: 'GoBack4'
 		withAction: (PermanentAction withEffect: (ModifyDiceResult modifyResultBy: -4)).
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -144,8 +144,7 @@ CardsTest >> testPlayerCannotMoveToNegativeLapAndTileValuesOnCardEffects [
 
 { #category : #tests }
 CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
-	| board instantCard permanentCard loadedDeck |
-	board := self loadedBoard.
+	| instantCard permanentCard loadedDeck |
 	permanentCard := gameElementsResource  dummyPermanentCard.
 	instantCard := gameElementsResource cancellationCard.
 	loadedDeck := self cardDeckWithCard: instantCard.
@@ -170,8 +169,7 @@ CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
 
 { #category : #tests }
 CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
-	| board permanentCard |
-	board := self loadedBoard.
+	| permanentCard |
 	permanentCard := gameElementsResource dummyPermanentCard.
 	game := Game
 		playedBy: players
@@ -189,9 +187,8 @@ CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCard [
-	| board  permanentCard  |
+	| permanentCard  |
 	permanentCard := gameElementsResource accelerationCard.
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -212,10 +209,9 @@ CardsTest >> testPlayerPlaysAccelerationCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
-	| board  permanentCard  |
+	| permanentCard  |
 	permanentCard := gameElementsResource accelerationCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 9.
-	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
@@ -236,11 +232,10 @@ CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
-	| board  instantCard permanentCard loadedDeck secondLoadedDeck |
+	| instantCard permanentCard loadedDeck secondLoadedDeck |
 	
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	dices := OrderedCollection with: fourFaceDummyDice.
-	board := self loadedBoard.
 	permanentCard := gameElementsResource dummyPermanentCard.
 	instantCard := gameElementsResource cancellationCard.
 	loadedDeck := (self cardDeckWithCard: instantCard).
@@ -263,9 +258,8 @@ CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
-	| board  instantCard |
+	| instantCard |
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
-	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	instantCard := gameElementsResource dummyInstantCard.
 	game := Game
@@ -283,10 +277,9 @@ CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
-	| board  permanentCard  |
+	| permanentCard  |
 	permanentCard := gameElementsResource overloadCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
-	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
@@ -307,11 +300,10 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
-	| board  permanentCard  |
+	|permanentCard  |
 	permanentCard := gameElementsResource overloadCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 5.
 	dices := OrderedCollection with: fourFaceDummyDice.
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -331,10 +323,9 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysPermanentCard [
-	| board  permanentCard |
+	| permanentCard |
 	players remove:juan.
 	permanentCard := gameElementsResource dummyPermanentCard.
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -349,10 +340,8 @@ CardsTest >> testPlayerPlaysPermanentCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
-	| board  instantCard  loadedDeck  permanentCard secondDeck |
+	| instantCard  loadedDeck  permanentCard secondDeck |
 	
-	board := self loadedBoard.
-		
 	permanentCard := gameElementsResource dummyPermanentCard.
 		
 	dices := OrderedCollection with: fourFaceDummyDice.
@@ -377,10 +366,8 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRedoCardOutOfHisTurnTwiceAndRedoesAnInstantCard [
-	| board  instantCard  loadedDeck  instantCard2 secondDeck |
+	| instantCard  loadedDeck  instantCard2 secondDeck |
 	
-	board := self loadedBoard.
-		
 	instantCard2 := gameElementsResource dummyInstantCard.
 	instantCard := gameElementsResource redoCard.
 	loadedDeck := (self cardDeckWithCard: instantCard ).
@@ -403,9 +390,8 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurnTwiceAndRedoesAnInstantCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRepeatCard [
-	| board instantCard  |
+	| instantCard  |
 	instantCard := gameElementsResource repeatCard.
-	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
@@ -420,10 +406,9 @@ CardsTest >> testPlayerPlaysRepeatCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
-	| board permanentCard |
+	| permanentCard |
 	permanentCard := self speedCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
-	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
@@ -443,10 +428,9 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
-	| board  permanentCard  |
+	| permanentCard  |
 	permanentCard := self speedCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
-	board := self loadedBoard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
@@ -469,8 +453,7 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 
 { #category : #tests }
 CardsTest >> testRedoCardHasNoEffectWhenNoCardWasPlayedBefore [
-	| board instantCard loadedDeck |
-	board := self loadedBoard.
+	| instantCard loadedDeck |
 	dices := OrderedCollection with: fourFaceDummyDice.
 	instantCard := gameElementsResource redoCard.
 	loadedDeck := (self cardDeckWithCard: instantCard ).

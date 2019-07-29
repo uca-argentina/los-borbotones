@@ -6,6 +6,7 @@ Class {
 	#superclass : #TestCase,
 	#instVars : [
 		'fourFaceDummyDice',
+		'board',
 		'game',
 		'dices',
 		'robert',
@@ -57,6 +58,7 @@ GameTest >> setUp [
 	
 	atomicBombWithProbability := AtomicBomb new -> 0.02.
 	emptyWithProbability := Empty new -> 0.45.
+	board := self loadedBoard.
 	
 	
 ]
@@ -85,8 +87,6 @@ GameTest >> stocasticCardDeck [
 
 { #category : #tests }
 GameTest >> testCanNotGetWinnerWhileGameIsRunning [
-	| board |
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -101,8 +101,7 @@ GameTest >> testCanNotGetWinnerWhileGameIsRunning [
 
 { #category : #tests }
 GameTest >> testCantInstantiatiateGameWithInvalidLapsAmount [
-	|board gameBlock|
-	board := self loadedBoard.
+	| gameBlock|
 	gameBlock := [ Game
 		playedBy: players
 		withLapsToWin: -3
@@ -115,8 +114,7 @@ GameTest >> testCantInstantiatiateGameWithInvalidLapsAmount [
 
 { #category : #tests }
 GameTest >> testCantInstantiatiateGameWithoutDices [
-	|board gameBlock|
-	board := self loadedBoard.
+	| gameBlock|
 	gameBlock := [ Game
 		playedBy: players
 		withLapsToWin: 5
@@ -129,8 +127,7 @@ GameTest >> testCantInstantiatiateGameWithoutDices [
 
 { #category : #tests }
 GameTest >> testCantInstantiatiateGameWithoutPlayers [
-	|board gameBlock|
-	board := self loadedBoard.
+	| gameBlock|
 	gameBlock := [ Game
 		playedBy: {}
 		withLapsToWin: 5
@@ -150,8 +147,6 @@ GameTest >> testCantInstantiatiateInvalidPosition [
 
 { #category : #tests }
 GameTest >> testGameCantBePlayedOnceItIsOver [
-	| board |
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -166,8 +161,6 @@ GameTest >> testGameCantBePlayedOnceItIsOver [
 
 { #category : #tests }
 GameTest >> testGameHasEnded [
-	| board |
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -181,7 +174,6 @@ GameTest >> testGameHasEnded [
 
 { #category : #tests }
 GameTest >> testGameStartsWithA4StepsBoard [
-	| board |
 	board := (LoadedBoardBuilder startBoardWithSteps: 4)
 		withEffectProbabilityAssociation: emptyWithProbability;
 		buildBoard.
@@ -196,8 +188,6 @@ GameTest >> testGameStartsWithA4StepsBoard [
 
 { #category : #tests }
 GameTest >> testGetWinnerOnceGameIsFinished [
-	| board |
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -212,7 +202,7 @@ GameTest >> testGetWinnerOnceGameIsFinished [
 
 { #category : #tests }
 GameTest >> testIsRobertTurn [
-	| matt martin board |
+	| matt martin |
 	matt := Player named: 'Matt'.
 	martin := Player named: 'Martin'.
 	players add: matt.
@@ -234,10 +224,9 @@ GameTest >> testIsRobertTurn [
 
 { #category : #tests }
 GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
-	| lucia board |
+	| lucia  |
 	lucia := Player named: 'Lucia'.
 	players add: lucia.
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -252,10 +241,9 @@ GameTest >> testLuciaCanNotPlayBecouseGameHasEnded [
 
 { #category : #tests }
 GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
-	| fiveFaceDummyDice board |
+	| fiveFaceDummyDice  |
 	fiveFaceDummyDice := LoadedDice withFaces: 5 andValue: 5.
 	dices add: fiveFaceDummyDice.
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 3
@@ -272,12 +260,11 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 
 { #category : #tests }
 GameTest >> testPlayersStartWithTwoCards [
-	| board tomas lucia |
+	| tomas lucia |
 	tomas := Player named: 'Tomas'.
 	lucia := Player named: 'Lucia'.
 	players add: tomas.
 	players add: lucia.
-	board := self loadedBoard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
@@ -290,7 +277,7 @@ GameTest >> testPlayersStartWithTwoCards [
 
 { #category : #tests }
 GameTest >> testPositionNotFound [
-	| board  lucia|
+	|lucia|
 	lucia := Player named: 'Lucia'.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: atomicBombWithProbability;
@@ -308,7 +295,7 @@ GameTest >> testPositionNotFound [
 
 { #category : #tests }
 GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
-	| lucia board |
+	| lucia |
 	lucia := Player named: 'Lucia'.
 	players add: lucia.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
@@ -335,7 +322,7 @@ GameTest >> testPositionOfRobertAndLuciaAfterAtomicBombIsZero [
 
 { #category : #tests }
 GameTest >> testThatRoberIsThirdLucasIsSecondAndJuanIsFirstInTheRanking [
-	| board lucas juan |
+	| lucas juan |
 	lucas := self lucas.
 	juan := self juan.
 	players
