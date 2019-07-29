@@ -142,6 +142,13 @@ GameTest >> testCantInstantiatiateGameWithoutPlayers [
 ]
 
 { #category : #tests }
+GameTest >> testCantInstantiatiateInvalidPosition [
+
+	self should: [ Position tile: -4 andLap: 2 ] raiseGameErrorWithMessage: 'Tile number must be a non negative integer. '.
+	self should: [ Position tile: 2 andLap: -2 ] raiseGameErrorWithMessage: 'Lap number must be a non negative integer. '.
+]
+
+{ #category : #tests }
 GameTest >> testGameCantBePlayedOnceItIsOver [
 	| board |
 	board := self loadedBoard.

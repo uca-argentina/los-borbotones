@@ -11,8 +11,15 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'private-assertions' }
+Position class >> assertValidTile: aTileNumber andLap: aLapNumber [ 
+	aTileNumber < 0 ifTrue: [ GameModelError signal: 'Tile number must be a non negative integer. ' ].
+	aLapNumber  < 0 ifTrue: [ GameModelError signal: 'Lap number must be a non negative integer. ' ]
+]
+
 { #category : #creation }
 Position class >> tile: aTileNumber andLap: aLapNumber [
+	self assertValidTile: aTileNumber andLap: aLapNumber.
 	^ self new
 		initializeWithTileNumber: aTileNumber andLap: aLapNumber;
 		yourself

@@ -1,3 +1,6 @@
+"
+Resource para tests
+"
 Class {
 	#name : #GameElementsResource,
 	#superclass : #TestResource,

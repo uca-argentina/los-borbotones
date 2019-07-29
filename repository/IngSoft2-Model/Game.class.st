@@ -79,7 +79,7 @@ Game >> assertGameHasNotEnded [
 		ifTrue: [ GameModelError signal: 'Game is over. ' ]
 ]
 
-{ #category : #asserting }
+{ #category : #'private-assertions' }
 Game >> assertValidPlayer: aPlayerName [
 	(players anySatisfy: [ :aPlayer | aPlayer name = aPlayerName  ])
 		ifFalse: [ GameModelError signal: 'There is no such player.' ]
