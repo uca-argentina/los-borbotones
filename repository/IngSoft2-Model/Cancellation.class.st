@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #action }
-Cancellation >> actOn: aGame affect: aPermanentCard [
+Cancellation >> actOn: aGame affect: aPermanentCard by: aPlayer [
 	self assertActivePermanentCardsOn: aGame.
 	aGame removePermanentCard: aPermanentCard
 ]

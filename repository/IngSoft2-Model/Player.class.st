@@ -43,6 +43,13 @@ Player class >> named: aName [
 		yourself
 ]
 
+{ #category : #'private - assertions' }
+Player >> assertPlayerHasCardInHand: aCard [
+	cards
+		detect: [ :card | card = aCard ]
+		ifNone: [ GameModelError signal: 'No such card in hand. ' ]
+]
+
 { #category : #accessing }
 Player >> cards [
 	^cards copy
@@ -65,19 +72,10 @@ Player >> name [
 ]
 
 { #category : #action }
-Player >> playsCard: aCard affecting: anObject on: aGame [
-	| cardToPlay |
-	cardToPlay := cards
-		detect: [ :card | card = aCard ]
-		ifNone: [ GameModelError signal: 'No such card in hand. ' ].
-	
-	aCard isPermanentCard ifTrue: [  	
-	aGame currentPlayer name = name
-		ifFalse: [ GameModelError
-				signal: 'Cannot play permanent card if it is not your turn. ' ]].
-			
-	cardToPlay actOn: aGame affect: anObject.
-	cards remove: cardToPlay
+Player >> playsCard: aCard affecting: aSetOfPlayers on: aGame [
+	self assertPlayerHasCardInHand: aCard.
+	aCard actOn: aGame affect: aSetOfPlayers by: self.
+	cards remove: aCard
 ]
 
 { #category : #action }

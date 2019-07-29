@@ -8,20 +8,12 @@ Class {
 }
 
 { #category : #action }
-DummyEffect >> actOn: aGame affect: aPlayer [ 
+DummyEffect >> actOn: aGame affect: aSetOfPlayer by: aPlayer [ 
 ]
 
 { #category : #action }
-DummyEffect >> appliesTo: aPlayer [
-	^ true
-]
+DummyEffect >> update: aResult for: aPlayer [
+	"Does nothing."
 
-{ #category : #presentation }
-DummyEffect >> changesRollResult [
-	^false
-]
-
-{ #category : #presentation }
-DummyEffect >> quantity [
-
+	^ 0
 ]

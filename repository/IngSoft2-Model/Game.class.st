@@ -39,14 +39,32 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'private-assertions' }
+Game class >> assertLapsAmountIsPositive: aLapsAmount [ 
+	(aLapsAmount < 1) ifTrue: [ GameModelError signal: 'Laps amount must be a positive integer. ' ]
+]
+
+{ #category : #'private-assertions' }
+Game class >> assertSetOfDicesIsValid: aSetOfDices [ 
+	aSetOfDices size < 1 ifTrue: [ GameModelError signal: 'Invalid set of dices. ' ]
+]
+
+{ #category : #'private-assertions' }
+Game class >> assertValidSetOfPlayers: aSetOfPlayers [ 
+	(aSetOfPlayers size == 0) ifTrue: [ GameModelError signal: 'Invalid set of players. ' ]
+]
+
 { #category : #creation }
-Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard deck: aDeck using: dices [
+Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard deck: aDeck using: aSetOfDices [
+	self assertValidSetOfPlayers: aSetOfPlayers.
+	self assertLapsAmountIsPositive: aLapsAmount.
+	self assertSetOfDicesIsValid: aSetOfDices.
 	^ self new
 		initializeWithLaps: aLapsAmount
 			board: aBoard
 			players: aSetOfPlayers
 			cardDeck: aDeck
-			andUsing: dices;
+			andUsing: aSetOfDices;
 		yourself
 ]
 
@@ -61,10 +79,10 @@ Game >> assertGameHasNotEnded [
 		ifTrue: [ GameModelError signal: 'Game is over. ' ]
 ]
 
-{ #category : #asserting }
+{ #category : #'private-assertions' }
 Game >> assertValidPlayer: aPlayerName [
 	(players anySatisfy: [ :aPlayer | aPlayer name = aPlayerName  ])
-		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
+		ifFalse: [ GameModelError signal: 'There is no such player.' ]
 ]
 
 { #category : #'private-assertions' }
@@ -76,15 +94,14 @@ Game >> assertValidPlayers: aPlayersCollection [
 		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
 ]
 
-{ #category : #components }
+{ #category : #presentation }
 Game >> board [
 	^ board
 ]
 
-{ #category : #components }
-Game >> changePositionOf: aPlayer toTile: aNumberOfTile andLap: aNumberOfLap [
-	(self historyPositionOf: aPlayer)
-		add: (Position tile: aNumberOfTile andLap: aNumberOfLap)
+{ #category : #actions }
+Game >> changePositionOf: aPlayer toTile: aTileNumber andLap: aLapNumber [ 
+	playersPositions changePositionOf: aPlayer toTile: aTileNumber andLap: aLapNumber.
 ]
 
 { #category : #status }
@@ -100,24 +117,13 @@ Game >> deck [
 { #category : #status }
 Game >> hasEnded [
 	^ players
-		anySatisfy: [ :player | (self positionLapOf: player) >= laps ]
-]
-
-{ #category : #components }
-Game >> historyPositionOf: aPlayer [
-	^ playersPositions at: (self indexOf: aPlayer)
-]
-
-{ #category : #components }
-Game >> indexOf: aPlayer [
-	^ players indexOf: aPlayer
+		anySatisfy: [ :player | (playersPositions positionLapOf: player) >= laps ]
 ]
 
 { #category : #initialize }
 Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers cardDeck: aDeck andUsing: aSetOfDices [
 	players := aSetOfPlayers.
-	playersPositions := players
-		collect: [ :player | OrderedCollection with: (Position tile: 0 andLap: 0) ].
+	playersPositions := PlayersPositions withPositionsFor: players.
 	laps := aLapsAmount.
 	dices := aSetOfDices.
 	board := aBoard.
@@ -135,64 +141,43 @@ Game >> lastCardPlayed [
 
 { #category : #actions }
 Game >> moveToPreviousPosition: aPlayer [
-	(self historyPositionOf: aPlayer)
-		removeLast;
-		removeLast
+	playersPositions moveToPreviousPosition: aPlayer.
 ]
 
 { #category : #actions }
-Game >> moves: aPlayer stepsBackwards: aStepsAmount [
+Game >> moves: aPlayer steps: aStepsAmount [
 	| newPosition newLap playerHistoryPosition |
-	playerHistoryPosition := self historyPositionOf: aPlayer.
+	playerHistoryPosition := playersPositions historyPositionOf: aPlayer.
 	newPosition := self
-		newPositionBackwardFor: aPlayer
+		newPositionFor: aPlayer
 		calculatedWith: aStepsAmount.
-	newLap := self newLapBackwardFor: aPlayer calculatedWith: newPosition.
+	newLap := self newLapFor: aPlayer calculatedWith: aStepsAmount.
 	playerHistoryPosition
 		add: (Position tile: newPosition andLap: newLap)
 ]
 
 { #category : #actions }
-Game >> moves: aPlayer stepsFoward: aStepsAmount [
-	| newPosition newLap playerHistoryPosition |
-	playerHistoryPosition := self historyPositionOf: aPlayer.
-	newPosition := self
-		newPositionForwardFor: aPlayer
-		calculatedWith: aStepsAmount.
-	newLap := self newLapFowardFor: aPlayer calculatedWith: aStepsAmount.
-	playerHistoryPosition
-		add: (Position tile: newPosition andLap: newLap)
+Game >> moves: aPlayer stepsBackwards: aPositiveStepsAmount [
+	self moves: aPlayer steps: -1*aPositiveStepsAmount.
 ]
 
-{ #category : #components }
-Game >> newLapBackwardFor: aPlayer calculatedWith: aStepsAmount [
+{ #category : #actions }
+Game >> newLapFor: aPlayer calculatedWith: aStepsAmount [
 	^ ((self
-		newTotalStepsBackwardMadeBy: aPlayer
+		newTotalStepsMadeBy: aPlayer
 		calculatedWith: aStepsAmount) / board numberOfTiles) floor
 ]
 
-{ #category : #components }
-Game >> newLapFowardFor: aPlayer calculatedWith: aStepsAmount [
-	^ (((self positionOf: aPlayer) lap + aStepsAmount)
-		/ board numberOfTiles) floor
-]
-
-{ #category : #components }
-Game >> newPositionBackwardFor: aPlayer calculatedWith: aStepsAmount [
+{ #category : #actions }
+Game >> newPositionFor: aPlayer calculatedWith: aStepsAmount [
 	^ (self
-		newTotalStepsBackwardMadeBy: aPlayer
+		newTotalStepsMadeBy: aPlayer
 		calculatedWith: aStepsAmount) % board numberOfTiles
 ]
 
-{ #category : #components }
-Game >> newPositionForwardFor: aPlayer calculatedWith: aStepsAmount [
-	^ ((self positionOf: aPlayer) tile + aStepsAmount)
-		% board numberOfTiles
-]
-
-{ #category : #components }
-Game >> newTotalStepsBackwardMadeBy: aPlayer calculatedWith: aStepsAmount [
-	^ (self totalStepsMadeOf: aPlayer) - aStepsAmount max: 0
+{ #category : #actions }
+Game >> newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount [
+	^ (playersPositions totalStepsMadeOf: aPlayer on: board) + aStepsAmount max: 0
 ]
 
 { #category : #presentation }
@@ -202,24 +187,18 @@ Game >> permanentCards [
 
 { #category : #status }
 Game >> players [
-	^ players
+	^ players copy.
 ]
 
-{ #category : #components }
-Game >> positionLapOf: aPlayer [
-	^ (self positionOf: aPlayer) lap
-]
-
-{ #category : #components }
-Game >> positionOf: aPlayer [
-	^ (playersPositions at: (self indexOf: aPlayer)) last
+{ #category : #presentation }
+Game >> playersPositions [
+	^ playersPositions
 ]
 
 { #category : #status }
 Game >> ranking [
-	^ players
-		asSortedCollection:
-			[ :player1 :player2 | (self positionOf: player1) isAheadOf: (self positionOf: player2) ]
+	^ playersPositions rankPlayers.
+
 ]
 
 { #category : #actions }
@@ -230,7 +209,7 @@ Game >> removePermanentCard: aCard [
 { #category : #actions }
 Game >> repeatLastEffectTileOf: aPlayer [ 
 	board
-		effectAt: (self tilePositionOf: aPlayer)
+		effectAt: (playersPositions tilePositionOf: aPlayer)
 		affect: aPlayer 
 		on: self
 ]
@@ -239,14 +218,12 @@ Game >> repeatLastEffectTileOf: aPlayer [
 Game >> rollDicesForCurrentPlayer [
 	| rollResult currentPlayer |
 	currentPlayer := self currentPlayer.
-	rollResult := dices sum: #roll.
-	permanentCards
-		select:
-			[ :card | card changesRollResult and: (card appliesTo: currentPlayer) ]
-		thenDo: [ :card | rollResult := 0 max: rollResult + card quantity ].
-	self moves: currentPlayer stepsFoward: rollResult.
+	rollResult := permanentCards
+		inject: (dices sum: #roll)
+		into: [ :result :card | card update: result for: currentPlayer ].
+	self moves: currentPlayer steps: rollResult.
 	board
-		effectAt: (self tilePositionOf: currentPlayer)
+		effectAt: (playersPositions tilePositionOf: currentPlayer)
 		affect: currentPlayer
 		on: self
 ]
@@ -269,18 +246,6 @@ Game >> setLastCard: aCard [
 	lastCardPlayed := aCard.
 ]
 
-{ #category : #components }
-Game >> tilePositionOf: aPlayer [
-	^ (self positionOf: aPlayer) tile
-]
-
-{ #category : #components }
-Game >> totalStepsMadeOf: aPlayer [
-	| playerPosition |
-	playerPosition := self positionOf: aPlayer.
-	^ playerPosition lap * board numberOfTiles + playerPosition tile
-]
-
 { #category : #actions }
 Game >> turnIsPlayed [
 	self assertGameHasNotEnded.
@@ -291,7 +256,7 @@ Game >> turnIsPlayed [
 { #category : #status }
 Game >> winner [
 	^ players
-		detect: [ :player | (self positionLapOf: player) >= laps ]
+		detect: [ :player | (playersPositions positionLapOf: player) >= laps ]
 		ifNone: [ GameModelError
 				signal: 'There is no winner yet. The game is not finished' ]
 ]

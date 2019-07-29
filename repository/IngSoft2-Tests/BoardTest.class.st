@@ -20,9 +20,9 @@ Class {
 }
 
 { #category : #asserting }
-BoardTest >> assertPosition: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
-	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
-	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
+BoardTest >> assertTile: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
+	self assert: (game playersPositions tilePositionOf: aPlayer) equals: aNumberOfTile.
+	self assert: (game playersPositions positionLapOf: aPlayer) equals: aNumberOfLap
 ]
 
 { #category : #running }
@@ -39,7 +39,38 @@ BoardTest >> setUp [
 	timeMachineWithProbability := TimeMachine new -> 0.08.
 	emptyWithProbability := Empty new -> 0.45.
 	wormHoleWithProbability := WormHole new -> 0.15.
-	cardDealingTileWithProbability := CardDealingTile new -> 0.1
+	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
+	
+]
+
+{ #category : #asserting }
+BoardTest >> should: aBlock raise: anError withErrorMessage: aMessage [
+	self should: aBlock
+		raise: anError
+		withExceptionDo: [ :signal | 
+			self
+				assert: signal messageText
+				equals: aMessage ]
+]
+
+{ #category : #asserting }
+BoardTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
+	self should: aBlock
+		raise: GameModelError 
+		withErrorMessage: aMessage.
+]
+
+{ #category : #tests }
+BoardTest >> stocasticCardDeck [
+	^ GameElementsResource current stocasticCardDeck.
+]
+
+{ #category : #tests }
+BoardTest >> testCantBuildBoardWithNonPositiveSteps [
+	self should: [(LoadedBoardBuilder startBoardWithSteps: -1)
+		withEffectProbabilityAssociation: speedUpWithProbability;
+		buildBoard] raiseGameErrorWithMessage: 'Steps amount must be a positive integer. '.
+	
 ]
 
 { #category : #tests }
@@ -54,7 +85,7 @@ BoardTest >> testCardDealingTileGivesPlayerOneCard [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: (self stocasticCardDeck)
 		using: dices.
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
@@ -77,13 +108,13 @@ BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck 
 		using: dices.
 	game changePositionOf: lucas toTile: 2 andLap: 0.
 	game changePositionOf: juan toTile: 3 andLap: 3.
 	game turnIsPlayed.
 	self
-		assert: (players allSatisfy: [ :player | (game tilePositionOf: player) = 0 ])
+		assert: (players allSatisfy: [ :player | (game playersPositions tilePositionOf: player) = 0 ])
 ]
 
 { #category : #tests }
@@ -103,24 +134,24 @@ BoardTest >> testMoonWalkEffectMakesInactivePlayersGoBackNSteps [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck
 		using: dices.
 	game changePositionOf: lucas toTile: 7 andLap: 3.
 	game changePositionOf: juan toTile: 2 andLap: 1.
 	game changePositionOf: lucia toTile: 1 andLap: 0.
 	game turnIsPlayed.
 	self
-		assertPosition: 2
+		assertTile: 2
 		andLap: 3
 		for: lucas
 		on: game.
 	self
-		assertPosition: 3
+		assertTile: 3
 		andLap: 0
 		for: juan
 		on: game.
 	self
-		assertPosition: 0
+		assertTile: 0
 		andLap: 0
 		for: lucia
 		on: game
@@ -136,27 +167,58 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck 
+		deck: self stocasticCardDeck 
 		using: dices.
-	self assert: (game tilePositionOf: robert) equals: 0.
+	self assert: (game playersPositions tilePositionOf: robert) equals: 0.
 	game turnIsPlayed.
-	self assert: (game tilePositionOf: robert) equals: 8
+	self assert: (game playersPositions tilePositionOf: robert) equals: 8
+]
+
+{ #category : #tests }
+BoardTest >> testStocasticBoardCantBeBuiltWhenSumOfProbabilitiesAreLessThanOne [
+	| boardBuilder  effects |
+	boardBuilder := StocasticBoardBuilder startBoardWithSteps: 6.
+	effects := OrderedCollection new.
+	effects add:  moonWalkWithProbability.
+	effects add:  atomicBombWithProbability.
+	effects add:  timeMachineWithProbability.
+	effects add:  speedUpWithProbability. 
+	effects add:  emptyWithProbability.
+	effects add:  wormHoleWithProbability.
+	self should: [ boardBuilder withEffects: effects. ] raise: GameModelError withExceptionDo: 
+	[ :exception | self assert: exception messageText equals: 'Sum of probabilities must be equal to 1.'  ]
+	
+]
+
+{ #category : #tests }
+BoardTest >> testStocasticBoardCantBeBuiltWithInvalidProbabilities [
+	| boardBuilder effects |
+	moonWalkWithProbability := (MoonWalk withNumber: 5) -> -0.5.
+	atomicBombWithProbability := AtomicBomb new -> 1.5.
+	boardBuilder := StocasticBoardBuilder startBoardWithSteps: 6.
+	effects := OrderedCollection new.
+	effects add:  moonWalkWithProbability.
+	effects add:  atomicBombWithProbability.
+	self should: [ boardBuilder withEffects: effects. ] raise: GameModelError withExceptionDo: 
+	[ :exception | self assert: exception messageText equals: 'Probabilities must be between 0 and 1.'  ]
+	
 ]
 
 { #category : #tests }
 BoardTest >> testStocasticBoardIsValid [
 	| boardBuilder board effects |
 	boardBuilder := StocasticBoardBuilder startBoardWithSteps: 6.
-	effects := OrderedCollection
-		with: moonWalkWithProbability
-		with: atomicBombWithProbability
-		with: timeMachineWithProbability
-		with: emptyWithProbability
-		with: wormHoleWithProbability.
+	effects := OrderedCollection new.
+	effects add:  moonWalkWithProbability.
+	effects add:  atomicBombWithProbability.
+	effects add:  timeMachineWithProbability.
+	effects add:  speedUpWithProbability. 
+	effects add:  emptyWithProbability.
+	effects add:  wormHoleWithProbability.
+	effects add: cardDealingTileWithProbability.
 	boardBuilder withEffects: effects.
 	board := boardBuilder buildBoard.
 	self assert: board numberOfTiles equals: 6
-	
 ]
 
 { #category : #tests }
@@ -169,13 +231,13 @@ BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck
 		using: dices.
 	game changePositionOf: robert toTile: 2 andLap: 0.
 	game changePositionOf: robert toTile: 3 andLap: 0.
-	self assert: (game tilePositionOf: robert) equals: 3.
+	self assert: (game playersPositions tilePositionOf: robert) equals: 3.
 	game turnIsPlayed.
-	self assert: (game tilePositionOf: robert) equals: 2
+	self assert: (game playersPositions tilePositionOf: robert) equals: 2
 ]
 
 { #category : #tests }
@@ -190,10 +252,10 @@ BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: StocasticCardDeck randomDeck
+		deck: self stocasticCardDeck
 		using: dices.
 	game changePositionOf: robert toTile: 1 andLap: 0.
-	self assert: (game tilePositionOf: robert) equals: 1.
+	self assert: (game playersPositions tilePositionOf: robert) equals: 1.
 	game turnIsPlayed.
-	self assert: (game tilePositionOf: robert) equals: 0
+	self assert: (game playersPositions tilePositionOf: robert) equals: 0
 ]

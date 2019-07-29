@@ -18,10 +18,10 @@ RedoLastCardEffect class >> withNoExcecutedCard [
 ]
 
 { #category : #action }
-RedoLastCardEffect >> actOn: aGame affect: aPlayer [
+RedoLastCardEffect >> actOn: aGame affect: aSetOfPlayers by: aPlayer [
 	| cardToRedo |
 	cardToRedo := self selectCardToRedoBasedOnPreviousRedosAnd: aGame.
-	cardToRedo redoAffecting: aPlayer on: aGame.
+	cardToRedo actOn: aGame affect: aPlayer by: aPlayer.
 	executedCard := aGame lastCardPlayed
 ]
 

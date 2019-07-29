@@ -8,6 +8,6 @@ Class {
 }
 
 { #category : #action }
-Card >> actOn: aGame affect: aCollection [ 
+Card >> actOn: aGame affect: aCollection by: anObject [ 
 	^self subclassResponsibility.
 ]

@@ -17,18 +17,8 @@ ModifyDiceResultOfAllPlayers class >> modifyResultBy: aQuantity [
 ]
 
 { #category : #action }
-ModifyDiceResultOfAllPlayers >> actOn: aGame affect: aPlayer [
+ModifyDiceResultOfAllPlayers >> actOn: aGame affect: aSetOfPlayers by: aPlayer [
 	affectedPlayers := aGame players 
-]
-
-{ #category : #presentation }
-ModifyDiceResultOfAllPlayers >> appliesTo: aPlayer [
-	^ true
-]
-
-{ #category : #presentation }
-ModifyDiceResultOfAllPlayers >> changesRollResult [
-	^true.
 ]
 
 { #category : #initialization }
@@ -37,6 +27,6 @@ ModifyDiceResultOfAllPlayers >> initializeWithModificationQuantity: aQuantity [
 ]
 
 { #category : #accessing }
-ModifyDiceResultOfAllPlayers >> quantity [
-	^ quantity
+ModifyDiceResultOfAllPlayers >> update: aResult for: aPlayer [
+	^ aResult + quantity
 ]

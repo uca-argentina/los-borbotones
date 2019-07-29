@@ -17,19 +17,9 @@ ModifyDiceResult class >> modifyResultBy: aQuantity [
 ]
 
 { #category : #action }
-ModifyDiceResult >> actOn: aGame affect: aPlayer [
+ModifyDiceResult >> actOn: aGame affect: aPlayer by: actingPlayer [
 	aGame assertValidPlayer: aPlayer.
 	affectedPlayer := aGame selectPlayerNamed: aPlayer
-]
-
-{ #category : #presentation }
-ModifyDiceResult >> appliesTo: aPlayer [
-	^ affectedPlayer name = aPlayer name
-]
-
-{ #category : #presentation }
-ModifyDiceResult >> changesRollResult [
-	^true.
 ]
 
 { #category : #initialize }
@@ -37,7 +27,9 @@ ModifyDiceResult >> initializeWithModificationQuantity: aQuantity [
 	quantity := aQuantity.
 ]
 
-{ #category : #accessing }
-ModifyDiceResult >> quantity [
-	^ quantity
+{ #category : #presentation }
+ModifyDiceResult >> update: aResult for: aPlayer [
+	^ affectedPlayer name = aPlayer name
+		ifTrue: [ aResult + quantity ]
+		ifFalse: [ aResult ]
 ]
