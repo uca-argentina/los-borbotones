@@ -94,15 +94,14 @@ Game >> assertValidPlayers: aPlayersCollection [
 		ifFalse: [ GameModelError signal: 'No son jugadores del juego' ]
 ]
 
-{ #category : #components }
+{ #category : #presentation }
 Game >> board [
 	^ board
 ]
 
-{ #category : #components }
-Game >> changePositionOf: aPlayer toTile: aNumberOfTile andLap: aNumberOfLap [
-	(self historyPositionOf: aPlayer)
-		add: (Position tile: aNumberOfTile andLap: aNumberOfLap)
+{ #category : #actions }
+Game >> changePositionOf: aPlayer toTile: aTileNumber andLap: aLapNumber [ 
+	playersPositions changePositionOf: aPlayer toTile: aTileNumber andLap: aLapNumber.
 ]
 
 { #category : #status }
@@ -118,24 +117,13 @@ Game >> deck [
 { #category : #status }
 Game >> hasEnded [
 	^ players
-		anySatisfy: [ :player | (self positionLapOf: player) >= laps ]
-]
-
-{ #category : #components }
-Game >> historyPositionOf: aPlayer [
-	^ playersPositions at: (self indexOf: aPlayer)
-]
-
-{ #category : #components }
-Game >> indexOf: aPlayer [
-	^ players indexOf: aPlayer
+		anySatisfy: [ :player | (playersPositions positionLapOf: player) >= laps ]
 ]
 
 { #category : #initialize }
 Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers cardDeck: aDeck andUsing: aSetOfDices [
 	players := aSetOfPlayers.
-	playersPositions := players
-		collect: [ :player | OrderedCollection with: (Position tile: 0 andLap: 0) ].
+	playersPositions := PlayersPositions withPositionsFor: players.
 	laps := aLapsAmount.
 	dices := aSetOfDices.
 	board := aBoard.
@@ -153,15 +141,13 @@ Game >> lastCardPlayed [
 
 { #category : #actions }
 Game >> moveToPreviousPosition: aPlayer [
-	(self historyPositionOf: aPlayer)
-		removeLast;
-		removeLast
+	playersPositions moveToPreviousPosition: aPlayer.
 ]
 
 { #category : #actions }
 Game >> moves: aPlayer steps: aStepsAmount [
 	| newPosition newLap playerHistoryPosition |
-	playerHistoryPosition := self historyPositionOf: aPlayer.
+	playerHistoryPosition := playersPositions historyPositionOf: aPlayer.
 	newPosition := self
 		newPositionFor: aPlayer
 		calculatedWith: aStepsAmount.
@@ -175,23 +161,23 @@ Game >> moves: aPlayer stepsBackwards: aPositiveStepsAmount [
 	self moves: aPlayer steps: -1*aPositiveStepsAmount.
 ]
 
-{ #category : #components }
+{ #category : #actions }
 Game >> newLapFor: aPlayer calculatedWith: aStepsAmount [
 	^ ((self
 		newTotalStepsMadeBy: aPlayer
 		calculatedWith: aStepsAmount) / board numberOfTiles) floor
 ]
 
-{ #category : #components }
+{ #category : #actions }
 Game >> newPositionFor: aPlayer calculatedWith: aStepsAmount [
 	^ (self
 		newTotalStepsMadeBy: aPlayer
 		calculatedWith: aStepsAmount) % board numberOfTiles
 ]
 
-{ #category : #components }
+{ #category : #actions }
 Game >> newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount [
-	^ (self totalStepsMadeOf: aPlayer) + aStepsAmount max: 0
+	^ (playersPositions totalStepsMadeOf: aPlayer on: board) + aStepsAmount max: 0
 ]
 
 { #category : #presentation }
@@ -201,24 +187,18 @@ Game >> permanentCards [
 
 { #category : #status }
 Game >> players [
-	^ players
+	^ players copy.
 ]
 
-{ #category : #components }
-Game >> positionLapOf: aPlayer [
-	^ (self positionOf: aPlayer) lap
-]
-
-{ #category : #components }
-Game >> positionOf: aPlayer [
-	^ (playersPositions at: (self indexOf: aPlayer)) last
+{ #category : #presentation }
+Game >> playersPositions [
+	^ playersPositions
 ]
 
 { #category : #status }
 Game >> ranking [
-	^ players
-		asSortedCollection:
-			[ :player1 :player2 | (self positionOf: player1) isAheadOf: (self positionOf: player2) ]
+	^ playersPositions rankPlayers.
+
 ]
 
 { #category : #actions }
@@ -229,7 +209,7 @@ Game >> removePermanentCard: aCard [
 { #category : #actions }
 Game >> repeatLastEffectTileOf: aPlayer [ 
 	board
-		effectAt: (self tilePositionOf: aPlayer)
+		effectAt: (playersPositions tilePositionOf: aPlayer)
 		affect: aPlayer 
 		on: self
 ]
@@ -243,7 +223,7 @@ Game >> rollDicesForCurrentPlayer [
 		into: [ :result :card | card update: result for: currentPlayer ].
 	self moves: currentPlayer steps: rollResult.
 	board
-		effectAt: (self tilePositionOf: currentPlayer)
+		effectAt: (playersPositions tilePositionOf: currentPlayer)
 		affect: currentPlayer
 		on: self
 ]
@@ -266,18 +246,6 @@ Game >> setLastCard: aCard [
 	lastCardPlayed := aCard.
 ]
 
-{ #category : #components }
-Game >> tilePositionOf: aPlayer [
-	^ (self positionOf: aPlayer) tile
-]
-
-{ #category : #components }
-Game >> totalStepsMadeOf: aPlayer [
-	| playerPosition |
-	playerPosition := self positionOf: aPlayer.
-	^ playerPosition lap * board numberOfTiles + playerPosition tile
-]
-
 { #category : #actions }
 Game >> turnIsPlayed [
 	self assertGameHasNotEnded.
@@ -288,7 +256,7 @@ Game >> turnIsPlayed [
 { #category : #status }
 Game >> winner [
 	^ players
-		detect: [ :player | (self positionLapOf: player) >= laps ]
+		detect: [ :player | (playersPositions positionLapOf: player) >= laps ]
 		ifNone: [ GameModelError
 				signal: 'There is no winner yet. The game is not finished' ]
 ]

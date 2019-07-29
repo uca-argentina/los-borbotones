@@ -21,8 +21,8 @@ Class {
 
 { #category : #asserting }
 BoardTest >> assertTile: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: game [
-	self assert: (game tilePositionOf: aPlayer) equals: aNumberOfTile.
-	self assert: (game positionLapOf: aPlayer) equals: aNumberOfLap
+	self assert: (game playersPositions tilePositionOf: aPlayer) equals: aNumberOfTile.
+	self assert: (game playersPositions positionLapOf: aPlayer) equals: aNumberOfLap
 ]
 
 { #category : #running }
@@ -114,7 +114,7 @@ BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
 	game changePositionOf: juan toTile: 3 andLap: 3.
 	game turnIsPlayed.
 	self
-		assert: (players allSatisfy: [ :player | (game tilePositionOf: player) = 0 ])
+		assert: (players allSatisfy: [ :player | (game playersPositions tilePositionOf: player) = 0 ])
 ]
 
 { #category : #tests }
@@ -169,9 +169,9 @@ BoardTest >> testSpeedUpEffectMakesPlayerMove4StepsForward [
 		board: board
 		deck: self stocasticCardDeck 
 		using: dices.
-	self assert: (game tilePositionOf: robert) equals: 0.
+	self assert: (game playersPositions tilePositionOf: robert) equals: 0.
 	game turnIsPlayed.
-	self assert: (game tilePositionOf: robert) equals: 8
+	self assert: (game playersPositions tilePositionOf: robert) equals: 8
 ]
 
 { #category : #tests }
@@ -235,9 +235,9 @@ BoardTest >> testTimeMachineEffectMakesPlayerMove4StepsBackwards [
 		using: dices.
 	game changePositionOf: robert toTile: 2 andLap: 0.
 	game changePositionOf: robert toTile: 3 andLap: 0.
-	self assert: (game tilePositionOf: robert) equals: 3.
+	self assert: (game playersPositions tilePositionOf: robert) equals: 3.
 	game turnIsPlayed.
-	self assert: (game tilePositionOf: robert) equals: 2
+	self assert: (game playersPositions tilePositionOf: robert) equals: 2
 ]
 
 { #category : #tests }
@@ -255,7 +255,7 @@ BoardTest >> testWormholeEffectMakesPlayerMove4StepsBackwards [
 		deck: self stocasticCardDeck
 		using: dices.
 	game changePositionOf: robert toTile: 1 andLap: 0.
-	self assert: (game tilePositionOf: robert) equals: 1.
+	self assert: (game playersPositions tilePositionOf: robert) equals: 1.
 	game turnIsPlayed.
-	self assert: (game tilePositionOf: robert) equals: 0
+	self assert: (game playersPositions tilePositionOf: robert) equals: 0
 ]
