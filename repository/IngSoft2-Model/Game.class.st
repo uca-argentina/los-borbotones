@@ -144,7 +144,7 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers car
 	dices := aSetOfDices.
 	board := aBoard.
 	deck := aDeck.
-	lastCardPlayed := DummyCard new.
+	lastCardPlayed := RealCard named:'start' withAction:(InstantAction withEffect:DummyEffect new).
 	permanentCards := OrderedCollection new.
 	turnPosition := 1.
 	discardDeck := DiscardDeck emptyDeck.

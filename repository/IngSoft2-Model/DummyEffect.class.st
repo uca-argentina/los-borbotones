@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #action }
-DummyEffect >> actOn: aGame affect: aSetOfPlayer by: aPlayer [ 
+DummyEffect >> actOn: aGame affect: aSetOfPlayers by: aPlayer [ 
 ]
 
 { #category : #action }

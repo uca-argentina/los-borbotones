@@ -28,11 +28,6 @@ RealCard >> initializeWithName: aName andAction: anAction [
 	action := anAction.
 ]
 
-{ #category : #testing }
-RealCard >> isDummyCard [
-	^ false.
-]
-
 { #category : #action }
 RealCard >> update: aResult for: aGame [
 	^action  update: aResult for: aGame.
