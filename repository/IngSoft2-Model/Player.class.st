@@ -55,11 +55,6 @@ Player >> cards [
 	^cards copy
 ]
 
-{ #category : #action }
-Player >> choose: aPlayerName inOrderToPlayCardOn: aGame [
-	playerChoosen := aGame selectPlayers: aPlayerName
-]
-
 { #category : #initialize }
 Player >> initializeWithName: aName [
 	name := aName.

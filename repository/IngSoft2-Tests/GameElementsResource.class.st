@@ -85,6 +85,12 @@ GameElementsResource >> speedCard [
 
 { #category : #running }
 GameElementsResource >> stocasticCardDeck [
+	
+	^ self stocasticCardDeckWithCardsAmount: 30.
+]
+
+{ #category : #running }
+GameElementsResource >> stocasticCardDeckWithCardsAmount: aCardsAmount [
 	| cardsWithProbabilities redo overload speed acceleration cancellation repeat |
 	overload := self overloadCard.
 	speed := self speedCard.
@@ -100,5 +106,11 @@ GameElementsResource >> stocasticCardDeck [
 		with: acceleration -> 0.1
 		with: repeat -> 0.1
 		with: cancellation -> 0.2.
-	^ ((StocasticPlayingCardDeckBuilder startWithCardsAmount: 30) withCardsFrom: cardsWithProbabilities) buildCardDeck
+	^ self stocasticPlayingCardDeckFrom: cardsWithProbabilities withCardsAmount: aCardsAmount.
+]
+
+{ #category : #running }
+GameElementsResource >> stocasticPlayingCardDeckFrom: aCardsProbabilityPairsSet withCardsAmount: aCardsAmount [
+
+	^ ((StocasticPlayingCardDeckBuilder startWithCardsAmount: aCardsAmount) withCardsFrom: aCardsProbabilityPairsSet) buildCardDeck
 ]

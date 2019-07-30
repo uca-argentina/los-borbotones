@@ -88,20 +88,10 @@ CardDeckTests >> should: aBlock raiseGameErrorWithMessage: aMessage [
 		withErrorMessage: aMessage.
 ]
 
-{ #category : #asserting }
-CardDeckTests >> stocasticCardDeckWithCardsAmount: aCardsAmount [
-	^self stocasticPlayingCardDeckFrom: cardsWithProbabilities  withCardsAmount: aCardsAmount.
-]
-
-{ #category : #asserting }
-CardDeckTests >> stocasticPlayingCardDeckFrom: aCardProbabilityPairsCollection withCardsAmount: aCardsAmount [
-	^((StocasticPlayingCardDeckBuilder startWithCardsAmount: aCardsAmount) withCardsFrom: aCardProbabilityPairsCollection) buildCardDeck
-]
-
 { #category : #tests }
 CardDeckTests >> testCannotCreateCardDeckWithNegativeCards [
-	self should: [ self stocasticPlayingCardDeckFrom: cardsWithProbabilities withCardsAmount: 0 ] raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
-	self should: [ self stocasticPlayingCardDeckFrom: cardsWithProbabilities withCardsAmount: -2 ] raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
+	self should: [ gameElements stocasticCardDeckWithCardsAmount: 0 ] raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
+	self should: [ gameElements stocasticCardDeckWithCardsAmount: -2 ] raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
 	
 ]
 
@@ -113,8 +103,8 @@ CardDeckTests >> testCannotCreateCardDeckWithoutCards [
 
 { #category : #tests }
 CardDeckTests >> testCannotCreateStocasticCardDeckWithInvalidCardProbabilityPairs [
-	self should: [self stocasticPlayingCardDeckFrom: {} withCardsAmount: 2] raiseGameErrorWithMessage: 'Builder must be provided with at least one card and probability pair. '.
-	self should: [self stocasticPlayingCardDeckFrom: (OrderedCollection with:permanentCard->0.5) withCardsAmount: 2] raiseGameErrorWithMessage: 'Sum of probabilities must be equal to 1. '.	
+	self should: [gameElements  stocasticPlayingCardDeckFrom: {} withCardsAmount: 2] raiseGameErrorWithMessage: 'Builder must be provided with at least one card and probability pair. '.
+	self should: [gameElements stocasticPlayingCardDeckFrom: (OrderedCollection with:permanentCard->0.5) withCardsAmount: 2] raiseGameErrorWithMessage: 'Sum of probabilities must be equal to 1. '.	
 ]
 
 { #category : #tests }
@@ -189,7 +179,7 @@ CardDeckTests >> testDiscardDeckEmptiesWhenShuffledForUse [
 
 { #category : #tests }
 CardDeckTests >> testFiniteAndDeterministicCardDeckCanBeCreated [
-	cardDeck := self stocasticPlayingCardDeckFrom: cardsWithProbabilities  withCardsAmount: 5.
+	cardDeck := gameElements stocasticPlayingCardDeckFrom: cardsWithProbabilities  withCardsAmount: 5.
 	self assert: cardDeck  size equals: 5.
 	self assert: (cardDeck dealACardIfNoneUse: {}) first equals: instantCard.
 ]
