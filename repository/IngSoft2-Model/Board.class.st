@@ -10,8 +10,15 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'private-assertions' }
+Board class >> assertTilesCollectionNotEmpty: aTilesCollection [
+	aTilesCollection isEmpty
+		ifTrue: [ GameModelError signal: 'Board must have at least one tile. ' ]
+]
+
 { #category : #creation }
 Board class >> withTiles: aTilesCollection [
+	self assertTilesCollectionNotEmpty: aTilesCollection.
 	^ self new
 		initializeWithTiles: aTilesCollection;
 		yourself

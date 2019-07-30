@@ -74,7 +74,7 @@ Game >> addPermanentCard: aPermanentCard [
 	permanentCards add: aPermanentCard 
 ]
 
-{ #category : #presentation }
+{ #category : #actions }
 Game >> addToDiscardDeck: aCard [
 	discardDeck addCard: aCard.
 ]

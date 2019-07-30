@@ -259,6 +259,13 @@ GameTest >> testPlayerMovesNineStepsWhenUsingTwoDices [
 ]
 
 { #category : #tests }
+GameTest >> testPlayerMustHaveAName [
+
+	self should: [ Player named:'' ] raiseGameErrorWithMessage: 'Player must have a name. '.
+	
+]
+
+{ #category : #tests }
 GameTest >> testPlayersStartWithTwoCards [
 	| tomas lucia |
 	tomas := Player named: 'Tomas'.

@@ -26,14 +26,19 @@ StocasticPlayingCardDeckBuilder class >> startWithCardsAmount: aCardsAmount [
 ]
 
 { #category : #'private-assertions' }
-StocasticPlayingCardDeckBuilder >> assertCardProbabilityIsNotEmpty: aCardProbabilityCollection [ 
+StocasticPlayingCardDeckBuilder >> assertCardProbabilitySetIsNotEmpty: aCardProbabilityCollection [ 
 	aCardProbabilityCollection isEmpty
 		ifTrue: [ GameModelError
 				signal: 'Builder must be provided with at least one card and probability pair. ' ]
 ]
 
 { #category : #'private-assertions' }
-StocasticPlayingCardDeckBuilder >> assertValidCardProbabilitySet: aCardProbabilityPairsCollection [ 
+StocasticPlayingCardDeckBuilder >> assertProbabilitiesAreBetweenZeroAndOne: aCardProbabilityPairsCollection [ 
+	(aCardProbabilityPairsCollection anySatisfy: [ :pair | pair value > 1 or: pair value < 0 ]) ifTrue: [ GameModelError signal:'Probabilities must be in the range between 0 and 1. ' ]
+]
+
+{ #category : #'private-assertions' }
+StocasticPlayingCardDeckBuilder >> assertSumOfProbabilitiesIsEqualToOne: aCardProbabilityPairsCollection [ 
 	|sumOfProbabilities|
 	sumOfProbabilities := aCardProbabilityPairsCollection sum: #value.
 	sumOfProbabilities := (sumOfProbabilities * 100) rounded / 100.
@@ -66,8 +71,9 @@ StocasticPlayingCardDeckBuilder >> selectCardUsing: aCardProbabiltiyPairsCollect
 
 { #category : #initialization }
 StocasticPlayingCardDeckBuilder >> withCardsFrom: aCardsProbabilityPairsSet [
-	self assertCardProbabilityIsNotEmpty: aCardsProbabilityPairsSet.
-	self assertValidCardProbabilitySet: aCardsProbabilityPairsSet.
+	self assertProbabilitiesAreBetweenZeroAndOne: aCardsProbabilityPairsSet.
+	self assertCardProbabilitySetIsNotEmpty: aCardsProbabilityPairsSet.
+	self assertSumOfProbabilitiesIsEqualToOne: aCardsProbabilityPairsSet.
 	cardsAmount
 		timesRepeat: [ cards add: (self selectCardUsing: aCardsProbabilityPairsSet) ]
 ]

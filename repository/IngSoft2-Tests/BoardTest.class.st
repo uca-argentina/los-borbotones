@@ -66,6 +66,12 @@ BoardTest >> stocasticCardDeck [
 ]
 
 { #category : #tests }
+BoardTest >> testCannotInstantiateBoardWithoutTiles [
+	self should: [ Board withTiles: {}. ] raiseGameErrorWithMessage: 'Board must have at least one tile. ' .
+	
+]
+
+{ #category : #tests }
 BoardTest >> testCantBuildBoardWithNonPositiveSteps [
 	self should: [(LoadedBoardBuilder startBoardWithSteps: -1)
 		withEffectProbabilityAssociation: speedUpWithProbability;

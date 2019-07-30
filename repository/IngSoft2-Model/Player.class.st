@@ -36,8 +36,14 @@ Class {
 	#category : #'IngSoft2-Model'
 }
 
+{ #category : #'private-assertions' }
+Player class >> assertValidName: aName [ 
+	aName isEmpty ifTrue:[ GameModelError signal: 'Player must have a name. ' ]
+]
+
 { #category : #creation }
 Player class >> named: aName [
+	self assertValidName: aName.
 	^ self new
 		initializeWithName: aName;
 		yourself

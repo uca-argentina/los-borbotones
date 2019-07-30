@@ -9,7 +9,7 @@ Class {
 
 { #category : #assertion }
 PlayingCardDeck class >> assertCardCollectionIsValid: aCardsCollection [
-	aCardsCollection size == 0
+	aCardsCollection isEmpty
 		ifTrue: [ GameModelError
 				signal: 'CardDeck must have at least one card to be created. ' ]
 ]

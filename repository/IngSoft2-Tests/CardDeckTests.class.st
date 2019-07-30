@@ -65,7 +65,6 @@ CardDeckTests >> setUp [
 	board := self loadedBoard.
 	instantCard := gameElements dummyInstantCard.
 	permanentCard := gameElements dummyPermanentCard.
-	cardsWithProbabilities  := OrderedCollection with: instantCard->1.
 	instantCardWithProbability  := OrderedCollection with: instantCard->1.	
 	permanentCardWithProbability  := OrderedCollection with: permanentCard->1.
 
@@ -90,21 +89,27 @@ CardDeckTests >> should: aBlock raiseGameErrorWithMessage: aMessage [
 
 { #category : #tests }
 CardDeckTests >> testCannotCreateCardDeckWithNegativeCards [
-	self should: [ gameElements stocasticCardDeckWithCardsAmount: 0 ] raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
-	self should: [ gameElements stocasticCardDeckWithCardsAmount: -2 ] raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
-	
+	self
+		should: [ gameElements stocasticCardDeckWithCardsAmount: 0 ]
+		raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
+	self
+		should: [ gameElements stocasticCardDeckWithCardsAmount: -2 ]
+		raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '
 ]
 
 { #category : #tests }
 CardDeckTests >> testCannotCreateCardDeckWithoutCards [
-	self should: [PlayingCardDeck withCards: {}] raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '.
-	
+	self
+		should: [ PlayingCardDeck withCards: {} ]
+		raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '
 ]
 
 { #category : #tests }
-CardDeckTests >> testCannotCreateStocasticCardDeckWithInvalidCardProbabilityPairs [
-	self should: [gameElements  stocasticPlayingCardDeckFrom: {} withCardsAmount: 2] raiseGameErrorWithMessage: 'Builder must be provided with at least one card and probability pair. '.
-	self should: [gameElements stocasticPlayingCardDeckFrom: (OrderedCollection with:permanentCard->0.5) withCardsAmount: 2] raiseGameErrorWithMessage: 'Sum of probabilities must be equal to 1. '.	
+CardDeckTests >> testCannotCreateStocasticCardDeckWithoutCards [
+	self
+		should: [ gameElements stocasticPlayingCardDeckFrom: {} withCardsAmount: 2 ]
+		raiseGameErrorWithMessage:
+			'Builder must be provided with at least one card and probability pair. '.
 ]
 
 { #category : #tests }
@@ -116,15 +121,33 @@ CardDeckTests >> testCannotTakeCardsWhenPlayingAndDiscardDecksAreEmpty [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: (self cardDeckWithCards: { permanentCard } andAmountPerCard:  2)
+		deck: (self cardDeckWithCards: {permanentCard} andAmountPerCard: 2)
 		using: dices.
 	self assert: game deck size equals: 0.
 	self assert: game discardDeck size equals: 0.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
-	self should: [game turnIsPlayed ] raiseGameErrorWithMessage:  'No available cards. Decks are empty! ' 
-	
-	
+	self
+		should: [ game turnIsPlayed ]
+		raiseGameErrorWithMessage: 'No available cards. Decks are empty! '
+]
+
+{ #category : #tests }
+CardDeckTests >> testCardProbabilitiesMustBeBetweenZeroAndOne [
+	self
+		should: [ gameElements
+				stocasticPlayingCardDeckFrom: (OrderedCollection with: permanentCard -> 1.5 with: permanentCard -> -0.5)
+				withCardsAmount: 2 ]
+		raiseGameErrorWithMessage: 'Probabilities must be in the range between 0 and 1. '
+]
+
+{ #category : #tests }
+CardDeckTests >> testCardProbabilitiesSumMustBeEqualToOneToMakeStocasticDeck [
+	self
+		should: [ gameElements
+				stocasticPlayingCardDeckFrom: (OrderedCollection with: permanentCard -> 0.5)
+				withCardsAmount: 2 ]
+		raiseGameErrorWithMessage: 'Sum of probabilities must be equal to 1. '
 ]
 
 { #category : #tests }
@@ -179,9 +202,18 @@ CardDeckTests >> testDiscardDeckEmptiesWhenShuffledForUse [
 
 { #category : #tests }
 CardDeckTests >> testFiniteAndDeterministicCardDeckCanBeCreated [
-	cardDeck := gameElements stocasticPlayingCardDeckFrom: cardsWithProbabilities  withCardsAmount: 5.
+	cardDeck := gameElements stocasticCardDeckWithCardsAmount: 5.
 	self assert: cardDeck  size equals: 5.
-	self assert: (cardDeck dealACardIfNoneUse: {}) first equals: instantCard.
+]
+
+{ #category : #tests }
+CardDeckTests >> testPlayingCardDeckIsDeterministicOnceCreated [
+	| testingDiscardDeck |
+	cardDeck := self cardDeckWithCards: {instantCard . permanentCard } andAmountPerCard: 1.
+	self assert: cardDeck  size equals: 2.
+	testingDiscardDeck := DiscardDeck emptyDeck.
+	self assert: (cardDeck dealACardIfNoneUse: testingDiscardDeck ) first equals: instantCard.
+	self assert: (cardDeck dealACardIfNoneUse: testingDiscardDeck) first equals: permanentCard.
 ]
 
 { #category : #tests }
