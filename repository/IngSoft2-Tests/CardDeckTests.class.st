@@ -118,6 +118,26 @@ CardDeckTests >> testCannotCreateStocasticCardDeckWithInvalidCardProbabilityPair
 ]
 
 { #category : #tests }
+CardDeckTests >> testCannotTakeCardsWhenPlayingAndDiscardDecksAreEmpty [
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		deck: (self cardDeckWithCards: { permanentCard } andAmountPerCard:  2)
+		using: dices.
+	self assert: game deck size equals: 0.
+	self assert: game discardDeck size equals: 0.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	self should: [game turnIsPlayed ] raiseGameErrorWithMessage:  'No available cards. Decks are empty! ' 
+	
+	
+]
+
+{ #category : #tests }
 CardDeckTests >> testDiscardCardDeckFillsWithOneUsedInstantCard [
 	game := Game
 		playedBy: players
@@ -151,6 +171,20 @@ CardDeckTests >> testDiscardCardDeckFillsWithOneUsedPermanentCard [
 	juan playsCard: cancellationCard affecting: permanentCard on: game. 
 	self assert: game permanentCards size equals: 0.
 	self assert: game discardDeck size equals: 2
+]
+
+{ #category : #tests }
+CardDeckTests >> testDiscardDeckEmptiesWhenShuffledForUse [
+	| discardDeck shuffledDeck|
+	discardDeck := DiscardDeck emptyDeck.
+	discardDeck addCard: instantCard.
+	discardDeck addCard: permanentCard.
+	discardDeck addCard: instantCard.
+	shuffledDeck := discardDeck shuffleAndEmpty.
+	self assert: discardDeck isEmpty.
+	self assert: shuffledDeck size equals: 3.
+	
+	
 ]
 
 { #category : #tests }

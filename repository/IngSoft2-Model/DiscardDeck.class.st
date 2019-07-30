@@ -22,9 +22,15 @@ DiscardDeck >> initializeEmptyDeck [
 	cards := OrderedCollection new.
 ]
 
+{ #category : #accessing }
+DiscardDeck >> isEmpty [
+	^cards isEmpty.
+]
+
 { #category : #actions }
 DiscardDeck >> shuffleAndEmpty [
 	| shuffledDeck randomCard |
+	cards isEmpty ifTrue: [ GameModelError signal: 'No available cards. Decks are empty! ' ].
 	shuffledDeck := OrderedCollection new.
 	cards size
 		timesRepeat: [ randomCard := cards atRandom.
