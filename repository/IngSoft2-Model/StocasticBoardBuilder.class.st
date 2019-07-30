@@ -32,6 +32,7 @@ StocasticBoardBuilder >> assertProbabilitiesAreBetweenZeroAndOneFor: aDictionary
 StocasticBoardBuilder >> assertValidProbabilitiesSumFor: aDictionaryOfPairs [
 	| sum |
 	sum := aDictionaryOfPairs sum: #value.
+	sum := (sum * 100) rounded / 100.
 	sum ~= 1 ifTrue: [ GameModelError signal: 'Sum of probabilities must be equal to 1.' ].
 	
 ]

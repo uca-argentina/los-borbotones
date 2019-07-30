@@ -115,6 +115,11 @@ Game >> currentPlayer [
 	^ players at: turnPosition
 ]
 
+{ #category : #actions }
+Game >> dealACardFromDeck [
+	^deck dealACardIfNoneUse: discardDeck.
+]
+
 { #category : #presentation }
 Game >> deck [
 	^ deck
@@ -143,7 +148,7 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers car
 	permanentCards := OrderedCollection new.
 	turnPosition := 1.
 	discardDeck := DiscardDeck emptyDeck.
-	players do: [ :player | player take: (deck dealCards: 2)]
+	players do: [ :player | player take: (deck dealCards: 2 ifNoneUse: discardDeck)]
 ]
 
 { #category : #presentation }

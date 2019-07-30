@@ -245,7 +245,7 @@ CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
-	| instantCard permanentCard loadedDeck secondLoadedDeck |
+	| instantCard permanentCard loadedDeck |
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	permanentCard := gameElementsResource dummyPermanentCard.
@@ -253,16 +253,14 @@ CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
 	loadedDeck := self
 		cardDeckWithCard: instantCard
 		andAmountOfCards: 10.
-	secondLoadedDeck := self
-		cardDeckWithCard: permanentCard
-		andAmountOfCards: 10.
+	
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		deck: loadedDeck
 		using: dices.
-	robert take: (secondLoadedDeck dealCards: 1).
+	robert take: {permanentCard} .
 	self assert: robert cards size equals: 3.
 	robert playsCard: permanentCard affecting: players on: game.
 	self assert: game permanentCards size equals: 1.
@@ -391,14 +389,11 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRedoCardOutOfHisTurnTwiceAndRedoesAnInstantCard [
-	| instantCard loadedDeck instantCard2 secondDeck |
+	| instantCard loadedDeck instantCard2 |
 	instantCard2 := gameElementsResource dummyInstantCard.
 	instantCard := gameElementsResource redoCard.
 	loadedDeck := self
 		cardDeckWithCard: instantCard
-		andAmountOfCards: 10.
-	secondDeck := self
-		cardDeckWithCard: instantCard2
 		andAmountOfCards: 10.
 	game := Game
 		playedBy: players
@@ -406,7 +401,7 @@ CardsTest >> testPlayerPlaysRedoCardOutOfHisTurnTwiceAndRedoesAnInstantCard [
 		board: board
 		deck: loadedDeck
 		using: dices.
-	robert take: (secondDeck dealCards: 1).
+	robert take: {instantCard2}.
 	self assert: game currentPlayer name equals: 'Robert'.
 	robert playsCard: instantCard2 affecting: 'Robert' on: game.
 	robert playsCard: instantCard affecting: juan on: game.
@@ -467,7 +462,7 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 		board: board
 		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
-	robert take: (game deck dealCards: 1).
+	robert take: game dealACardFromDeck.
 	self assert: robert cards size equals: 3.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.

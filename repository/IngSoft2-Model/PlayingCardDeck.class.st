@@ -22,13 +22,14 @@ PlayingCardDeck class >> withCards: aCollectionOfCards [
 ]
 
 { #category : #actions }
-PlayingCardDeck >> dealACard [
-	^ self dealCards: 1.
+PlayingCardDeck >> dealACardIfNoneUse: aDiscardDeck [ 
+	^self dealCards: 1 ifNoneUse: aDiscardDeck.
 ]
 
 { #category : #actions }
-PlayingCardDeck >> dealCards: anAmountOfCards [
+PlayingCardDeck >> dealCards: anAmountOfCards ifNoneUse: aDiscardDeck [ 
 	| cardsToBeDelt |
+	cards isEmpty ifTrue: [ cards := aDiscardDeck shuffleAndEmpty ].
 	cardsToBeDelt := OrderedCollection new.
 	anAmountOfCards
 		timesRepeat: [ cardsToBeDelt add: cards first.

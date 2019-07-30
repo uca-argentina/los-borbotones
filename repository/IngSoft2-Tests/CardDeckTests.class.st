@@ -18,7 +18,8 @@ Class {
 		'game',
 		'permanentCard',
 		'instantCardWithProbability',
-		'permanentCardWithProbability'
+		'permanentCardWithProbability',
+		'cardDealingTileWithProbability'
 	],
 	#category : #'IngSoft2-Tests'
 }
@@ -27,6 +28,14 @@ Class {
 CardDeckTests >> cardDeckWithCard: aCard andAmountOfCards: anAmountOfCards [
 	
 	^((LoadedPlayingCardDeckBuilder startWithCardsAmount: anAmountOfCards) withCard: aCard) buildCardDeck
+]
+
+{ #category : #running }
+CardDeckTests >> cardDeckWithCards: aCardsCollection andAmountPerCard: anAmountOfCards [
+	|boardBuilder |
+	boardBuilder := LoadedPlayingCardDeckBuilder startWithCardsAmount: anAmountOfCards.
+	aCardsCollection do: [ :card | boardBuilder withCard: card].
+	^boardBuilder buildCardDeck
 ]
 
 { #category : #tests }
@@ -51,7 +60,8 @@ CardDeckTests >> setUp [
 	robert := Player named: 'Robert'.
 	players := OrderedCollection with: robert.
 	
-	emptyWithProbability := Empty -> 1.
+	emptyWithProbability := Empty new -> 1.
+	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
 	board := self loadedBoard.
 	instantCard := gameElements dummyInstantCard.
 	permanentCard := gameElements dummyPermanentCard.
@@ -147,5 +157,35 @@ CardDeckTests >> testDiscardCardDeckFillsWithOneUsedPermanentCard [
 CardDeckTests >> testFiniteAndDeterministicCardDeckCanBeCreated [
 	cardDeck := self stocasticPlayingCardDeckFrom: cardsWithProbabilities  withCardsAmount: 5.
 	self assert: cardDeck  size equals: 5.
-	self assert: cardDeck dealACard first equals: instantCard.
+	self assert: (cardDeck dealACardIfNoneUse: {}) first equals: instantCard.
+]
+
+{ #category : #tests }
+CardDeckTests >> testPlayingDeckTakesCardsFromShuffledDiscardDeckWhenItIsEmpty [
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		deck: (self cardDeckWithCards: { instantCard. permanentCard } andAmountPerCard:  2)
+		using: dices.
+	self assert: game deck size equals: 2.
+	game turnIsPlayed.
+	game turnIsPlayed.
+	self assert: game discardDeck size equals: 0.
+	self assert: game deck size equals: 0.
+	robert playsCard: instantCard affecting: 'Juan' on: game.
+	robert playsCard: instantCard affecting: 'Juan' on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	game removePermanentCard: permanentCard.
+	game removePermanentCard: permanentCard.
+	self assert: game discardDeck size equals: 4.
+	game turnIsPlayed.
+	self assert: game discardDeck size equals: 0.
+	self assert: game deck size equals: 3.
+	self assert: robert cards size equals: 1.
+	
 ]
