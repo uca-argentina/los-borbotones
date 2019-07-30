@@ -25,8 +25,9 @@ CardsTest >> assertTile: aNumberOfTile andLap: aNumberOfLap for: aPlayer on: aGa
 ]
 
 { #category : #running }
-CardsTest >> cardDeckWithCard: aCard [ 
-	^CardDeck withCards: (OrderedCollection with: aCard)
+CardsTest >> cardDeckWithCard: aCard andAmountOfCards: anAmountOfCards [
+	
+	^((LoadedPlayingCardDeckBuilder startWithCardsAmount: anAmountOfCards) withCard: aCard) buildCardDeck
 ]
 
 { #category : #running }
@@ -68,24 +69,19 @@ CardsTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
 ]
 
 { #category : #tests }
-CardsTest >> speedCard [ 
-	^gameElementsResource speedCard.
-]
-
-{ #category : #tests }
 CardsTest >> testCantCreateCardDeckWithNoCards [
-	self should: [ CardDeck withCards: { } ] raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '.
+	self should: [ PlayingCardDeck  withCards: { } ] raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '.
 ]
 
 { #category : #tests }
 CardsTest >> testOverloadCardAffectsPlayerInConsecutiveTurns [
 	| permanentCard |
-	permanentCard := gameElementsResource  overloadCard.
+	permanentCard := gameElementsResource overloadCard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	self assert: robert cards size equals: 2.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
@@ -126,7 +122,7 @@ CardsTest >> testPlayerCannotMoveToNegativeLapAndTileValuesOnCardEffects [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	self assert: robert cards size equals: 2.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
@@ -145,9 +141,11 @@ CardsTest >> testPlayerCannotMoveToNegativeLapAndTileValuesOnCardEffects [
 { #category : #tests }
 CardsTest >> testPlayerCantPlayCancellationIfNoPermanentCardsAreActive [
 	| instantCard permanentCard loadedDeck |
-	permanentCard := gameElementsResource  dummyPermanentCard.
+	permanentCard := gameElementsResource dummyPermanentCard.
 	instantCard := gameElementsResource cancellationCard.
-	loadedDeck := self cardDeckWithCard: instantCard.
+	loadedDeck := self
+		cardDeckWithCard: instantCard
+		andAmountOfCards: 10.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -175,7 +173,7 @@ CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
@@ -187,29 +185,36 @@ CardsTest >> testPlayerCantPlayPermanentCardOutOfHisTurn [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCard [
-	| permanentCard  |
+	| permanentCard |
 	permanentCard := gameElementsResource accelerationCard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	self assert: robert cards size equals: 2.
-	
 	robert playsCard: permanentCard affecting: players on: game.
 	self assert: robert cards size equals: 1.
 	self assert: game permanentCards size equals: 1.
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertTile: 4 andLap: 0 for: juan on: game.
-	self assertTile: 4 andLap: 0 for: robert on: game.
+	self
+		assertTile: 4
+		andLap: 0
+		for: juan
+		on: game.
+	self
+		assertTile: 4
+		andLap: 0
+		for: robert
+		on: game
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
-	| permanentCard  |
+	| permanentCard |
 	permanentCard := gameElementsResource accelerationCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 9.
 	dices := OrderedCollection with: fourFaceDummyDice.
@@ -217,7 +222,7 @@ CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	self assert: robert cards size equals: 2.
 	robert playsCard: permanentCard affecting: players on: game.
@@ -226,20 +231,31 @@ CardsTest >> testPlayerPlaysAccelerationCardAndLapIsFinished [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertTile: 0 andLap: 1 for: juan on: game.
-	self assertTile: 0 andLap: 1 for: juan on: game.
+	self
+		assertTile: 0
+		andLap: 1
+		for: juan
+		on: game.
+	self
+		assertTile: 0
+		andLap: 1
+		for: juan
+		on: game
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
 	| instantCard permanentCard loadedDeck secondLoadedDeck |
-	
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 2.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	permanentCard := gameElementsResource dummyPermanentCard.
 	instantCard := gameElementsResource cancellationCard.
-	loadedDeck := (self cardDeckWithCard: instantCard).
-	secondLoadedDeck := (self cardDeckWithCard: permanentCard).
+	loadedDeck := self
+		cardDeckWithCard: instantCard
+		andAmountOfCards: 10.
+	secondLoadedDeck := self
+		cardDeckWithCard: permanentCard
+		andAmountOfCards: 10.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
@@ -252,7 +268,7 @@ CardsTest >> testPlayerPlaysCancellationCardOutOfHisTurn [
 	self assert: game permanentCards size equals: 1.
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
-	robert playsCard: instantCard affecting: permanentCard  on:game.
+	robert playsCard: instantCard affecting: permanentCard on: game.
 	self assert: game permanentCards size equals: 0
 ]
 
@@ -266,18 +282,21 @@ CardsTest >> testPlayerPlaysInstantCardOutOfHisTurn [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: instantCard)
+		deck: (self cardDeckWithCard: instantCard andAmountOfCards: 10)
 		using: dices.
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
 	self assert: game currentPlayer name equals: 'Juan'.
-	robert playsCard: instantCard affecting: (OrderedCollection with: robert) on: game.
+	robert
+		playsCard: instantCard
+		affecting: (OrderedCollection with: robert)
+		on: game.
 	self assert: robert cards size equals: 2
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
-	| permanentCard  |
+	| permanentCard |
 	permanentCard := gameElementsResource overloadCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	dices := OrderedCollection with: fourFaceDummyDice.
@@ -285,22 +304,25 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayer [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	self assert: robert cards size equals: 2.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
-	
 	self assert: robert cards size equals: 1.
 	self assert: game permanentCards size equals: 1.
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertTile: 1 andLap: 0 for: juan on: game.
+	self
+		assertTile: 1
+		andLap: 0
+		for: juan
+		on: game
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
-	|permanentCard  |
+	| permanentCard |
 	permanentCard := gameElementsResource overloadCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 5.
 	dices := OrderedCollection with: fourFaceDummyDice.
@@ -308,7 +330,7 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	self assert: robert cards size equals: 2.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
@@ -318,19 +340,23 @@ CardsTest >> testPlayerPlaysOverloadCardOnAnotherPlayerTwice [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertTile: 1 andLap: 0 for: juan on: game.
+	self
+		assertTile: 1
+		andLap: 0
+		for: juan
+		on: game
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysPermanentCard [
 	| permanentCard |
-	players remove:juan.
+	players remove: juan.
 	permanentCard := gameElementsResource dummyPermanentCard.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
@@ -340,64 +366,63 @@ CardsTest >> testPlayerPlaysPermanentCard [
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRedoCardOutOfHisTurn [
-	| instantCard  loadedDeck  permanentCard secondDeck |
-	
+	| instantCard loadedDeck permanentCard |
 	permanentCard := gameElementsResource dummyPermanentCard.
-		
 	dices := OrderedCollection with: fourFaceDummyDice.
 	instantCard := gameElementsResource redoCard.
-	loadedDeck := (self cardDeckWithCard: instantCard ).
-	secondDeck := (self cardDeckWithCard: permanentCard).
+	loadedDeck := self
+		cardDeckWithCard: instantCard
+		andAmountOfCards: 10.
+	
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		deck: loadedDeck
 		using: dices.
-		
-	robert take: (secondDeck dealCards: 1).
+	robert take: {permanentCard}.
 	self assert: game currentPlayer name equals: 'Robert'.
-	robert playsCard: permanentCard affecting: 'Robert' on: game. 
-	self assert: game permanentCards  size equals: 1.
+	robert playsCard: permanentCard affecting: 'Robert' on: game.
+	self assert: game permanentCards size equals: 1.
 	robert playsCard: instantCard affecting: juan on: game.
-	self assert: game permanentCards  size equals: 2.
-	robert playsCard: instantCard affecting: juan on: game.
+	self assert: game permanentCards size equals: 2.
+	robert playsCard: instantCard affecting: juan on: game
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRedoCardOutOfHisTurnTwiceAndRedoesAnInstantCard [
-	| instantCard  loadedDeck  instantCard2 secondDeck |
-	
+	| instantCard loadedDeck instantCard2 secondDeck |
 	instantCard2 := gameElementsResource dummyInstantCard.
 	instantCard := gameElementsResource redoCard.
-	loadedDeck := (self cardDeckWithCard: instantCard ).
-	
-	secondDeck := (self cardDeckWithCard: instantCard2).
-	
+	loadedDeck := self
+		cardDeckWithCard: instantCard
+		andAmountOfCards: 10.
+	secondDeck := self
+		cardDeckWithCard: instantCard2
+		andAmountOfCards: 10.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
 		deck: loadedDeck
 		using: dices.
-		
 	robert take: (secondDeck dealCards: 1).
 	self assert: game currentPlayer name equals: 'Robert'.
-	robert playsCard: instantCard2 affecting: 'Robert' on: game. 
+	robert playsCard: instantCard2 affecting: 'Robert' on: game.
 	robert playsCard: instantCard affecting: juan on: game.
-	robert playsCard: instantCard affecting: juan on: game.
+	robert playsCard: instantCard affecting: juan on: game
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysRepeatCard [
-	| instantCard  |
+	| instantCard |
 	instantCard := gameElementsResource repeatCard.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: instantCard)
+		deck: (self cardDeckWithCard: instantCard andAmountOfCards: 10)
 		using: dices.
 	game turnIsPlayed.
 	self assert: robert cards size equals: 3.
@@ -407,14 +432,14 @@ CardsTest >> testPlayerPlaysRepeatCard [
 { #category : #tests }
 CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
 	| permanentCard |
-	permanentCard := self speedCard.
+	permanentCard := gameElementsResource speedCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	self assert: robert cards size equals: 2.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
@@ -423,20 +448,24 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertTile: 4 andLap: 0 for: juan on: game.
+	self
+		assertTile: 4
+		andLap: 0
+		for: juan
+		on: game
 ]
 
 { #category : #tests }
 CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
-	| permanentCard  |
-	permanentCard := self speedCard.
+	| permanentCard |
+	permanentCard := gameElementsResource speedCard.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 3.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4
 		board: board
-		deck: (self cardDeckWithCard: permanentCard)
+		deck: (self cardDeckWithCard: permanentCard andAmountOfCards: 10)
 		using: dices.
 	robert take: (game deck dealCards: 1).
 	self assert: robert cards size equals: 3.
@@ -448,7 +477,11 @@ CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayerMoreThanOnce [
 	game turnIsPlayed.
 	self assert: game currentPlayer name equals: 'Juan'.
 	game turnIsPlayed.
-	self assertTile: 6 andLap: 0 for: juan on: game.
+	self
+		assertTile: 6
+		andLap: 0
+		for: juan
+		on: game
 ]
 
 { #category : #tests }
@@ -456,7 +489,9 @@ CardsTest >> testRedoCardHasNoEffectWhenNoCardWasPlayedBefore [
 	| instantCard loadedDeck |
 	dices := OrderedCollection with: fourFaceDummyDice.
 	instantCard := gameElementsResource redoCard.
-	loadedDeck := (self cardDeckWithCard: instantCard ).
+	loadedDeck := self
+		cardDeckWithCard: instantCard
+		andAmountOfCards: 10.
 	game := Game
 		playedBy: players
 		withLapsToWin: 4

@@ -30,6 +30,7 @@ Class {
 		'playersPositions',
 		'dices',
 		'deck',
+		'discardDeck',
 		'turnPosition',
 		'board',
 		'laps',
@@ -71,6 +72,11 @@ Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard d
 { #category : #actions }
 Game >> addPermanentCard: aPermanentCard [ 
 	permanentCards add: aPermanentCard 
+]
+
+{ #category : #presentation }
+Game >> addToDiscardDeck: aCard [
+	discardDeck add: aCard.
 ]
 
 { #category : #'private-assertions' }
@@ -115,6 +121,11 @@ Game >> deck [
 ]
 
 { #category : #status }
+Game >> discardDeck [
+	^discardDeck
+]
+
+{ #category : #status }
 Game >> hasEnded [
 	^ players
 		anySatisfy: [ :player | (playersPositions positionLapOf: player) >= laps ]
@@ -131,6 +142,7 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers car
 	lastCardPlayed := DummyCard new.
 	permanentCards := OrderedCollection new.
 	turnPosition := 1.
+	discardDeck := DiscardDeck emptyDeck.
 	players do: [ :player | player take: (deck dealCards: 2)]
 ]
 
@@ -204,6 +216,7 @@ Game >> ranking [
 { #category : #actions }
 Game >> removePermanentCard: aCard [ 
 	permanentCards remove: aCard ifAbsent: [].
+	discardDeck add: aCard.
 ]
 
 { #category : #actions }

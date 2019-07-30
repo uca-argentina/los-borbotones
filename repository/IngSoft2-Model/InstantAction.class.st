@@ -28,4 +28,5 @@ InstantAction >> update: aResult for: aPlayer [
 { #category : #action }
 InstantAction >> use: aCard on: aGame affecting: aSetOfPlayers byRequestOf: aPlayer [
 	effect actOn: aGame affect: aSetOfPlayers by: aPlayer.
+	aGame addToDiscardDeck: aCard.
 ]

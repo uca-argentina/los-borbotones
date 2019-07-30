@@ -85,7 +85,7 @@ GameElementsResource >> speedCard [
 
 { #category : #running }
 GameElementsResource >> stocasticCardDeck [
-	| cards redo overload speed acceleration cancellation repeat |
+	| cardsWithProbabilities redo overload speed acceleration cancellation repeat |
 	overload := self overloadCard.
 	speed := self speedCard.
 	acceleration := self accelerationCard.
@@ -93,12 +93,12 @@ GameElementsResource >> stocasticCardDeck [
 	cancellation := self cancellationCard.
 	repeat := self repeatCard.
 	
-	cards := OrderedCollection
-		with: overload
-		with: speed
-		with: redo
-		with: acceleration
-		with: repeat
-		with: cancellation.
-	^ CardDeck withCards: cards
+	cardsWithProbabilities := OrderedCollection
+		with: overload -> 0.1
+		with: speed -> 0.2
+		with: redo -> 0.3
+		with: acceleration -> 0.1
+		with: repeat -> 0.1
+		with: cancellation -> 0.2.
+	^ ((StocasticPlayingCardDeckBuilder startWithCardsAmount: 30) withCardsFrom: cardsWithProbabilities) buildCardDeck
 ]

@@ -48,22 +48,22 @@ StocasticBoardBuilder >> initializeBoardWithSteps: aStepsAmount [
 ]
 
 { #category : #creation }
-StocasticBoardBuilder >> selectEffectFrom: effectProbabilityPairs [
+StocasticBoardBuilder >> selectEffectFrom: anEffectProbabilityPairsCollection [
 	| prob cumulativeProbability |
-	^ [ :index | cumulativeProbability := 0.
+	cumulativeProbability := 0.
 	prob := random next.
-	effectProbabilityPairs
+	^(anEffectProbabilityPairsCollection
 		detect:
 			[ :each | 
 			cumulativeProbability := cumulativeProbability + each value.
-			cumulativeProbability >= prob ] key ]
+			cumulativeProbability >= prob ]) key 
 ]
 
 { #category : #creation }
-StocasticBoardBuilder >> withEffects: effectProbabilityPairs [
-	self assertValidProbabilitiesSumFor: effectProbabilityPairs.
-	self assertProbabilitiesAreBetweenZeroAndOneFor: effectProbabilityPairs.
+StocasticBoardBuilder >> withEffects: anEffectProbabilityPairsSet [
+	self assertValidProbabilitiesSumFor: anEffectProbabilityPairsSet.
+	self assertProbabilitiesAreBetweenZeroAndOneFor: anEffectProbabilityPairsSet.
 	tiles := OrderedCollection new.
 	steps
-		timesRepeat: [ tiles add: (self selectEffectFrom: effectProbabilityPairs) ]
+		timesRepeat: [ tiles add: (self selectEffectFrom: anEffectProbabilityPairsSet) ]
 ]
