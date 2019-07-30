@@ -36,6 +36,7 @@ StocasticPlayingCardDeckBuilder >> assertCardProbabilityIsNotEmpty: aCardProbabi
 StocasticPlayingCardDeckBuilder >> assertValidCardProbabilitySet: aCardProbabilityPairsCollection [ 
 	|sumOfProbabilities|
 	sumOfProbabilities := aCardProbabilityPairsCollection sum: #value.
+	sumOfProbabilities := (sumOfProbabilities * 100) rounded / 100.
 	sumOfProbabilities ~= 1 ifTrue: [ GameModelError signal: 'Sum of probabilities must be equal to 1. ' ]
 ]
 

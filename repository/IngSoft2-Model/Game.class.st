@@ -76,7 +76,7 @@ Game >> addPermanentCard: aPermanentCard [
 
 { #category : #presentation }
 Game >> addToDiscardDeck: aCard [
-	discardDeck add: aCard.
+	discardDeck addCard: aCard.
 ]
 
 { #category : #'private-assertions' }
@@ -216,7 +216,7 @@ Game >> ranking [
 { #category : #actions }
 Game >> removePermanentCard: aCard [ 
 	permanentCards remove: aCard ifAbsent: [].
-	discardDeck add: aCard.
+	discardDeck addCard: aCard.
 ]
 
 { #category : #actions }

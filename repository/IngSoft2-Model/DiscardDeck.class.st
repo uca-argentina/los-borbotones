@@ -13,7 +13,7 @@ DiscardDeck class >> emptyDeck [
 ]
 
 { #category : #adding }
-DiscardDeck >> add: aCard [
+DiscardDeck >> addCard: aCard [
 	cards add: aCard
 ]
 
