@@ -9,7 +9,6 @@ Class {
 
 { #category : #action }
 DummyCard >> actOn: aGame affect: aCollection by: aPlayer [
-	"Does nothing." 
 	aGame lastCardPlayed actOn: aGame affect: aCollection by: aPlayer
 
 ]

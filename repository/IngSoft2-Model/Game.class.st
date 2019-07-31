@@ -70,11 +70,6 @@ Game class >> playedBy: aSetOfPlayers withLapsToWin: aLapsAmount board: aBoard d
 ]
 
 { #category : #actions }
-Game >> addPermanentCard: aPermanentCard [ 
-	permanentCards add: aPermanentCard 
-]
-
-{ #category : #actions }
 Game >> addToDiscardDeck: aCard [
 	discardDeck addCard: aCard.
 ]
@@ -120,11 +115,6 @@ Game >> dealACardFromDeck [
 	^deck dealACardIfNoneUse: discardDeck.
 ]
 
-{ #category : #presentation }
-Game >> deck [
-	^ deck
-]
-
 { #category : #status }
 Game >> discardDeck [
 	^discardDeck
@@ -157,49 +147,30 @@ Game >> lastCardPlayed [
 ]
 
 { #category : #actions }
+Game >> move: aPlayer steps: aStepsAmount [
+	playersPositions move: aPlayer steps: aStepsAmount on: board.
+]
+
+{ #category : #actions }
 Game >> moveToPreviousPosition: aPlayer [
 	playersPositions moveToPreviousPosition: aPlayer.
 ]
 
 { #category : #actions }
-Game >> moves: aPlayer steps: aStepsAmount [
-	| newPosition newLap playerHistoryPosition |
-	playerHistoryPosition := playersPositions historyPositionOf: aPlayer.
-	newPosition := self
-		newPositionFor: aPlayer
-		calculatedWith: aStepsAmount.
-	newLap := self newLapFor: aPlayer calculatedWith: aStepsAmount.
-	playerHistoryPosition
-		add: (Position tile: newPosition andLap: newLap)
-]
-
-{ #category : #actions }
 Game >> moves: aPlayer stepsBackwards: aPositiveStepsAmount [
-	self moves: aPlayer steps: -1*aPositiveStepsAmount.
-]
-
-{ #category : #actions }
-Game >> newLapFor: aPlayer calculatedWith: aStepsAmount [
-	^ ((self
-		newTotalStepsMadeBy: aPlayer
-		calculatedWith: aStepsAmount) / board numberOfTiles) floor
-]
-
-{ #category : #actions }
-Game >> newPositionFor: aPlayer calculatedWith: aStepsAmount [
-	^ (self
-		newTotalStepsMadeBy: aPlayer
-		calculatedWith: aStepsAmount) % board numberOfTiles
-]
-
-{ #category : #actions }
-Game >> newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount [
-	^ (playersPositions totalStepsMadeOf: aPlayer on: board) + aStepsAmount max: 0
+	self move: aPlayer steps: -1*aPositiveStepsAmount.
 ]
 
 { #category : #presentation }
 Game >> permanentCards [
 	^permanentCards copy.
+]
+
+{ #category : #actions }
+Game >> playPermanentCard: aCard byRequestOf: aPlayer [
+	self currentPlayer name = aPlayer name
+		ifFalse: [ GameModelError signal: 'Cannot play permanent card if it is not your turn. ' ].
+	permanentCards add: aCard.	
 ]
 
 { #category : #status }
@@ -209,7 +180,7 @@ Game >> players [
 
 { #category : #presentation }
 Game >> playersPositions [
-	^ playersPositions
+	^ playersPositions copy
 ]
 
 { #category : #status }
@@ -239,7 +210,7 @@ Game >> rollDicesForCurrentPlayer [
 	rollResult := permanentCards
 		inject: (dices sum: #roll)
 		into: [ :result :card | card update: result for: currentPlayer ].
-	self moves: currentPlayer steps: rollResult.
+	self move: currentPlayer steps: rollResult.
 	board
 		effectAt: (playersPositions tilePositionOf: currentPlayer)
 		affect: currentPlayer
@@ -251,12 +222,6 @@ Game >> selectPlayerNamed: aPlayerName [
 	self assertValidPlayer: aPlayerName .
 	^ players
 		detect: [ :aPlayer | aPlayer name = aPlayerName ]
-]
-
-{ #category : #actions }
-Game >> selectPlayers: aPlayersCollection [
-	self assertValidPlayers: aPlayersCollection.
-	^ players
 ]
 
 { #category : #actions }

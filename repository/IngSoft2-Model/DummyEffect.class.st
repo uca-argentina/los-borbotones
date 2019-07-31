@@ -9,6 +9,7 @@ Class {
 
 { #category : #action }
 DummyEffect >> actOn: aGame affect: aSetOfPlayers by: aPlayer [ 
+	"Does nothing"
 ]
 
 { #category : #action }

@@ -30,8 +30,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'name',
-		'cards',
-		'playerChoosen'
+		'cards'
 	],
 	#category : #'IngSoft2-Model'
 }

@@ -4,6 +4,9 @@ Resource para tests
 Class {
 	#name : #GameElementsResource,
 	#superclass : #TestResource,
+	#instVars : [
+		'emptyWithProbability'
+	],
 	#classVars : [
 		'accelerationCardEffect',
 		'overloadCardEffect',
@@ -41,6 +44,13 @@ GameElementsResource >> dummyPermanentCard [
 ]
 
 { #category : #running }
+GameElementsResource >> emptyBoardWithSteps: aStepsAmount [
+	^(LoadedBoardBuilder startBoardWithSteps: aStepsAmount )
+		withEffectProbabilityAssociation: emptyWithProbability;
+		buildBoard 
+]
+
+{ #category : #running }
 GameElementsResource >> isAvaliable [
 	^true.
 ]
@@ -72,6 +82,7 @@ GameElementsResource >> setUp [
 	
 	overloadCardEffect := ModifyDiceResult modifyResultBy: -2.
 	speedCardEffect := ModifyDiceResult modifyResultBy: 1.
+	emptyWithProbability := Empty new -> 0.45.
 	accelerationCardEffect := ModifyDiceResultOfAllPlayers
 		modifyResultBy: 1
 ]

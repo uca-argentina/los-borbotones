@@ -32,7 +32,7 @@ BoardTest >> setUp [
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
 	dices := OrderedCollection with: fourFaceDummyDice.
 	robert := Player named: 'Robert'.
-	players := OrderedCollection with: robert.
+	players := OrderedCollection with: robert. 
 	moonWalkWithProbability := (MoonWalk withNumber: 5) -> 0.05.
 	atomicBombWithProbability := AtomicBomb new -> 0.02.
 	speedUpWithProbability := SpeedUp new -> 0.15.
@@ -73,9 +73,12 @@ BoardTest >> testCannotInstantiateBoardWithoutTiles [
 
 { #category : #tests }
 BoardTest >> testCantBuildBoardWithNonPositiveSteps [
-	self should: [(LoadedBoardBuilder startBoardWithSteps: -1)
+	|board|
+	board := [(LoadedBoardBuilder startBoardWithSteps: -1)
 		withEffectProbabilityAssociation: speedUpWithProbability;
-		buildBoard] raiseGameErrorWithMessage: 'Steps amount must be a positive integer. '.
+		buildBoard].
+	
+	self should: board raiseGameErrorWithMessage: 'Steps amount must be a positive integer. '.
 	
 ]
 

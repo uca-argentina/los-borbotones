@@ -31,7 +31,7 @@ CardsTest >> cardDeckWithCard: aCard andAmountOfCards: anAmountOfCards [
 ]
 
 { #category : #running }
-CardsTest >> loadedBoard [
+CardsTest >> loadedCardDealingTilesBoard [
  	^(LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
@@ -48,7 +48,7 @@ CardsTest >> setUp [
 	players := OrderedCollection with: robert with:juan.
 	
 	cardDealingTileWithProbability := CardDealingTile new -> 0.1.	
-	board := self loadedBoard.
+	board := self loadedCardDealingTilesBoard.
 ]
 
 { #category : #tests }
@@ -70,7 +70,9 @@ CardsTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
 
 { #category : #tests }
 CardsTest >> testCantCreateCardDeckWithNoCards [
-	self should: [ PlayingCardDeck  withCards: { } ] raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '.
+	self
+		should: [ PlayingCardDeck withCards: {} ]
+		raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '
 ]
 
 { #category : #tests }

@@ -35,13 +35,6 @@ GameTest >> juan [
 ]
 
 { #category : #tests }
-GameTest >> loadedBoard [
-	^(LoadedBoardBuilder startBoardWithSteps: 3)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard 
-]
-
-{ #category : #tests }
 GameTest >> lucas [
 	^ Player named: 'Lucas'
 ]
@@ -58,7 +51,7 @@ GameTest >> setUp [
 	
 	atomicBombWithProbability := AtomicBomb new -> 0.02.
 	emptyWithProbability := Empty new -> 0.45.
-	board := self loadedBoard.
+	board := gameElementsResource  emptyBoardWithSteps: 3.
 	
 	
 ]

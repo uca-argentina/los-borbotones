@@ -17,6 +17,12 @@ DiscardDeck >> addCard: aCard [
 	cards add: aCard
 ]
 
+{ #category : #'private-assertions' }
+DiscardDeck >> assertCardsAreAvailable [
+	cards isEmpty
+		ifTrue: [ GameModelError signal: 'No available cards. Decks are empty! ' ]
+]
+
 { #category : #initialization }
 DiscardDeck >> initializeEmptyDeck [
 	cards := OrderedCollection new.
@@ -30,13 +36,13 @@ DiscardDeck >> isEmpty [
 { #category : #actions }
 DiscardDeck >> shuffleAndEmpty [
 	| shuffledDeck randomCard |
-	cards isEmpty ifTrue: [ GameModelError signal: 'No available cards. Decks are empty! ' ].
+	self assertCardsAreAvailable.
 	shuffledDeck := OrderedCollection new.
 	cards size
 		timesRepeat: [ randomCard := cards atRandom.
 			shuffledDeck add: randomCard.
 			cards remove: randomCard ].
-	^shuffledDeck.
+	^ shuffledDeck
 ]
 
 { #category : #accessing }

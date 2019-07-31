@@ -34,11 +34,38 @@ PlayersPositions >> initializeWithPositionsFor: aSetOfPlayers [
 	playersPositions := Dictionary newFrom: positionsCollection.
 ]
 
+{ #category : #actions }
+PlayersPositions >> move: aPlayer steps: aStepsAmount on: aBoard [
+	| newPosition newLap |
+	newPosition := self
+		newPositionFor: aPlayer
+		calculatedWith: aStepsAmount on: aBoard.
+	newLap := self newLapFor: aPlayer calculatedWith: aStepsAmount on: aBoard.
+	self changePositionOf: aPlayer toTile: newPosition andLap: newLap.
+]
+
 { #category : #components }
 PlayersPositions >> moveToPreviousPosition: aPlayer [
 	(self historyPositionOf: aPlayer)
 		removeLast;
 		removeLast
+]
+
+{ #category : #'instance creation' }
+PlayersPositions >> newLapFor: aPlayer calculatedWith: aStepsAmount on: aBoard [
+	^ ((self newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount on: aBoard)
+		/ aBoard numberOfTiles) floor
+]
+
+{ #category : #'instance creation' }
+PlayersPositions >> newPositionFor: aPlayer calculatedWith: aStepsAmount on: aBoard [
+	^ (self newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount on: aBoard)
+		% aBoard numberOfTiles
+]
+
+{ #category : #accessing }
+PlayersPositions >> newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount on: aBoard [
+	^ (self totalStepsMadeOf: aPlayer on: aBoard) + aStepsAmount max: 0
 ]
 
 { #category : #components }

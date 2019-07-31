@@ -2,36 +2,31 @@
 Card Deck tests.
 "
 Class {
-	#name : #CardDeckTests,
+	#name : #CardDeckTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'cardDeck',
-		'cardsWithProbabilities',
 		'gameElements',
 		'instantCard',
 		'fourFaceDummyDice',
 		'dices',
 		'robert',
 		'players',
-		'emptyWithProbability',
 		'board',
 		'game',
 		'permanentCard',
-		'instantCardWithProbability',
-		'permanentCardWithProbability',
 		'cardDealingTileWithProbability'
 	],
 	#category : #'IngSoft2-Tests'
 }
 
 { #category : #running }
-CardDeckTests >> cardDeckWithCard: aCard andAmountOfCards: anAmountOfCards [
+CardDeckTest >> cardDeckWithCard: aCard andAmountOfCards: anAmountOfCards [
 	
 	^((LoadedPlayingCardDeckBuilder startWithCardsAmount: anAmountOfCards) withCard: aCard) buildCardDeck
 ]
 
 { #category : #running }
-CardDeckTests >> cardDeckWithCards: aCardsCollection andAmountPerCard: anAmountOfCards [
+CardDeckTest >> cardDeckWithCards: aCardsCollection andAmountPerCard: anAmountOfCards [
 	|boardBuilder |
 	boardBuilder := LoadedPlayingCardDeckBuilder startWithCardsAmount: anAmountOfCards.
 	aCardsCollection do: [ :card | boardBuilder withCard: card].
@@ -39,19 +34,12 @@ CardDeckTests >> cardDeckWithCards: aCardsCollection andAmountPerCard: anAmountO
 ]
 
 { #category : #tests }
-CardDeckTests >> juan [
+CardDeckTest >> juan [
 	^Player named: 'Juan'
 ]
 
-{ #category : #asserting }
-CardDeckTests >> loadedBoard [
- 	^(LoadedBoardBuilder startBoardWithSteps: 10)
-		withEffectProbabilityAssociation: emptyWithProbability;
-		buildBoard.
-]
-
 { #category : #running }
-CardDeckTests >> setUp [
+CardDeckTest >> setUp [
 	super setUp.
 	gameElements := GameElementsResource current.
 	fourFaceDummyDice := LoadedDice withFaces: 4 andValue: 4.
@@ -60,18 +48,15 @@ CardDeckTests >> setUp [
 	robert := Player named: 'Robert'.
 	players := OrderedCollection with: robert.
 	
-	emptyWithProbability := Empty new -> 1.
 	cardDealingTileWithProbability := CardDealingTile new -> 0.1.
-	board := self loadedBoard.
+	board := gameElements emptyBoardWithSteps: 10.
 	instantCard := gameElements dummyInstantCard.
 	permanentCard := gameElements dummyPermanentCard.
-	instantCardWithProbability  := OrderedCollection with: instantCard->1.	
-	permanentCardWithProbability  := OrderedCollection with: permanentCard->1.
 
 ]
 
 { #category : #asserting }
-CardDeckTests >> should: aBlock raise: anError withErrorMessage: aMessage [
+CardDeckTest >> should: aBlock raise: anError withErrorMessage: aMessage [
 	self should: aBlock
 		raise: anError
 		withExceptionDo: [ :signal | 
@@ -81,31 +66,31 @@ CardDeckTests >> should: aBlock raise: anError withErrorMessage: aMessage [
 ]
 
 { #category : #asserting }
-CardDeckTests >> should: aBlock raiseGameErrorWithMessage: aMessage [
+CardDeckTest >> should: aBlock raiseGameErrorWithMessage: aMessage [
 	self should: aBlock
 		raise: GameModelError 
 		withErrorMessage: aMessage.
 ]
 
 { #category : #tests }
-CardDeckTests >> testCannotCreateCardDeckWithNegativeCards [
+CardDeckTest >> testCannotCreateCardDeckWithNegativeCards [
 	self
 		should: [ gameElements stocasticCardDeckWithCardsAmount: 0 ]
 		raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '.
 	self
-		should: [ gameElements stocasticCardDeckWithCardsAmount: -2 ]
+		should: [ gameElements stocasticCardDeckWithCardsAmount: -1 ]
 		raiseGameErrorWithMessage: 'CardDeck cards amount must be a positive integer. '
 ]
 
 { #category : #tests }
-CardDeckTests >> testCannotCreateCardDeckWithoutCards [
+CardDeckTest >> testCannotCreateCardDeckWithoutCards [
 	self
-		should: [ PlayingCardDeck withCards: {} ]
+		should: [ PlayingCardDeck withCards: DiscardDeck emptyDeck ]
 		raiseGameErrorWithMessage: 'CardDeck must have at least one card to be created. '
 ]
 
 { #category : #tests }
-CardDeckTests >> testCannotCreateStocasticCardDeckWithoutCards [
+CardDeckTest >> testCannotCreateStocasticCardDeckWithoutCards [
 	self
 		should: [ gameElements stocasticPlayingCardDeckFrom: {} withCardsAmount: 2 ]
 		raiseGameErrorWithMessage:
@@ -113,7 +98,11 @@ CardDeckTests >> testCannotCreateStocasticCardDeckWithoutCards [
 ]
 
 { #category : #tests }
-CardDeckTests >> testCannotTakeCardsWhenPlayingAndDiscardDecksAreEmpty [
+CardDeckTest >> testCannotTakeCardsWhenPlayingAndDiscardDecksAreEmpty [
+	| cardDeck |
+	cardDeck := self
+		cardDeckWithCards: {permanentCard}
+		andAmountPerCard: 2.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
@@ -121,9 +110,9 @@ CardDeckTests >> testCannotTakeCardsWhenPlayingAndDiscardDecksAreEmpty [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: (self cardDeckWithCards: {permanentCard} andAmountPerCard: 2)
+		deck: cardDeck
 		using: dices.
-	self assert: game deck size equals: 0.
+	self assert: cardDeck size equals: 0.
 	self assert: game discardDeck size equals: 0.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
@@ -133,40 +122,43 @@ CardDeckTests >> testCannotTakeCardsWhenPlayingAndDiscardDecksAreEmpty [
 ]
 
 { #category : #tests }
-CardDeckTests >> testCardProbabilitiesMustBeBetweenZeroAndOne [
+CardDeckTest >> testCardProbabilitiesMustBeBetweenZeroAndOne [
 	self
 		should: [ gameElements
-				stocasticPlayingCardDeckFrom: (OrderedCollection with: permanentCard -> 1.5 with: permanentCard -> -0.5)
+				stocasticPlayingCardDeckFrom: { permanentCard -> 1.5 . permanentCard -> -0.5}
 				withCardsAmount: 2 ]
 		raiseGameErrorWithMessage: 'Probabilities must be in the range between 0 and 1. '
 ]
 
 { #category : #tests }
-CardDeckTests >> testCardProbabilitiesSumMustBeEqualToOneToMakeStocasticDeck [
+CardDeckTest >> testCardProbabilitiesSumMustBeEqualToOneToMakeStocasticDeck [
 	self
 		should: [ gameElements
-				stocasticPlayingCardDeckFrom: (OrderedCollection with: permanentCard -> 0.5)
+				stocasticPlayingCardDeckFrom: {permanentCard -> 0.5}
 				withCardsAmount: 2 ]
 		raiseGameErrorWithMessage: 'Sum of probabilities must be equal to 1. '
 ]
 
 { #category : #tests }
-CardDeckTests >> testDiscardCardDeckFillsWithOneUsedInstantCard [
+CardDeckTest >> testDiscardCardDeckFillsWithOneUsedInstantCard [
+	| cardDeck |
+	cardDeck := self cardDeckWithCard: instantCard andAmountOfCards:  4.
 	game := Game
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: (self cardDeckWithCard: instantCard andAmountOfCards:  4)
+		deck: cardDeck
 		using: dices.
-	self assert: game deck size equals: 2.
+	self assert: cardDeck size equals: 2.
 	self assert: game discardDeck size equals: 0.
 	robert playsCard: instantCard affecting: 'Juan' on: game.
 	self assert: game discardDeck size equals: 1
 ]
 
 { #category : #tests }
-CardDeckTests >> testDiscardCardDeckFillsWithOneUsedPermanentCard [
-	| juan cancellationCard|
+CardDeckTest >> testDiscardCardDeckFillsWithOneUsedPermanentCard [
+	| juan cancellationCard cardDeck|
+	cardDeck := self cardDeckWithCard: permanentCard andAmountOfCards:6.
 	juan := self juan.
 	players add: juan.
 	cancellationCard :=  gameElements cancellationCard.
@@ -174,9 +166,9 @@ CardDeckTests >> testDiscardCardDeckFillsWithOneUsedPermanentCard [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: (self cardDeckWithCard: permanentCard andAmountOfCards:6) 
+		deck: cardDeck
 		using: dices.
-	self assert: game deck size equals: 2.
+	self assert: cardDeck size equals: 2.
 	self assert: game discardDeck size equals: 0.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
 	self assert: game permanentCards size equals: 1.
@@ -187,8 +179,8 @@ CardDeckTests >> testDiscardCardDeckFillsWithOneUsedPermanentCard [
 ]
 
 { #category : #tests }
-CardDeckTests >> testDiscardDeckEmptiesWhenShuffledForUse [
-	| discardDeck shuffledDeck|
+CardDeckTest >> testDiscardDeckEmptiesWhenShuffledForUse [
+	| discardDeck shuffledDeck  |
 	discardDeck := DiscardDeck emptyDeck.
 	discardDeck addCard: instantCard.
 	discardDeck addCard: permanentCard.
@@ -197,18 +189,32 @@ CardDeckTests >> testDiscardDeckEmptiesWhenShuffledForUse [
 	self assert: discardDeck isEmpty.
 	self assert: shuffledDeck size equals: 3.
 	
-	
 ]
 
 { #category : #tests }
-CardDeckTests >> testFiniteAndDeterministicCardDeckCanBeCreated [
+CardDeckTest >> testDiscardDeckShufflesEffectively [ 
+	| discardDeck shuffledDeck anotherInstantCard |
+	anotherInstantCard := gameElements dummyInstantCard.
+	discardDeck := DiscardDeck emptyDeck.
+	discardDeck addCard: instantCard.
+	discardDeck addCard: permanentCard.
+	discardDeck addCard: anotherInstantCard.
+	shuffledDeck := discardDeck shuffleAndEmpty.
+	self assert: (shuffledDeck anySatisfy: [ :card | card = instantCard ]).
+	self assert: (shuffledDeck anySatisfy: [ :card | card = permanentCard ]).
+	self assert: (shuffledDeck anySatisfy: [ :card | card = anotherInstantCard  ])
+]
+
+{ #category : #tests }
+CardDeckTest >> testFiniteCardDeckCanBeCreated [
+	|cardDeck|
 	cardDeck := gameElements stocasticCardDeckWithCardsAmount: 5.
 	self assert: cardDeck  size equals: 5.
 ]
 
 { #category : #tests }
-CardDeckTests >> testPlayingCardDeckIsDeterministicOnceCreated [
-	| testingDiscardDeck |
+CardDeckTest >> testPlayingCardDeckIsDeterministicOnceCreated [
+	| testingDiscardDeck cardDeck|
 	cardDeck := self cardDeckWithCards: {instantCard . permanentCard } andAmountPerCard: 1.
 	self assert: cardDeck  size equals: 2.
 	testingDiscardDeck := DiscardDeck emptyDeck.
@@ -217,7 +223,9 @@ CardDeckTests >> testPlayingCardDeckIsDeterministicOnceCreated [
 ]
 
 { #category : #tests }
-CardDeckTests >> testPlayingDeckTakesCardsFromShuffledDiscardDeckWhenItIsEmpty [
+CardDeckTest >> testPlayingDeckTakesCardsFromShuffledDiscardDeckWhenItIsEmpty [
+	|cardDeck|
+	cardDeck := self cardDeckWithCards: { instantCard. permanentCard } andAmountPerCard:  2.
 	board := (LoadedBoardBuilder startBoardWithSteps: 10)
 		withEffectProbabilityAssociation: cardDealingTileWithProbability;
 		buildBoard.
@@ -225,13 +233,13 @@ CardDeckTests >> testPlayingDeckTakesCardsFromShuffledDiscardDeckWhenItIsEmpty [
 		playedBy: players
 		withLapsToWin: 1
 		board: board
-		deck: (self cardDeckWithCards: { instantCard. permanentCard } andAmountPerCard:  2)
+		deck: cardDeck
 		using: dices.
-	self assert: game deck size equals: 2.
+	self assert: cardDeck size equals: 2.
 	game turnIsPlayed.
 	game turnIsPlayed.
 	self assert: game discardDeck size equals: 0.
-	self assert: game deck size equals: 0.
+	self assert: cardDeck size equals: 0.
 	robert playsCard: instantCard affecting: 'Juan' on: game.
 	robert playsCard: instantCard affecting: 'Juan' on: game.
 	robert playsCard: permanentCard affecting: 'Juan' on: game.
@@ -241,7 +249,7 @@ CardDeckTests >> testPlayingDeckTakesCardsFromShuffledDiscardDeckWhenItIsEmpty [
 	self assert: game discardDeck size equals: 4.
 	game turnIsPlayed.
 	self assert: game discardDeck size equals: 0.
-	self assert: game deck size equals: 3.
+	self assert: cardDeck size equals: 3.
 	self assert: robert cards size equals: 1.
 	
 ]

@@ -9,5 +9,5 @@ Class {
 
 { #category : #action }
 SpeedUp >> affect: aPlayer on: aGame [
-	aGame moves: aPlayer steps: 4
+	aGame move: aPlayer steps: 4
 ]

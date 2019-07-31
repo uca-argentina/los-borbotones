@@ -27,8 +27,6 @@ PermanentAction >> update: aResult for: aPlayer [
 
 { #category : #action }
 PermanentAction >> use: aCard on: aGame affecting: aSetOfPlayers byRequestOf: aPlayer [
-	aGame currentPlayer name = aPlayer name
-		ifFalse: [ GameModelError signal: 'Cannot play permanent card if it is not your turn. ' ].
+	aGame playPermanentCard: aCard byRequestOf: aPlayer.
 	effect actOn: aGame affect: aSetOfPlayers by: aPlayer.
-	aGame addPermanentCard: aCard
 ]
