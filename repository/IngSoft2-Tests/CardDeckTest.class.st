@@ -213,6 +213,31 @@ CardDeckTest >> testFiniteCardDeckCanBeCreated [
 ]
 
 { #category : #tests }
+CardDeckTest >> testGameResumesWhenCardsAppearInDeck [
+	| cardDeck |
+	cardDeck := self
+		cardDeckWithCard: permanentCard
+		andAmountOfCards: 2.
+	board := (LoadedBoardBuilder startBoardWithSteps: 10)
+		withEffectProbabilityAssociation: cardDealingTileWithProbability;
+		buildBoard.
+	game := Game
+		playedBy: players
+		withLapsToWin: 1
+		board: board
+		deck: cardDeck
+		using: dices.
+	robert playsCard: permanentCard affecting: 'Juan' on: game.
+	game removePermanentCard: permanentCard.
+	self assert: game discardDeck size equals:1.
+	game turnIsPlayed.
+	self assert: game discardDeck size equals:0.
+	game assert: cardDeck size equals: 0.
+	
+	
+]
+
+{ #category : #tests }
 CardDeckTest >> testPlayingCardDeckIsDeterministicOnceCreated [
 	| testingDiscardDeck cardDeck|
 	cardDeck := self cardDeckWithCards: {instantCard . permanentCard } andAmountPerCard: 1.
