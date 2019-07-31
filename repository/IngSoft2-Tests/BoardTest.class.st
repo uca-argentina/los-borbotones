@@ -106,7 +106,7 @@ BoardTest >> testCardDealingTileGivesPlayerOneCard [
 BoardTest >> testIfRobertGoesToAnAtomicBombTileAllPlayersGoBackToTheStart [
 	| board game lucas juan |
 	lucas := Player named: 'Lucas'.
-	juan := Player named: 'Juan'.
+	juan := Player named: 'Juan'. 
 	players
 		add: lucas;
 		add: juan.
