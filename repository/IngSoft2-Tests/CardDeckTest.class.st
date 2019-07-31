@@ -232,7 +232,7 @@ CardDeckTest >> testGameResumesWhenCardsAppearInDeck [
 	self assert: game discardDeck size equals:1.
 	game turnIsPlayed.
 	self assert: game discardDeck size equals:0.
-	game assert: cardDeck size equals: 0.
+	self assert: cardDeck size equals: 0.
 	
 	
 ]
