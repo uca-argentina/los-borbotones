@@ -427,6 +427,28 @@ CardsTest >> testPlayerPlaysReverseCard [
 ]
 
 { #category : #tests }
+CardsTest >> testPlayerPlaysSkipCard [
+	| instantCard pablo rodrigo |
+	instantCard := gameElementsResource skipCard.
+	pablo := Player named: 'Pablo'.
+	rodrigo := Player named: 'Rodrigo'.
+	players add: pablo.
+	players add: rodrigo.
+	dices := OrderedCollection with: fourFaceDummyDice.
+	game := Game
+		playedBy: players
+		withLapsToWin: 4
+		board: board
+		deck: (self cardDeckWithCard: instantCard )
+		using: dices.
+	game turnIsPlayed.
+	game turnIsPlayed.
+	self assert: robert cards size equals: 3.
+	rodrigo playsCard: instantCard affecting: players on: game.
+	self assert: game currentPlayer equals: rodrigo.
+]
+
+{ #category : #tests }
 CardsTest >> testPlayerPlaysSpeedCardOnAnotherPlayer [
 	| permanentCard |
 	permanentCard := self speedCard.

@@ -270,6 +270,11 @@ Game >> setLastCard: aCard [
 ]
 
 { #category : #actions }
+Game >> skipTurn [
+	self performTurnPosition.
+]
+
+{ #category : #actions }
 Game >> turnIsPlayed [
 	self assertGameHasNotEnded.
 	self rollDicesForCurrentPlayer.

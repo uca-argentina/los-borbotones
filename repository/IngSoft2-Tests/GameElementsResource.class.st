@@ -84,6 +84,13 @@ GameElementsResource >> setUp [
 ]
 
 { #category : #running }
+GameElementsResource >> skipCard [
+	^ RealCard
+		named: 'Skip'
+		withAction: (InstantAction   withEffect: SkipEffect  new)
+]
+
+{ #category : #running }
 GameElementsResource >> speedCard [
 	^ RealCard
 		named: 'Speed'
