@@ -34,7 +34,8 @@ Class {
 		'board',
 		'laps',
 		'permanentCards',
-		'lastCardPlayed'
+		'lastCardPlayed',
+		'orientationTurn'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -100,6 +101,11 @@ Game >> board [
 ]
 
 { #category : #actions }
+Game >> changeOrientationTurn [
+	orientationTurn := orientationTurn * -1.
+]
+
+{ #category : #actions }
 Game >> changePositionOf: aPlayer toTile: aTileNumber andLap: aLapNumber [ 
 	playersPositions changePositionOf: aPlayer toTile: aTileNumber andLap: aLapNumber.
 ]
@@ -131,6 +137,7 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers car
 	lastCardPlayed := DummyCard new.
 	permanentCards := OrderedCollection new.
 	turnPosition := 1.
+	orientationTurn := 1.
 	players do: [ :player | player take: (deck dealCards: 2)]
 ]
 
@@ -180,6 +187,15 @@ Game >> newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount [
 	^ (playersPositions totalStepsMadeOf: aPlayer on: board) + aStepsAmount max: 0
 ]
 
+{ #category : #actions }
+Game >> performTurnPosition [
+	turnPosition := turnPosition + orientationTurn.
+	turnPosition = 0
+	ifTrue: [ turnPosition := players size ].
+	turnPosition > players size
+	ifTrue: [ turnPosition := 1 ].
+]
+
 { #category : #presentation }
 Game >> permanentCards [
 	^permanentCards copy.
@@ -212,6 +228,13 @@ Game >> repeatLastEffectTileOf: aPlayer [
 		effectAt: (playersPositions tilePositionOf: aPlayer)
 		affect: aPlayer 
 		on: self
+]
+
+{ #category : #actions }
+Game >> reverseTurns [
+	self changeOrientationTurn.
+	self performTurnPosition.
+	self performTurnPosition.
 ]
 
 { #category : #actions }
@@ -250,7 +273,7 @@ Game >> setLastCard: aCard [
 Game >> turnIsPlayed [
 	self assertGameHasNotEnded.
 	self rollDicesForCurrentPlayer.
-	turnPosition := turnPosition % players size + 1
+	self performTurnPosition
 ]
 
 { #category : #status }

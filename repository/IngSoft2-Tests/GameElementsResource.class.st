@@ -67,6 +67,13 @@ GameElementsResource >> repeatCard [
 ]
 
 { #category : #running }
+GameElementsResource >> reverseCard [
+	^ RealCard
+		named: 'Reverse'
+		withAction: (InstantAction   withEffect: ReverseEffect  new)
+]
+
+{ #category : #running }
 GameElementsResource >> setUp [
 	super setUp.
 	
