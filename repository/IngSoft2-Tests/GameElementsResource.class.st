@@ -27,6 +27,13 @@ GameElementsResource >> cancellationCard [
 ]
 
 { #category : #running }
+GameElementsResource >> doubleCard [
+	^ RealCard
+		named: 'Double'
+		withAction: (InstantAction   withEffect: DoubleEffect  new)
+]
+
+{ #category : #running }
 GameElementsResource >> dummyInstantCard [
 	^ RealCard
 		named: 'Test'

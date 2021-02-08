@@ -35,7 +35,8 @@ Class {
 		'laps',
 		'permanentCards',
 		'lastCardPlayed',
-		'orientationTurn'
+		'orientationTurn',
+		'doubleTurn'
 	],
 	#category : #'IngSoft2-Model'
 }
@@ -138,6 +139,7 @@ Game >> initializeWithLaps: aLapsAmount board: aBoard players: aSetOfPlayers car
 	permanentCards := OrderedCollection new.
 	turnPosition := 1.
 	orientationTurn := 1.
+	doubleTurn := 1.
 	players do: [ :player | player take: (deck dealCards: 2)]
 ]
 
@@ -189,11 +191,12 @@ Game >> newTotalStepsMadeBy: aPlayer calculatedWith: aStepsAmount [
 
 { #category : #actions }
 Game >> performTurnPosition [
-	turnPosition := turnPosition + orientationTurn.
+	turnPosition := turnPosition + (orientationTurn * doubleTurn).
 	turnPosition = 0
 	ifTrue: [ turnPosition := players size ].
 	turnPosition > players size
 	ifTrue: [ turnPosition := 1 ].
+	doubleTurn := 1.
 ]
 
 { #category : #presentation }
@@ -228,6 +231,11 @@ Game >> repeatLastEffectTileOf: aPlayer [
 		effectAt: (playersPositions tilePositionOf: aPlayer)
 		affect: aPlayer 
 		on: self
+]
+
+{ #category : #actions }
+Game >> repeatTurn [
+	doubleTurn := 0
 ]
 
 { #category : #actions }
